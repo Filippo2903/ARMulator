@@ -126,7 +126,7 @@ class I18NPlugin(object):
         self._keyword = keyword
     
     def _get_languages(self, directory):
-        return None #[dir for dir in os.listdir(self._locale_dir) if os.path.isdir(os.path.join(directory, dir))]
+        return [dir for dir in os.listdir(self._locale_dir) if os.path.isdir(os.path.join(directory, dir))]
     
     
     def setup(self, app):
