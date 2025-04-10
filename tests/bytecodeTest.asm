@@ -1,0 +1,246 @@
+  MOV R0, #10
+  MOV R1, #0
+  MOV R2, #255
+  MOV R3, #256
+  MOV R4, #260
+  MOV R5, #1024
+  MOV R6, #4096
+  MOV R7, #8192
+  MOV R8, #65536
+  MOV R9, #0x80000000
+  MOV R10, #-1
+  MOV R11, #-2
+  MOV R12, #-255
+  MOV R13, #0xffffffbf
+  MOV R14, #0x01
+  MVN R0, #-2
+  MVN R1, #0xf
+  MVN r3, #0x4
+  MVN r10, #0x77
+  MVN lr, #11
+  MVN sp, #12
+
+  @ SHIFTS
+  MOV R0, R0, LSL #10
+  MOV R1, R2, LSL #1
+  MOV R1, R2, LSL #0
+  MOV R2, R3, LSR #2
+  MOV R3, R4, LSR #0x13
+  MOV R3, R4, LSR #32
+  MOV R3, R4, LSR #0
+  MOV R8, R9, ASR #2
+  MOV R8, R9, ASR #32
+  MOV R8, R9, ASR #0
+  MOV R4, R5, ROR #14
+  MOV R4, R5, ROR #0
+  MOV R5, R6, RRX
+  MOV R6, R7, LSL R8
+  MOV R7, R8, LSR R9
+  MOV R9, R9, ASR R1
+  MOV R10, R11, ROR R12
+
+  @ PSEUDO INSTRUCTIONS SHIFTS
+  LSR R0, R1, R1
+  LSR R0, R1, #1
+  LSL R0, R1, #20
+  ASR R0, R1, #32
+  ROR R0, R1, R7
+  ROR R0, R1, #0xe
+  RRX R3, R2
+
+  @ DATA OP (ARITHMETIC)
+  ADD R0, R0, R1
+  ADD R2, R3, R4, LSL #2
+  ADD R5, R6, R7, LSR R8
+  ADD R2, R0, #4
+  ADD R2, R0, #-8
+  SUB R6, R6, R5
+  SUB R6, R6, R5, LSR #3
+  SUB R7, R7, #0x10
+  SUB R7, R7, #-77
+  ADC R8, R9, R9
+  ADC R8, R10, #264
+  ADC R10, R11, #10
+  RSB R8, R9, R10
+  RSB R8, R9, #0x4F
+  RSB R10, R11, R12, ASR R13
+  RSB R10, R9, #8
+  SBC R2, R0, R1
+  SBC R2, R3, #4
+  SBC R2, R3, #0xFF
+  ADDS R0, R0, R1
+
+  @ DATA OP (LOGICAL)
+  AND R0, R1, R2
+  AND R0, R1, #0xFF000000
+  AND R0, R1, #0xFFFFFFFF
+  BIC R2, R3, R4
+  BIC R2, R3, #0x8F
+  BIC R2, R3, #-1
+  EOR R5, R6, R7
+  EOR R5, R6, #31
+  EOR R5, R6, #0xF2
+  ORR R6, R7, R5
+  ORR R6, R7, #11
+  ORRS R7, R8, R9
+
+  @ DATA OP (conditions)
+  CMP R3, R4
+  CMP R3, #4
+  CMP R3, #-1
+  CMP R3, #0xFF010000
+  SUB R3, R3, #0xFF010000
+  CMP R3, #0x0FFFFFFF
+  CMN R4, R8
+  CMN R7, #12
+  CMN R7, #0
+  CMN R10, #-5
+  TST R9, R10
+  TST R9, #0xF
+  TEQ R9, R10
+  TEQ R10, #0x22
+
+  @ CONDITIONS
+  MOVEQ R0, R1
+  MOVEQS R0, R1
+  MOVNE R0, R1
+  MOVCS R0, R1
+  MOVCC R0, R1
+  MOVMI R0, R1
+  MOVPL R0, R1
+  MOVVS R0, R1
+  MOVVC R0, R1
+  MOVHI R0, R1
+  MOVLS R0, R1
+  MOVGE R0, R1
+  MOVLT R0, R1
+  MOVGT R0, R1
+  MOVLE R0, R1
+  ADDLES R0, R1, R2
+  MOVAL R0, R1
+
+  @ BRANCH
+  BX LR
+  BX R2
+etiquette:  B etiquette
+etiquette2:  BL etiquette2
+pcetiquette:  BL pcetiquette
+
+  @ LDR / STR
+  LDR R0, [R1]
+  LDR R0, [R1, R2]
+  LDR R0, [R1, #8]
+  LDR R0, [R1, #-8]
+  LDR R0, [R1, #0xFF]
+  LDR R0, [R1, #0xFFF]
+  LDR R0, [R1, #-0xFFF]
+  LDR R0, [R1, -R2]
+  LDR R0, [R1, +R2]
+  LDR R0, [R1, R2, LSL #4]
+  LDR R0, [R1, R2, LSR #4]
+  LDR R0, [R1, R2, ROR #4]
+  LDR R0, [R1, -R2, ROR #4]
+  LDR R0, [R1, R2, RRX]
+  LDR R0, [R1, R2]!
+  LDR R0, [R1], R2
+  LDR R0, [R1], -R2
+  LDRNE R0, [R1]
+  LDRB R0, [R1], R2
+  LDRGTB R0, [R1], R2
+  STR R0, [R1]
+  STR R0, [R1, #16]
+  STR R0, [R1, #18]
+  STR R0, [R1, #-16]
+  STR R0, [R1, #0xFFF]
+  STR R0, [R1, -R2]
+  STR R0, [R1, R3, ROR #4]
+  STR R0, [R1, -R3, ROR #4]
+label:  LDR R0, label
+label2:  STR R1, label2
+
+  @ SPECIAL MEMORY TRANSFER (LDRH, LDRSH, LDRSB)
+  LDRH R7, [R2, R3]
+  LDRH R8, [R9, #42]
+  LDRH R9, [R10, #-0xA]
+  LDRH R6, [R0, #245]!
+  LDRSH R3, [R1]
+  LDRSH R8, [R1], R2
+  LDRLESH R8, [R1], R2
+  LDRLESH R8, [R1], -R2
+  LDRSB R4, [R4, R6]
+  LDRSB R5, [R5, R7]
+  LDRSB R5, [R5, -R7]
+  STRH R12, [R10]
+  STRH R8, [R2, R9]!
+  STRH R8, [R2, +R9]!
+  STREQH R8, [R2, R4]!
+  STRH R9, [R3], #-88
+label3:  LDRSB R0, label3
+label4:  STRH R1, label4
+r5label4:  STRH R1, r5label4
+
+  @ BLOCK DATA TRANSFER (LDM/STM/PUSH/POP)
+  @ GCC replace single PUSH with a single STR, so we should not test that here
+  PUSH {R0,R14}
+  PUSH {R2, R3,R4}
+  PUSH {R2-R7}
+  PUSH {R8-R10, R12, LR, PC}
+  POP {R1,R2,R3,R6-R9,LR}
+  LDM R4, {R1, R2, R3}
+  LDM R5, {R6}
+  LDM R4!, {R1, R2, R3}
+  STM R7, {R1, R2}
+  STM R8!, {R10-R12}^
+  LDMED R1, {R2-R8,R9}
+  LDMED R1, {r2-r8,r9}
+  LDMIB R1, {R2-R8, R9}
+  LDMFD R1, {R2-R8,R9}
+  LDMIA R1, {R2-R8, R9}
+  LDMEA R1, {R2-R8,R9}
+  LDMDB R1, {R2-R8, R9}
+  LDMEQDB R1, {R2-R8, R9}
+  LDMNEIB R1, {R2-R8, R9}
+  LDMVSEA R1, {R2-R8, R9}
+  STMFA R1, {R2-R8,R9}
+  STMIB R1, {R2-R8, R9}
+  STMEA R1, {R2-R8,R9}
+  STMIA R1, {R2-R8, R9}
+  STMFD R1, {R2-R8,R9}
+  STMDB R1, {R2-R8, R9}
+  STMED R1, {R2-R8,R9}
+  STMDA R1, {R2-R8, R9}
+  STMEQDB R1, {R2-R8, R9}
+  STMNEIB R1, {R2-R8, R9}
+  STMVSEA R1, {R2-R8, R9}
+
+  @ SWAP TRANSFER (SWP, SWPB)
+  SWP R0, R1, [R2]
+  SWPB R5, R10, [R12]
+  SWPMI R9, R8, [R7]
+  SWPPLB R11, R12, [R0]
+
+  @ SOFTWARE INTERRUPT
+  SWI #0xFF1422
+  SWI 0xFF1422
+  SVC 0xFF1422
+
+  @ MULTIPLICATION
+  MUL R1, R2, R3
+  MUL R2, R3, LR
+  MLA R3, R4, R5, R6
+
+  @ MSR/MRS
+  MRS R0, CPSR
+  MRS R0, SPSR
+  MRS R0, spsr
+  MSR CPSR, R4
+  MSR SPSR, R1
+  MSR CPSR_flg, R4
+  MSR cpsr_flg, R4
+  MSR SPSR_flg, R1
+
+  @ MULTIPLICATION LONG
+  UMULL R1, R2, R3, R4
+  SMULL R2, R3, LR, R0
+  UMLAL R3, R4, R5, R6
+  SMLAL R3, R4, R5, R6
