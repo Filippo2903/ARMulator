@@ -1,0 +1,3374 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    RANGE
+    STARTSPACES
+
+Grammar
+
+Rule 0     S' -> line
+Rule 1     line -> ENDLINESPACES
+Rule 2     line -> COMMENT ENDLINESPACES
+Rule 3     line -> linelabel ENDLINESPACES
+Rule 4     line -> linelabelinstr ENDLINESPACES
+Rule 5     line -> lineinstruction ENDLINESPACES
+Rule 6     line -> sectiondeclaration ENDLINESPACES
+Rule 7     line -> linedeclaration ENDLINESPACES
+Rule 8     line -> lineassertion ENDLINESPACES
+Rule 9     line -> CONST error ENDLINESPACES
+Rule 10    linelabel -> LABEL
+Rule 11    linelabel -> LABEL SPACEORTAB COMMENT
+Rule 12    linelabel -> LABEL error COMMA
+Rule 13    sectiondeclaration -> SECTION SECTIONNAME
+Rule 14    sectiondeclaration -> SECTION SECTIONNAME SPACEORTAB COMMENT
+Rule 15    lineassertion -> ASSERTION ASSERTIONDATA
+Rule 16    lineassertion -> ASSERTION ASSERTIONDATA SPACEORTAB COMMENT
+Rule 17    linedeclaration -> LABEL SPACEORTAB declarationconst
+Rule 18    linedeclaration -> LABEL SPACEORTAB declarationconst SPACEORTAB COMMENT
+Rule 19    linedeclaration -> LABEL SPACEORTAB declarationsize
+Rule 20    linedeclaration -> LABEL SPACEORTAB declarationsize SPACEORTAB COMMENT
+Rule 21    lineinstruction -> instruction
+Rule 22    lineinstruction -> instruction SPACEORTAB COMMENT
+Rule 23    linelabelinstr -> LABEL SPACEORTAB instruction
+Rule 24    linelabelinstr -> LABEL SPACEORTAB instruction SPACEORTAB COMMENT
+Rule 25    instruction -> datainstruction
+Rule 26    instruction -> meminstruction
+Rule 27    instruction -> branchinstruction
+Rule 28    instruction -> multiplememinstruction
+Rule 29    instruction -> swapinstruction
+Rule 30    instruction -> shiftinstruction
+Rule 31    instruction -> psrinstruction
+Rule 32    instruction -> svcinstruction
+Rule 33    instruction -> multiplyinstruction
+Rule 34    instruction -> multiplylonginstruction
+Rule 35    instruction -> nopinstruction
+Rule 36    datainstruction -> datainst2op
+Rule 37    datainstruction -> datainst3op
+Rule 38    datainstruction -> datainsttest
+Rule 39    condandspace -> SPACEORTAB
+Rule 40    condandspace -> CONDITION SPACEORTAB
+Rule 41    flagscondandspace -> CONDITION MODIFYFLAGS SPACEORTAB
+Rule 42    flagscondandspace -> CONDITION SPACEORTAB
+Rule 43    flagscondandspace -> MODIFYFLAGS SPACEORTAB
+Rule 44    flagscondandspace -> SPACEORTAB
+Rule 45    accessmodifiersandspace -> SPACEORTAB
+Rule 46    accessmodifiersandspace -> BYTEONLY SPACEORTAB
+Rule 47    accessmodifiersandspace -> HALFONLY SPACEORTAB
+Rule 48    accessmodifiersandspace -> SIGNEDBYTE SPACEORTAB
+Rule 49    accessmodifiersandspace -> SIGNEDHALF SPACEORTAB
+Rule 50    accessmodifiersandspace -> MEMPRIVILEGED SPACEORTAB
+Rule 51    accessmodifiersandspace -> BYTEONLY MEMPRIVILEGED SPACEORTAB
+Rule 52    datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG COMMA op2
+Rule 53    datainst2op -> OPDATA2OP logmnemonic flagscondandspace error COMMA op2
+Rule 54    datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error op2
+Rule 55    datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error COMMA op2
+Rule 56    datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG COMMA op2
+Rule 57    datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error REG COMMA op2
+Rule 58    datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error op2
+Rule 59    datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG
+Rule 60    datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG COMMA op2
+Rule 61    datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error COMMA op2
+Rule 62    datainsttest -> OPDATATEST logmnemonic condandspace REG COMMA op2
+Rule 63    logmnemonic -> <empty>
+Rule 64    op2 -> REG
+Rule 65    op2 -> SHARP CONST
+Rule 66    op2 -> REG COMMA shift
+Rule 67    op2 -> REG shift
+Rule 68    shift -> shiftbyreg
+Rule 69    shift -> shiftbyvalue
+Rule 70    shiftbyreg -> INNERSHIFT
+Rule 71    shiftbyreg -> INNERSHIFT SPACEORTAB REG
+Rule 72    shiftbyvalue -> INNERSHIFT SHARP CONST
+Rule 73    shiftbyvalue -> INNERSHIFT SPACEORTAB SHARP CONST
+Rule 74    shiftinstruction -> shiftinstrconst
+Rule 75    shiftinstruction -> shiftinstrreg
+Rule 76    shiftinstruction -> shiftinstrrrx
+Rule 77    shiftinstrrrx -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG
+Rule 78    shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST
+Rule 79    shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA REG
+Rule 80    meminstruction -> OPMEM logmnemonic accessmodifiersandspace REG COMMA memaccess
+Rule 81    meminstruction -> OPMEM logmnemonic CONDITION accessmodifiersandspace REG COMMA memaccess
+Rule 82    memaccess -> memaccesspre
+Rule 83    memaccess -> memaccesspost
+Rule 84    memaccess -> memaccesslabel
+Rule 85    memaccess -> memaccesslabeladdr
+Rule 86    memaccess -> memaccessimmediate
+Rule 87    memaccesspre -> OPENBRACKET REG CLOSEBRACKET
+Rule 88    memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg memaccesspreclosing
+Rule 89    memaccesspre -> OPENBRACKET REG COMMA SHARP CONST memaccesspreclosing
+Rule 90    memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg COMMA shiftnoreg memaccesspreclosing
+Rule 91    memaccesspre -> OPENBRACKET REG COMMA REG error memaccesspreclosing
+Rule 92    shiftnoreg -> INNERSHIFT
+Rule 93    shiftnoreg -> INNERSHIFT SHARP CONST
+Rule 94    shiftnoreg -> INNERSHIFT SPACEORTAB SHARP CONST
+Rule 95    signedoffsetreg -> REG
+Rule 96    signedoffsetreg -> SIGN REG
+Rule 97    memaccesspreclosing -> CLOSEBRACKET
+Rule 98    memaccesspreclosing -> CLOSEBRACKET EXCLAMATION
+Rule 99    memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg
+Rule 100   memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg COMMA shiftnoreg
+Rule 101   memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA SHARP CONST
+Rule 102   memaccesslabel -> LABEL
+Rule 103   memaccesslabeladdr -> EQUALS LABEL
+Rule 104   memaccessimmediate -> EQUALS CONST
+Rule 105   swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+Rule 106   swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+Rule 107   swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+Rule 108   swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+Rule 109   branchinstruction -> OPBRANCH logmnemonic condandspace LABEL
+Rule 110   branchinstruction -> OPBRANCH logmnemonic condandspace REG
+Rule 111   branchinstruction -> OPBRANCH logmnemonic condandspace CONST error
+Rule 112   multiplememinstruction -> stackinstruction
+Rule 113   multiplememinstruction -> stmldminstruction
+Rule 114   listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE
+Rule 115   listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE CARET
+Rule 116   stackinstruction -> OPMULTIPLEMEM logmnemonic condandspace listregswithpsr
+Rule 117   stmldmtargetreg -> REG
+Rule 118   stmldmtargetreg -> REG EXCLAMATION
+Rule 119   stmldmmodifier -> SPACEORTAB
+Rule 120   stmldmmodifier -> CONDITION SPACEORTAB
+Rule 121   stmldmmodifier -> LDMSTMMODE SPACEORTAB
+Rule 122   stmldmmodifier -> CONDITION LDMSTMMODE SPACEORTAB
+Rule 123   stmldminstruction -> OPMULTIPLEMEM logmnemonic stmldmmodifier stmldmtargetreg COMMA listregswithpsr
+Rule 124   psrinstruction -> OPPSR logmnemonic condandspace REG COMMA PSR
+Rule 125   psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA REG
+Rule 126   psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA SHARP CONST
+Rule 127   svcinstruction -> OPSVC logmnemonic condandspace CONST
+Rule 128   svcinstruction -> OPSVC logmnemonic condandspace SHARP CONST
+Rule 129   multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG
+Rule 130   multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG
+Rule 131   multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST
+Rule 132   multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG
+Rule 133   multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA SHARP CONST
+Rule 134   nopinstruction -> OPNOP logmnemonic
+Rule 135   nopinstruction -> OPNOP logmnemonic CONDITION
+Rule 136   declarationconst -> CONSTDEC LISTINIT
+Rule 137   declarationconst -> CONSTDECWITHOUTSIZE LISTINIT
+Rule 138   declarationsize -> VARDEC LISTINIT
+Rule 139   declarationsize -> VARDECWITHOUTSIZE LISTINIT
+
+Terminals, with rules where they appear
+
+ASSERTION            : 15 16
+ASSERTIONDATA        : 15 16
+BYTEONLY             : 46 51 106 108
+CARET                : 115
+CLOSEBRACE           : 114 115
+CLOSEBRACKET         : 87 97 98 99 100 101 105 106 107 108
+COMMA                : 12 52 53 55 56 56 57 58 59 60 60 61 61 62 66 77 78 78 79 79 80 81 88 89 90 90 91 99 100 100 101 105 105 106 106 107 107 108 108 123 124 125 126 129 129 130 130 130 131 131 132 132 132 133 133 133
+COMMENT              : 2 11 14 16 18 20 22 24
+CONDITION            : 40 41 42 81 107 108 120 122 135
+CONST                : 9 65 72 73 78 89 93 94 101 104 111 126 127 128 131 133
+CONSTDEC             : 136
+CONSTDECWITHOUTSIZE  : 137
+ENDLINESPACES        : 1 2 3 4 5 6 7 8 9
+EQUALS               : 103 104
+EXCLAMATION          : 98 118
+HALFONLY             : 47
+INNERSHIFT           : 70 71 72 73 92 93 94
+LABEL                : 10 11 12 17 18 19 20 23 24 102 103 109
+LDMSTMMODE           : 121 122
+LISTINIT             : 136 137 138 139
+LISTREGS             : 114 115
+MEMPRIVILEGED        : 50 51
+MODIFYFLAGS          : 41 43
+OPBRANCH             : 109 110 111
+OPDATA2OP            : 52 53 54 55
+OPDATA3OP            : 56 57 58 59 60 61
+OPDATATEST           : 62
+OPENBRACE            : 114 115
+OPENBRACKET          : 87 88 89 90 91 99 100 101 105 106 107 108
+OPMEM                : 80 81
+OPMUL                : 129 130 131
+OPMULL               : 132 133
+OPMULTIPLEMEM        : 116 123
+OPNOP                : 134 135
+OPPSR                : 124 125 126
+OPSHIFT              : 77 78 79
+OPSVC                : 127 128
+OPSWP                : 105 106 107 108
+PSR                  : 124 125 126
+RANGE                : 
+REG                  : 52 54 55 56 56 57 57 58 58 59 59 60 60 61 61 62 64 66 67 71 77 77 78 78 79 79 79 80 81 87 88 89 90 91 91 95 96 99 100 101 105 105 105 106 106 106 107 107 107 108 108 108 110 117 118 124 125 129 129 129 130 130 130 130 131 131 132 132 132 132 133 133 133
+SECTION              : 13 14
+SECTIONNAME          : 13 14
+SHARP                : 65 72 73 78 89 93 94 101 126 128 131 133
+SIGN                 : 96
+SIGNEDBYTE           : 48
+SIGNEDHALF           : 49
+SPACEORTAB           : 11 14 16 17 18 18 19 20 20 22 23 24 24 39 40 41 42 43 44 45 46 47 48 49 50 51 71 73 94 105 106 107 108 119 120 121 122
+STARTSPACES          : 
+VARDEC               : 138
+VARDECWITHOUTSIZE    : 139
+error                : 9 12 53 54 55 57 58 60 61 91 111
+
+Nonterminals, with rules where they appear
+
+accessmodifiersandspace : 80 81
+branchinstruction    : 27
+condandspace         : 62 109 110 111 116 124 125 126 127 128
+datainst2op          : 36
+datainst3op          : 37
+datainstruction      : 25
+datainsttest         : 38
+declarationconst     : 17 18
+declarationsize      : 19 20
+flagscondandspace    : 52 53 54 55 56 57 58 59 60 61 77 78 79 129 130 131 132 133
+instruction          : 21 22 23 24
+line                 : 0
+lineassertion        : 8
+linedeclaration      : 7
+lineinstruction      : 5
+linelabel            : 3
+linelabelinstr       : 4
+listregswithpsr      : 116 123
+logmnemonic          : 52 53 54 55 56 57 58 59 60 61 62 77 78 79 80 81 105 106 107 108 109 110 111 116 123 124 125 126 127 128 129 130 131 132 133 134 135
+memaccess            : 80 81
+memaccessimmediate   : 86
+memaccesslabel       : 84
+memaccesslabeladdr   : 85
+memaccesspost        : 83
+memaccesspre         : 82
+memaccesspreclosing  : 88 89 90 91
+meminstruction       : 26
+multiplememinstruction : 28
+multiplyinstruction  : 33
+multiplylonginstruction : 34
+nopinstruction       : 35
+op2                  : 52 53 54 55 56 57 58 60 61 62
+psrinstruction       : 31
+sectiondeclaration   : 6
+shift                : 66 67
+shiftbyreg           : 68
+shiftbyvalue         : 69
+shiftinstrconst      : 74
+shiftinstrreg        : 75
+shiftinstrrrx        : 76
+shiftinstruction     : 30
+shiftnoreg           : 90 100
+signedoffsetreg      : 88 90 99 100
+stackinstruction     : 112
+stmldminstruction    : 113
+stmldmmodifier       : 123
+stmldmtargetreg      : 123
+svcinstruction       : 32
+swapinstruction      : 29
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . line
+    (1) line -> . ENDLINESPACES
+    (2) line -> . COMMENT ENDLINESPACES
+    (3) line -> . linelabel ENDLINESPACES
+    (4) line -> . linelabelinstr ENDLINESPACES
+    (5) line -> . lineinstruction ENDLINESPACES
+    (6) line -> . sectiondeclaration ENDLINESPACES
+    (7) line -> . linedeclaration ENDLINESPACES
+    (8) line -> . lineassertion ENDLINESPACES
+    (9) line -> . CONST error ENDLINESPACES
+    (10) linelabel -> . LABEL
+    (11) linelabel -> . LABEL SPACEORTAB COMMENT
+    (12) linelabel -> . LABEL error COMMA
+    (23) linelabelinstr -> . LABEL SPACEORTAB instruction
+    (24) linelabelinstr -> . LABEL SPACEORTAB instruction SPACEORTAB COMMENT
+    (21) lineinstruction -> . instruction
+    (22) lineinstruction -> . instruction SPACEORTAB COMMENT
+    (13) sectiondeclaration -> . SECTION SECTIONNAME
+    (14) sectiondeclaration -> . SECTION SECTIONNAME SPACEORTAB COMMENT
+    (17) linedeclaration -> . LABEL SPACEORTAB declarationconst
+    (18) linedeclaration -> . LABEL SPACEORTAB declarationconst SPACEORTAB COMMENT
+    (19) linedeclaration -> . LABEL SPACEORTAB declarationsize
+    (20) linedeclaration -> . LABEL SPACEORTAB declarationsize SPACEORTAB COMMENT
+    (15) lineassertion -> . ASSERTION ASSERTIONDATA
+    (16) lineassertion -> . ASSERTION ASSERTIONDATA SPACEORTAB COMMENT
+    (25) instruction -> . datainstruction
+    (26) instruction -> . meminstruction
+    (27) instruction -> . branchinstruction
+    (28) instruction -> . multiplememinstruction
+    (29) instruction -> . swapinstruction
+    (30) instruction -> . shiftinstruction
+    (31) instruction -> . psrinstruction
+    (32) instruction -> . svcinstruction
+    (33) instruction -> . multiplyinstruction
+    (34) instruction -> . multiplylonginstruction
+    (35) instruction -> . nopinstruction
+    (36) datainstruction -> . datainst2op
+    (37) datainstruction -> . datainst3op
+    (38) datainstruction -> . datainsttest
+    (80) meminstruction -> . OPMEM logmnemonic accessmodifiersandspace REG COMMA memaccess
+    (81) meminstruction -> . OPMEM logmnemonic CONDITION accessmodifiersandspace REG COMMA memaccess
+    (109) branchinstruction -> . OPBRANCH logmnemonic condandspace LABEL
+    (110) branchinstruction -> . OPBRANCH logmnemonic condandspace REG
+    (111) branchinstruction -> . OPBRANCH logmnemonic condandspace CONST error
+    (112) multiplememinstruction -> . stackinstruction
+    (113) multiplememinstruction -> . stmldminstruction
+    (105) swapinstruction -> . OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (106) swapinstruction -> . OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (107) swapinstruction -> . OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (108) swapinstruction -> . OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (74) shiftinstruction -> . shiftinstrconst
+    (75) shiftinstruction -> . shiftinstrreg
+    (76) shiftinstruction -> . shiftinstrrrx
+    (124) psrinstruction -> . OPPSR logmnemonic condandspace REG COMMA PSR
+    (125) psrinstruction -> . OPPSR logmnemonic condandspace PSR COMMA REG
+    (126) psrinstruction -> . OPPSR logmnemonic condandspace PSR COMMA SHARP CONST
+    (127) svcinstruction -> . OPSVC logmnemonic condandspace CONST
+    (128) svcinstruction -> . OPSVC logmnemonic condandspace SHARP CONST
+    (129) multiplyinstruction -> . OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG
+    (130) multiplyinstruction -> . OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG
+    (131) multiplyinstruction -> . OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST
+    (132) multiplylonginstruction -> . OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG
+    (133) multiplylonginstruction -> . OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA SHARP CONST
+    (134) nopinstruction -> . OPNOP logmnemonic
+    (135) nopinstruction -> . OPNOP logmnemonic CONDITION
+    (52) datainst2op -> . OPDATA2OP logmnemonic flagscondandspace REG COMMA op2
+    (53) datainst2op -> . OPDATA2OP logmnemonic flagscondandspace error COMMA op2
+    (54) datainst2op -> . OPDATA2OP logmnemonic flagscondandspace REG error op2
+    (55) datainst2op -> . OPDATA2OP logmnemonic flagscondandspace REG error COMMA op2
+    (56) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG COMMA REG COMMA op2
+    (57) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG error REG COMMA op2
+    (58) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error op2
+    (59) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG COMMA REG
+    (60) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG COMMA op2
+    (61) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error COMMA op2
+    (62) datainsttest -> . OPDATATEST logmnemonic condandspace REG COMMA op2
+    (116) stackinstruction -> . OPMULTIPLEMEM logmnemonic condandspace listregswithpsr
+    (123) stmldminstruction -> . OPMULTIPLEMEM logmnemonic stmldmmodifier stmldmtargetreg COMMA listregswithpsr
+    (78) shiftinstrconst -> . OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST
+    (79) shiftinstrreg -> . OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA REG
+    (77) shiftinstrrrx -> . OPSHIFT logmnemonic flagscondandspace REG COMMA REG
+
+    ENDLINESPACES   shift and go to state 2
+    COMMENT         shift and go to state 3
+    CONST           shift and go to state 10
+    LABEL           shift and go to state 11
+    SECTION         shift and go to state 13
+    ASSERTION       shift and go to state 14
+    OPMEM           shift and go to state 29
+    OPBRANCH        shift and go to state 30
+    OPSWP           shift and go to state 33
+    OPPSR           shift and go to state 37
+    OPSVC           shift and go to state 38
+    OPMUL           shift and go to state 39
+    OPMULL          shift and go to state 40
+    OPNOP           shift and go to state 41
+    OPDATA2OP       shift and go to state 42
+    OPDATA3OP       shift and go to state 43
+    OPDATATEST      shift and go to state 44
+    OPMULTIPLEMEM   shift and go to state 45
+    OPSHIFT         shift and go to state 46
+
+    line                           shift and go to state 1
+    linelabel                      shift and go to state 4
+    linelabelinstr                 shift and go to state 5
+    lineinstruction                shift and go to state 6
+    sectiondeclaration             shift and go to state 7
+    linedeclaration                shift and go to state 8
+    lineassertion                  shift and go to state 9
+    instruction                    shift and go to state 12
+    datainstruction                shift and go to state 15
+    meminstruction                 shift and go to state 16
+    branchinstruction              shift and go to state 17
+    multiplememinstruction         shift and go to state 18
+    swapinstruction                shift and go to state 19
+    shiftinstruction               shift and go to state 20
+    psrinstruction                 shift and go to state 21
+    svcinstruction                 shift and go to state 22
+    multiplyinstruction            shift and go to state 23
+    multiplylonginstruction        shift and go to state 24
+    nopinstruction                 shift and go to state 25
+    datainst2op                    shift and go to state 26
+    datainst3op                    shift and go to state 27
+    datainsttest                   shift and go to state 28
+    stackinstruction               shift and go to state 31
+    stmldminstruction              shift and go to state 32
+    shiftinstrconst                shift and go to state 34
+    shiftinstrreg                  shift and go to state 35
+    shiftinstrrrx                  shift and go to state 36
+
+state 1
+
+    (0) S' -> line .
+
+
+
+state 2
+
+    (1) line -> ENDLINESPACES .
+
+    $end            reduce using rule 1 (line -> ENDLINESPACES .)
+
+
+state 3
+
+    (2) line -> COMMENT . ENDLINESPACES
+
+    ENDLINESPACES   shift and go to state 47
+
+
+state 4
+
+    (3) line -> linelabel . ENDLINESPACES
+
+    ENDLINESPACES   shift and go to state 48
+
+
+state 5
+
+    (4) line -> linelabelinstr . ENDLINESPACES
+
+    ENDLINESPACES   shift and go to state 49
+
+
+state 6
+
+    (5) line -> lineinstruction . ENDLINESPACES
+
+    ENDLINESPACES   shift and go to state 50
+
+
+state 7
+
+    (6) line -> sectiondeclaration . ENDLINESPACES
+
+    ENDLINESPACES   shift and go to state 51
+
+
+state 8
+
+    (7) line -> linedeclaration . ENDLINESPACES
+
+    ENDLINESPACES   shift and go to state 52
+
+
+state 9
+
+    (8) line -> lineassertion . ENDLINESPACES
+
+    ENDLINESPACES   shift and go to state 53
+
+
+state 10
+
+    (9) line -> CONST . error ENDLINESPACES
+
+    error           shift and go to state 54
+
+
+state 11
+
+    (10) linelabel -> LABEL .
+    (11) linelabel -> LABEL . SPACEORTAB COMMENT
+    (12) linelabel -> LABEL . error COMMA
+    (23) linelabelinstr -> LABEL . SPACEORTAB instruction
+    (24) linelabelinstr -> LABEL . SPACEORTAB instruction SPACEORTAB COMMENT
+    (17) linedeclaration -> LABEL . SPACEORTAB declarationconst
+    (18) linedeclaration -> LABEL . SPACEORTAB declarationconst SPACEORTAB COMMENT
+    (19) linedeclaration -> LABEL . SPACEORTAB declarationsize
+    (20) linedeclaration -> LABEL . SPACEORTAB declarationsize SPACEORTAB COMMENT
+
+    ENDLINESPACES   reduce using rule 10 (linelabel -> LABEL .)
+    SPACEORTAB      shift and go to state 55
+    error           shift and go to state 56
+
+
+state 12
+
+    (21) lineinstruction -> instruction .
+    (22) lineinstruction -> instruction . SPACEORTAB COMMENT
+
+    ENDLINESPACES   reduce using rule 21 (lineinstruction -> instruction .)
+    SPACEORTAB      shift and go to state 57
+
+
+state 13
+
+    (13) sectiondeclaration -> SECTION . SECTIONNAME
+    (14) sectiondeclaration -> SECTION . SECTIONNAME SPACEORTAB COMMENT
+
+    SECTIONNAME     shift and go to state 58
+
+
+state 14
+
+    (15) lineassertion -> ASSERTION . ASSERTIONDATA
+    (16) lineassertion -> ASSERTION . ASSERTIONDATA SPACEORTAB COMMENT
+
+    ASSERTIONDATA   shift and go to state 59
+
+
+state 15
+
+    (25) instruction -> datainstruction .
+
+    SPACEORTAB      reduce using rule 25 (instruction -> datainstruction .)
+    ENDLINESPACES   reduce using rule 25 (instruction -> datainstruction .)
+
+
+state 16
+
+    (26) instruction -> meminstruction .
+
+    SPACEORTAB      reduce using rule 26 (instruction -> meminstruction .)
+    ENDLINESPACES   reduce using rule 26 (instruction -> meminstruction .)
+
+
+state 17
+
+    (27) instruction -> branchinstruction .
+
+    SPACEORTAB      reduce using rule 27 (instruction -> branchinstruction .)
+    ENDLINESPACES   reduce using rule 27 (instruction -> branchinstruction .)
+
+
+state 18
+
+    (28) instruction -> multiplememinstruction .
+
+    SPACEORTAB      reduce using rule 28 (instruction -> multiplememinstruction .)
+    ENDLINESPACES   reduce using rule 28 (instruction -> multiplememinstruction .)
+
+
+state 19
+
+    (29) instruction -> swapinstruction .
+
+    SPACEORTAB      reduce using rule 29 (instruction -> swapinstruction .)
+    ENDLINESPACES   reduce using rule 29 (instruction -> swapinstruction .)
+
+
+state 20
+
+    (30) instruction -> shiftinstruction .
+
+    SPACEORTAB      reduce using rule 30 (instruction -> shiftinstruction .)
+    ENDLINESPACES   reduce using rule 30 (instruction -> shiftinstruction .)
+
+
+state 21
+
+    (31) instruction -> psrinstruction .
+
+    SPACEORTAB      reduce using rule 31 (instruction -> psrinstruction .)
+    ENDLINESPACES   reduce using rule 31 (instruction -> psrinstruction .)
+
+
+state 22
+
+    (32) instruction -> svcinstruction .
+
+    SPACEORTAB      reduce using rule 32 (instruction -> svcinstruction .)
+    ENDLINESPACES   reduce using rule 32 (instruction -> svcinstruction .)
+
+
+state 23
+
+    (33) instruction -> multiplyinstruction .
+
+    SPACEORTAB      reduce using rule 33 (instruction -> multiplyinstruction .)
+    ENDLINESPACES   reduce using rule 33 (instruction -> multiplyinstruction .)
+
+
+state 24
+
+    (34) instruction -> multiplylonginstruction .
+
+    SPACEORTAB      reduce using rule 34 (instruction -> multiplylonginstruction .)
+    ENDLINESPACES   reduce using rule 34 (instruction -> multiplylonginstruction .)
+
+
+state 25
+
+    (35) instruction -> nopinstruction .
+
+    SPACEORTAB      reduce using rule 35 (instruction -> nopinstruction .)
+    ENDLINESPACES   reduce using rule 35 (instruction -> nopinstruction .)
+
+
+state 26
+
+    (36) datainstruction -> datainst2op .
+
+    SPACEORTAB      reduce using rule 36 (datainstruction -> datainst2op .)
+    ENDLINESPACES   reduce using rule 36 (datainstruction -> datainst2op .)
+
+
+state 27
+
+    (37) datainstruction -> datainst3op .
+
+    SPACEORTAB      reduce using rule 37 (datainstruction -> datainst3op .)
+    ENDLINESPACES   reduce using rule 37 (datainstruction -> datainst3op .)
+
+
+state 28
+
+    (38) datainstruction -> datainsttest .
+
+    SPACEORTAB      reduce using rule 38 (datainstruction -> datainsttest .)
+    ENDLINESPACES   reduce using rule 38 (datainstruction -> datainsttest .)
+
+
+state 29
+
+    (80) meminstruction -> OPMEM . logmnemonic accessmodifiersandspace REG COMMA memaccess
+    (81) meminstruction -> OPMEM . logmnemonic CONDITION accessmodifiersandspace REG COMMA memaccess
+    (63) logmnemonic -> .
+
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+    BYTEONLY        reduce using rule 63 (logmnemonic -> .)
+    HALFONLY        reduce using rule 63 (logmnemonic -> .)
+    SIGNEDBYTE      reduce using rule 63 (logmnemonic -> .)
+    SIGNEDHALF      reduce using rule 63 (logmnemonic -> .)
+    MEMPRIVILEGED   reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 60
+
+state 30
+
+    (109) branchinstruction -> OPBRANCH . logmnemonic condandspace LABEL
+    (110) branchinstruction -> OPBRANCH . logmnemonic condandspace REG
+    (111) branchinstruction -> OPBRANCH . logmnemonic condandspace CONST error
+    (63) logmnemonic -> .
+
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 61
+
+state 31
+
+    (112) multiplememinstruction -> stackinstruction .
+
+    SPACEORTAB      reduce using rule 112 (multiplememinstruction -> stackinstruction .)
+    ENDLINESPACES   reduce using rule 112 (multiplememinstruction -> stackinstruction .)
+
+
+state 32
+
+    (113) multiplememinstruction -> stmldminstruction .
+
+    SPACEORTAB      reduce using rule 113 (multiplememinstruction -> stmldminstruction .)
+    ENDLINESPACES   reduce using rule 113 (multiplememinstruction -> stmldminstruction .)
+
+
+state 33
+
+    (105) swapinstruction -> OPSWP . logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (106) swapinstruction -> OPSWP . logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (107) swapinstruction -> OPSWP . logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (108) swapinstruction -> OPSWP . logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (63) logmnemonic -> .
+
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+    BYTEONLY        reduce using rule 63 (logmnemonic -> .)
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 62
+
+state 34
+
+    (74) shiftinstruction -> shiftinstrconst .
+
+    SPACEORTAB      reduce using rule 74 (shiftinstruction -> shiftinstrconst .)
+    ENDLINESPACES   reduce using rule 74 (shiftinstruction -> shiftinstrconst .)
+
+
+state 35
+
+    (75) shiftinstruction -> shiftinstrreg .
+
+    SPACEORTAB      reduce using rule 75 (shiftinstruction -> shiftinstrreg .)
+    ENDLINESPACES   reduce using rule 75 (shiftinstruction -> shiftinstrreg .)
+
+
+state 36
+
+    (76) shiftinstruction -> shiftinstrrrx .
+
+    SPACEORTAB      reduce using rule 76 (shiftinstruction -> shiftinstrrrx .)
+    ENDLINESPACES   reduce using rule 76 (shiftinstruction -> shiftinstrrrx .)
+
+
+state 37
+
+    (124) psrinstruction -> OPPSR . logmnemonic condandspace REG COMMA PSR
+    (125) psrinstruction -> OPPSR . logmnemonic condandspace PSR COMMA REG
+    (126) psrinstruction -> OPPSR . logmnemonic condandspace PSR COMMA SHARP CONST
+    (63) logmnemonic -> .
+
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 63
+
+state 38
+
+    (127) svcinstruction -> OPSVC . logmnemonic condandspace CONST
+    (128) svcinstruction -> OPSVC . logmnemonic condandspace SHARP CONST
+    (63) logmnemonic -> .
+
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 64
+
+state 39
+
+    (129) multiplyinstruction -> OPMUL . logmnemonic flagscondandspace REG COMMA REG COMMA REG
+    (130) multiplyinstruction -> OPMUL . logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG
+    (131) multiplyinstruction -> OPMUL . logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST
+    (63) logmnemonic -> .
+
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+    MODIFYFLAGS     reduce using rule 63 (logmnemonic -> .)
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 65
+
+state 40
+
+    (132) multiplylonginstruction -> OPMULL . logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG
+    (133) multiplylonginstruction -> OPMULL . logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA SHARP CONST
+    (63) logmnemonic -> .
+
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+    MODIFYFLAGS     reduce using rule 63 (logmnemonic -> .)
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 66
+
+state 41
+
+    (134) nopinstruction -> OPNOP . logmnemonic
+    (135) nopinstruction -> OPNOP . logmnemonic CONDITION
+    (63) logmnemonic -> .
+
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+    ENDLINESPACES   reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 67
+
+state 42
+
+    (52) datainst2op -> OPDATA2OP . logmnemonic flagscondandspace REG COMMA op2
+    (53) datainst2op -> OPDATA2OP . logmnemonic flagscondandspace error COMMA op2
+    (54) datainst2op -> OPDATA2OP . logmnemonic flagscondandspace REG error op2
+    (55) datainst2op -> OPDATA2OP . logmnemonic flagscondandspace REG error COMMA op2
+    (63) logmnemonic -> .
+
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+    MODIFYFLAGS     reduce using rule 63 (logmnemonic -> .)
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 68
+
+state 43
+
+    (56) datainst3op -> OPDATA3OP . logmnemonic flagscondandspace REG COMMA REG COMMA op2
+    (57) datainst3op -> OPDATA3OP . logmnemonic flagscondandspace REG error REG COMMA op2
+    (58) datainst3op -> OPDATA3OP . logmnemonic flagscondandspace REG COMMA REG error op2
+    (59) datainst3op -> OPDATA3OP . logmnemonic flagscondandspace REG COMMA REG
+    (60) datainst3op -> OPDATA3OP . logmnemonic flagscondandspace REG error COMMA REG COMMA op2
+    (61) datainst3op -> OPDATA3OP . logmnemonic flagscondandspace REG COMMA REG error COMMA op2
+    (63) logmnemonic -> .
+
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+    MODIFYFLAGS     reduce using rule 63 (logmnemonic -> .)
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 69
+
+state 44
+
+    (62) datainsttest -> OPDATATEST . logmnemonic condandspace REG COMMA op2
+    (63) logmnemonic -> .
+
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 70
+
+state 45
+
+    (116) stackinstruction -> OPMULTIPLEMEM . logmnemonic condandspace listregswithpsr
+    (123) stmldminstruction -> OPMULTIPLEMEM . logmnemonic stmldmmodifier stmldmtargetreg COMMA listregswithpsr
+    (63) logmnemonic -> .
+
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+    LDMSTMMODE      reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 71
+
+state 46
+
+    (78) shiftinstrconst -> OPSHIFT . logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST
+    (79) shiftinstrreg -> OPSHIFT . logmnemonic flagscondandspace REG COMMA REG COMMA REG
+    (77) shiftinstrrrx -> OPSHIFT . logmnemonic flagscondandspace REG COMMA REG
+    (63) logmnemonic -> .
+
+    CONDITION       reduce using rule 63 (logmnemonic -> .)
+    MODIFYFLAGS     reduce using rule 63 (logmnemonic -> .)
+    SPACEORTAB      reduce using rule 63 (logmnemonic -> .)
+
+    logmnemonic                    shift and go to state 72
+
+state 47
+
+    (2) line -> COMMENT ENDLINESPACES .
+
+    $end            reduce using rule 2 (line -> COMMENT ENDLINESPACES .)
+
+
+state 48
+
+    (3) line -> linelabel ENDLINESPACES .
+
+    $end            reduce using rule 3 (line -> linelabel ENDLINESPACES .)
+
+
+state 49
+
+    (4) line -> linelabelinstr ENDLINESPACES .
+
+    $end            reduce using rule 4 (line -> linelabelinstr ENDLINESPACES .)
+
+
+state 50
+
+    (5) line -> lineinstruction ENDLINESPACES .
+
+    $end            reduce using rule 5 (line -> lineinstruction ENDLINESPACES .)
+
+
+state 51
+
+    (6) line -> sectiondeclaration ENDLINESPACES .
+
+    $end            reduce using rule 6 (line -> sectiondeclaration ENDLINESPACES .)
+
+
+state 52
+
+    (7) line -> linedeclaration ENDLINESPACES .
+
+    $end            reduce using rule 7 (line -> linedeclaration ENDLINESPACES .)
+
+
+state 53
+
+    (8) line -> lineassertion ENDLINESPACES .
+
+    $end            reduce using rule 8 (line -> lineassertion ENDLINESPACES .)
+
+
+state 54
+
+    (9) line -> CONST error . ENDLINESPACES
+
+    ENDLINESPACES   shift and go to state 73
+
+
+state 55
+
+    (11) linelabel -> LABEL SPACEORTAB . COMMENT
+    (23) linelabelinstr -> LABEL SPACEORTAB . instruction
+    (24) linelabelinstr -> LABEL SPACEORTAB . instruction SPACEORTAB COMMENT
+    (17) linedeclaration -> LABEL SPACEORTAB . declarationconst
+    (18) linedeclaration -> LABEL SPACEORTAB . declarationconst SPACEORTAB COMMENT
+    (19) linedeclaration -> LABEL SPACEORTAB . declarationsize
+    (20) linedeclaration -> LABEL SPACEORTAB . declarationsize SPACEORTAB COMMENT
+    (25) instruction -> . datainstruction
+    (26) instruction -> . meminstruction
+    (27) instruction -> . branchinstruction
+    (28) instruction -> . multiplememinstruction
+    (29) instruction -> . swapinstruction
+    (30) instruction -> . shiftinstruction
+    (31) instruction -> . psrinstruction
+    (32) instruction -> . svcinstruction
+    (33) instruction -> . multiplyinstruction
+    (34) instruction -> . multiplylonginstruction
+    (35) instruction -> . nopinstruction
+    (136) declarationconst -> . CONSTDEC LISTINIT
+    (137) declarationconst -> . CONSTDECWITHOUTSIZE LISTINIT
+    (138) declarationsize -> . VARDEC LISTINIT
+    (139) declarationsize -> . VARDECWITHOUTSIZE LISTINIT
+    (36) datainstruction -> . datainst2op
+    (37) datainstruction -> . datainst3op
+    (38) datainstruction -> . datainsttest
+    (80) meminstruction -> . OPMEM logmnemonic accessmodifiersandspace REG COMMA memaccess
+    (81) meminstruction -> . OPMEM logmnemonic CONDITION accessmodifiersandspace REG COMMA memaccess
+    (109) branchinstruction -> . OPBRANCH logmnemonic condandspace LABEL
+    (110) branchinstruction -> . OPBRANCH logmnemonic condandspace REG
+    (111) branchinstruction -> . OPBRANCH logmnemonic condandspace CONST error
+    (112) multiplememinstruction -> . stackinstruction
+    (113) multiplememinstruction -> . stmldminstruction
+    (105) swapinstruction -> . OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (106) swapinstruction -> . OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (107) swapinstruction -> . OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (108) swapinstruction -> . OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (74) shiftinstruction -> . shiftinstrconst
+    (75) shiftinstruction -> . shiftinstrreg
+    (76) shiftinstruction -> . shiftinstrrrx
+    (124) psrinstruction -> . OPPSR logmnemonic condandspace REG COMMA PSR
+    (125) psrinstruction -> . OPPSR logmnemonic condandspace PSR COMMA REG
+    (126) psrinstruction -> . OPPSR logmnemonic condandspace PSR COMMA SHARP CONST
+    (127) svcinstruction -> . OPSVC logmnemonic condandspace CONST
+    (128) svcinstruction -> . OPSVC logmnemonic condandspace SHARP CONST
+    (129) multiplyinstruction -> . OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG
+    (130) multiplyinstruction -> . OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG
+    (131) multiplyinstruction -> . OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST
+    (132) multiplylonginstruction -> . OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG
+    (133) multiplylonginstruction -> . OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA SHARP CONST
+    (134) nopinstruction -> . OPNOP logmnemonic
+    (135) nopinstruction -> . OPNOP logmnemonic CONDITION
+    (52) datainst2op -> . OPDATA2OP logmnemonic flagscondandspace REG COMMA op2
+    (53) datainst2op -> . OPDATA2OP logmnemonic flagscondandspace error COMMA op2
+    (54) datainst2op -> . OPDATA2OP logmnemonic flagscondandspace REG error op2
+    (55) datainst2op -> . OPDATA2OP logmnemonic flagscondandspace REG error COMMA op2
+    (56) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG COMMA REG COMMA op2
+    (57) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG error REG COMMA op2
+    (58) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error op2
+    (59) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG COMMA REG
+    (60) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG COMMA op2
+    (61) datainst3op -> . OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error COMMA op2
+    (62) datainsttest -> . OPDATATEST logmnemonic condandspace REG COMMA op2
+    (116) stackinstruction -> . OPMULTIPLEMEM logmnemonic condandspace listregswithpsr
+    (123) stmldminstruction -> . OPMULTIPLEMEM logmnemonic stmldmmodifier stmldmtargetreg COMMA listregswithpsr
+    (78) shiftinstrconst -> . OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST
+    (79) shiftinstrreg -> . OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA REG
+    (77) shiftinstrrrx -> . OPSHIFT logmnemonic flagscondandspace REG COMMA REG
+
+    COMMENT         shift and go to state 74
+    CONSTDEC        shift and go to state 78
+    CONSTDECWITHOUTSIZE shift and go to state 79
+    VARDEC          shift and go to state 80
+    VARDECWITHOUTSIZE shift and go to state 81
+    OPMEM           shift and go to state 29
+    OPBRANCH        shift and go to state 30
+    OPSWP           shift and go to state 33
+    OPPSR           shift and go to state 37
+    OPSVC           shift and go to state 38
+    OPMUL           shift and go to state 39
+    OPMULL          shift and go to state 40
+    OPNOP           shift and go to state 41
+    OPDATA2OP       shift and go to state 42
+    OPDATA3OP       shift and go to state 43
+    OPDATATEST      shift and go to state 44
+    OPMULTIPLEMEM   shift and go to state 45
+    OPSHIFT         shift and go to state 46
+
+    instruction                    shift and go to state 75
+    declarationconst               shift and go to state 76
+    declarationsize                shift and go to state 77
+    datainstruction                shift and go to state 15
+    meminstruction                 shift and go to state 16
+    branchinstruction              shift and go to state 17
+    multiplememinstruction         shift and go to state 18
+    swapinstruction                shift and go to state 19
+    shiftinstruction               shift and go to state 20
+    psrinstruction                 shift and go to state 21
+    svcinstruction                 shift and go to state 22
+    multiplyinstruction            shift and go to state 23
+    multiplylonginstruction        shift and go to state 24
+    nopinstruction                 shift and go to state 25
+    datainst2op                    shift and go to state 26
+    datainst3op                    shift and go to state 27
+    datainsttest                   shift and go to state 28
+    stackinstruction               shift and go to state 31
+    stmldminstruction              shift and go to state 32
+    shiftinstrconst                shift and go to state 34
+    shiftinstrreg                  shift and go to state 35
+    shiftinstrrrx                  shift and go to state 36
+
+state 56
+
+    (12) linelabel -> LABEL error . COMMA
+
+    COMMA           shift and go to state 82
+
+
+state 57
+
+    (22) lineinstruction -> instruction SPACEORTAB . COMMENT
+
+    COMMENT         shift and go to state 83
+
+
+state 58
+
+    (13) sectiondeclaration -> SECTION SECTIONNAME .
+    (14) sectiondeclaration -> SECTION SECTIONNAME . SPACEORTAB COMMENT
+
+    ENDLINESPACES   reduce using rule 13 (sectiondeclaration -> SECTION SECTIONNAME .)
+    SPACEORTAB      shift and go to state 84
+
+
+state 59
+
+    (15) lineassertion -> ASSERTION ASSERTIONDATA .
+    (16) lineassertion -> ASSERTION ASSERTIONDATA . SPACEORTAB COMMENT
+
+    ENDLINESPACES   reduce using rule 15 (lineassertion -> ASSERTION ASSERTIONDATA .)
+    SPACEORTAB      shift and go to state 85
+
+
+state 60
+
+    (80) meminstruction -> OPMEM logmnemonic . accessmodifiersandspace REG COMMA memaccess
+    (81) meminstruction -> OPMEM logmnemonic . CONDITION accessmodifiersandspace REG COMMA memaccess
+    (45) accessmodifiersandspace -> . SPACEORTAB
+    (46) accessmodifiersandspace -> . BYTEONLY SPACEORTAB
+    (47) accessmodifiersandspace -> . HALFONLY SPACEORTAB
+    (48) accessmodifiersandspace -> . SIGNEDBYTE SPACEORTAB
+    (49) accessmodifiersandspace -> . SIGNEDHALF SPACEORTAB
+    (50) accessmodifiersandspace -> . MEMPRIVILEGED SPACEORTAB
+    (51) accessmodifiersandspace -> . BYTEONLY MEMPRIVILEGED SPACEORTAB
+
+    CONDITION       shift and go to state 87
+    SPACEORTAB      shift and go to state 88
+    BYTEONLY        shift and go to state 89
+    HALFONLY        shift and go to state 90
+    SIGNEDBYTE      shift and go to state 91
+    SIGNEDHALF      shift and go to state 92
+    MEMPRIVILEGED   shift and go to state 93
+
+    accessmodifiersandspace        shift and go to state 86
+
+state 61
+
+    (109) branchinstruction -> OPBRANCH logmnemonic . condandspace LABEL
+    (110) branchinstruction -> OPBRANCH logmnemonic . condandspace REG
+    (111) branchinstruction -> OPBRANCH logmnemonic . condandspace CONST error
+    (39) condandspace -> . SPACEORTAB
+    (40) condandspace -> . CONDITION SPACEORTAB
+
+    SPACEORTAB      shift and go to state 95
+    CONDITION       shift and go to state 96
+
+    condandspace                   shift and go to state 94
+
+state 62
+
+    (105) swapinstruction -> OPSWP logmnemonic . SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (106) swapinstruction -> OPSWP logmnemonic . BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (107) swapinstruction -> OPSWP logmnemonic . CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (108) swapinstruction -> OPSWP logmnemonic . CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    SPACEORTAB      shift and go to state 97
+    BYTEONLY        shift and go to state 98
+    CONDITION       shift and go to state 99
+
+
+state 63
+
+    (124) psrinstruction -> OPPSR logmnemonic . condandspace REG COMMA PSR
+    (125) psrinstruction -> OPPSR logmnemonic . condandspace PSR COMMA REG
+    (126) psrinstruction -> OPPSR logmnemonic . condandspace PSR COMMA SHARP CONST
+    (39) condandspace -> . SPACEORTAB
+    (40) condandspace -> . CONDITION SPACEORTAB
+
+    SPACEORTAB      shift and go to state 95
+    CONDITION       shift and go to state 96
+
+    condandspace                   shift and go to state 100
+
+state 64
+
+    (127) svcinstruction -> OPSVC logmnemonic . condandspace CONST
+    (128) svcinstruction -> OPSVC logmnemonic . condandspace SHARP CONST
+    (39) condandspace -> . SPACEORTAB
+    (40) condandspace -> . CONDITION SPACEORTAB
+
+    SPACEORTAB      shift and go to state 95
+    CONDITION       shift and go to state 96
+
+    condandspace                   shift and go to state 101
+
+state 65
+
+    (129) multiplyinstruction -> OPMUL logmnemonic . flagscondandspace REG COMMA REG COMMA REG
+    (130) multiplyinstruction -> OPMUL logmnemonic . flagscondandspace REG COMMA REG COMMA REG COMMA REG
+    (131) multiplyinstruction -> OPMUL logmnemonic . flagscondandspace REG COMMA REG COMMA SHARP CONST
+    (41) flagscondandspace -> . CONDITION MODIFYFLAGS SPACEORTAB
+    (42) flagscondandspace -> . CONDITION SPACEORTAB
+    (43) flagscondandspace -> . MODIFYFLAGS SPACEORTAB
+    (44) flagscondandspace -> . SPACEORTAB
+
+    CONDITION       shift and go to state 103
+    MODIFYFLAGS     shift and go to state 104
+    SPACEORTAB      shift and go to state 105
+
+    flagscondandspace              shift and go to state 102
+
+state 66
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic . flagscondandspace REG COMMA REG COMMA REG COMMA REG
+    (133) multiplylonginstruction -> OPMULL logmnemonic . flagscondandspace REG COMMA REG COMMA REG COMMA SHARP CONST
+    (41) flagscondandspace -> . CONDITION MODIFYFLAGS SPACEORTAB
+    (42) flagscondandspace -> . CONDITION SPACEORTAB
+    (43) flagscondandspace -> . MODIFYFLAGS SPACEORTAB
+    (44) flagscondandspace -> . SPACEORTAB
+
+    CONDITION       shift and go to state 103
+    MODIFYFLAGS     shift and go to state 104
+    SPACEORTAB      shift and go to state 105
+
+    flagscondandspace              shift and go to state 106
+
+state 67
+
+    (134) nopinstruction -> OPNOP logmnemonic .
+    (135) nopinstruction -> OPNOP logmnemonic . CONDITION
+
+    SPACEORTAB      reduce using rule 134 (nopinstruction -> OPNOP logmnemonic .)
+    ENDLINESPACES   reduce using rule 134 (nopinstruction -> OPNOP logmnemonic .)
+    CONDITION       shift and go to state 107
+
+
+state 68
+
+    (52) datainst2op -> OPDATA2OP logmnemonic . flagscondandspace REG COMMA op2
+    (53) datainst2op -> OPDATA2OP logmnemonic . flagscondandspace error COMMA op2
+    (54) datainst2op -> OPDATA2OP logmnemonic . flagscondandspace REG error op2
+    (55) datainst2op -> OPDATA2OP logmnemonic . flagscondandspace REG error COMMA op2
+    (41) flagscondandspace -> . CONDITION MODIFYFLAGS SPACEORTAB
+    (42) flagscondandspace -> . CONDITION SPACEORTAB
+    (43) flagscondandspace -> . MODIFYFLAGS SPACEORTAB
+    (44) flagscondandspace -> . SPACEORTAB
+
+    CONDITION       shift and go to state 103
+    MODIFYFLAGS     shift and go to state 104
+    SPACEORTAB      shift and go to state 105
+
+    flagscondandspace              shift and go to state 108
+
+state 69
+
+    (56) datainst3op -> OPDATA3OP logmnemonic . flagscondandspace REG COMMA REG COMMA op2
+    (57) datainst3op -> OPDATA3OP logmnemonic . flagscondandspace REG error REG COMMA op2
+    (58) datainst3op -> OPDATA3OP logmnemonic . flagscondandspace REG COMMA REG error op2
+    (59) datainst3op -> OPDATA3OP logmnemonic . flagscondandspace REG COMMA REG
+    (60) datainst3op -> OPDATA3OP logmnemonic . flagscondandspace REG error COMMA REG COMMA op2
+    (61) datainst3op -> OPDATA3OP logmnemonic . flagscondandspace REG COMMA REG error COMMA op2
+    (41) flagscondandspace -> . CONDITION MODIFYFLAGS SPACEORTAB
+    (42) flagscondandspace -> . CONDITION SPACEORTAB
+    (43) flagscondandspace -> . MODIFYFLAGS SPACEORTAB
+    (44) flagscondandspace -> . SPACEORTAB
+
+    CONDITION       shift and go to state 103
+    MODIFYFLAGS     shift and go to state 104
+    SPACEORTAB      shift and go to state 105
+
+    flagscondandspace              shift and go to state 109
+
+state 70
+
+    (62) datainsttest -> OPDATATEST logmnemonic . condandspace REG COMMA op2
+    (39) condandspace -> . SPACEORTAB
+    (40) condandspace -> . CONDITION SPACEORTAB
+
+    SPACEORTAB      shift and go to state 95
+    CONDITION       shift and go to state 96
+
+    condandspace                   shift and go to state 110
+
+state 71
+
+    (116) stackinstruction -> OPMULTIPLEMEM logmnemonic . condandspace listregswithpsr
+    (123) stmldminstruction -> OPMULTIPLEMEM logmnemonic . stmldmmodifier stmldmtargetreg COMMA listregswithpsr
+    (39) condandspace -> . SPACEORTAB
+    (40) condandspace -> . CONDITION SPACEORTAB
+    (119) stmldmmodifier -> . SPACEORTAB
+    (120) stmldmmodifier -> . CONDITION SPACEORTAB
+    (121) stmldmmodifier -> . LDMSTMMODE SPACEORTAB
+    (122) stmldmmodifier -> . CONDITION LDMSTMMODE SPACEORTAB
+
+    SPACEORTAB      shift and go to state 113
+    CONDITION       shift and go to state 114
+    LDMSTMMODE      shift and go to state 115
+
+    condandspace                   shift and go to state 111
+    stmldmmodifier                 shift and go to state 112
+
+state 72
+
+    (78) shiftinstrconst -> OPSHIFT logmnemonic . flagscondandspace REG COMMA REG COMMA SHARP CONST
+    (79) shiftinstrreg -> OPSHIFT logmnemonic . flagscondandspace REG COMMA REG COMMA REG
+    (77) shiftinstrrrx -> OPSHIFT logmnemonic . flagscondandspace REG COMMA REG
+    (41) flagscondandspace -> . CONDITION MODIFYFLAGS SPACEORTAB
+    (42) flagscondandspace -> . CONDITION SPACEORTAB
+    (43) flagscondandspace -> . MODIFYFLAGS SPACEORTAB
+    (44) flagscondandspace -> . SPACEORTAB
+
+    CONDITION       shift and go to state 103
+    MODIFYFLAGS     shift and go to state 104
+    SPACEORTAB      shift and go to state 105
+
+    flagscondandspace              shift and go to state 116
+
+state 73
+
+    (9) line -> CONST error ENDLINESPACES .
+
+    $end            reduce using rule 9 (line -> CONST error ENDLINESPACES .)
+
+
+state 74
+
+    (11) linelabel -> LABEL SPACEORTAB COMMENT .
+
+    ENDLINESPACES   reduce using rule 11 (linelabel -> LABEL SPACEORTAB COMMENT .)
+
+
+state 75
+
+    (23) linelabelinstr -> LABEL SPACEORTAB instruction .
+    (24) linelabelinstr -> LABEL SPACEORTAB instruction . SPACEORTAB COMMENT
+
+    ENDLINESPACES   reduce using rule 23 (linelabelinstr -> LABEL SPACEORTAB instruction .)
+    SPACEORTAB      shift and go to state 117
+
+
+state 76
+
+    (17) linedeclaration -> LABEL SPACEORTAB declarationconst .
+    (18) linedeclaration -> LABEL SPACEORTAB declarationconst . SPACEORTAB COMMENT
+
+    ENDLINESPACES   reduce using rule 17 (linedeclaration -> LABEL SPACEORTAB declarationconst .)
+    SPACEORTAB      shift and go to state 118
+
+
+state 77
+
+    (19) linedeclaration -> LABEL SPACEORTAB declarationsize .
+    (20) linedeclaration -> LABEL SPACEORTAB declarationsize . SPACEORTAB COMMENT
+
+    ENDLINESPACES   reduce using rule 19 (linedeclaration -> LABEL SPACEORTAB declarationsize .)
+    SPACEORTAB      shift and go to state 119
+
+
+state 78
+
+    (136) declarationconst -> CONSTDEC . LISTINIT
+
+    LISTINIT        shift and go to state 120
+
+
+state 79
+
+    (137) declarationconst -> CONSTDECWITHOUTSIZE . LISTINIT
+
+    LISTINIT        shift and go to state 121
+
+
+state 80
+
+    (138) declarationsize -> VARDEC . LISTINIT
+
+    LISTINIT        shift and go to state 122
+
+
+state 81
+
+    (139) declarationsize -> VARDECWITHOUTSIZE . LISTINIT
+
+    LISTINIT        shift and go to state 123
+
+
+state 82
+
+    (12) linelabel -> LABEL error COMMA .
+
+    ENDLINESPACES   reduce using rule 12 (linelabel -> LABEL error COMMA .)
+
+
+state 83
+
+    (22) lineinstruction -> instruction SPACEORTAB COMMENT .
+
+    ENDLINESPACES   reduce using rule 22 (lineinstruction -> instruction SPACEORTAB COMMENT .)
+
+
+state 84
+
+    (14) sectiondeclaration -> SECTION SECTIONNAME SPACEORTAB . COMMENT
+
+    COMMENT         shift and go to state 124
+
+
+state 85
+
+    (16) lineassertion -> ASSERTION ASSERTIONDATA SPACEORTAB . COMMENT
+
+    COMMENT         shift and go to state 125
+
+
+state 86
+
+    (80) meminstruction -> OPMEM logmnemonic accessmodifiersandspace . REG COMMA memaccess
+
+    REG             shift and go to state 126
+
+
+state 87
+
+    (81) meminstruction -> OPMEM logmnemonic CONDITION . accessmodifiersandspace REG COMMA memaccess
+    (45) accessmodifiersandspace -> . SPACEORTAB
+    (46) accessmodifiersandspace -> . BYTEONLY SPACEORTAB
+    (47) accessmodifiersandspace -> . HALFONLY SPACEORTAB
+    (48) accessmodifiersandspace -> . SIGNEDBYTE SPACEORTAB
+    (49) accessmodifiersandspace -> . SIGNEDHALF SPACEORTAB
+    (50) accessmodifiersandspace -> . MEMPRIVILEGED SPACEORTAB
+    (51) accessmodifiersandspace -> . BYTEONLY MEMPRIVILEGED SPACEORTAB
+
+    SPACEORTAB      shift and go to state 88
+    BYTEONLY        shift and go to state 89
+    HALFONLY        shift and go to state 90
+    SIGNEDBYTE      shift and go to state 91
+    SIGNEDHALF      shift and go to state 92
+    MEMPRIVILEGED   shift and go to state 93
+
+    accessmodifiersandspace        shift and go to state 127
+
+state 88
+
+    (45) accessmodifiersandspace -> SPACEORTAB .
+
+    REG             reduce using rule 45 (accessmodifiersandspace -> SPACEORTAB .)
+
+
+state 89
+
+    (46) accessmodifiersandspace -> BYTEONLY . SPACEORTAB
+    (51) accessmodifiersandspace -> BYTEONLY . MEMPRIVILEGED SPACEORTAB
+
+    SPACEORTAB      shift and go to state 128
+    MEMPRIVILEGED   shift and go to state 129
+
+
+state 90
+
+    (47) accessmodifiersandspace -> HALFONLY . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 130
+
+
+state 91
+
+    (48) accessmodifiersandspace -> SIGNEDBYTE . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 131
+
+
+state 92
+
+    (49) accessmodifiersandspace -> SIGNEDHALF . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 132
+
+
+state 93
+
+    (50) accessmodifiersandspace -> MEMPRIVILEGED . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 133
+
+
+state 94
+
+    (109) branchinstruction -> OPBRANCH logmnemonic condandspace . LABEL
+    (110) branchinstruction -> OPBRANCH logmnemonic condandspace . REG
+    (111) branchinstruction -> OPBRANCH logmnemonic condandspace . CONST error
+
+    LABEL           shift and go to state 134
+    REG             shift and go to state 135
+    CONST           shift and go to state 136
+
+
+state 95
+
+    (39) condandspace -> SPACEORTAB .
+
+    LABEL           reduce using rule 39 (condandspace -> SPACEORTAB .)
+    REG             reduce using rule 39 (condandspace -> SPACEORTAB .)
+    CONST           reduce using rule 39 (condandspace -> SPACEORTAB .)
+    PSR             reduce using rule 39 (condandspace -> SPACEORTAB .)
+    SHARP           reduce using rule 39 (condandspace -> SPACEORTAB .)
+
+
+state 96
+
+    (40) condandspace -> CONDITION . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 137
+
+
+state 97
+
+    (105) swapinstruction -> OPSWP logmnemonic SPACEORTAB . REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    REG             shift and go to state 138
+
+
+state 98
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY . SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    SPACEORTAB      shift and go to state 139
+
+
+state 99
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION . SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION . BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    SPACEORTAB      shift and go to state 140
+    BYTEONLY        shift and go to state 141
+
+
+state 100
+
+    (124) psrinstruction -> OPPSR logmnemonic condandspace . REG COMMA PSR
+    (125) psrinstruction -> OPPSR logmnemonic condandspace . PSR COMMA REG
+    (126) psrinstruction -> OPPSR logmnemonic condandspace . PSR COMMA SHARP CONST
+
+    REG             shift and go to state 142
+    PSR             shift and go to state 143
+
+
+state 101
+
+    (127) svcinstruction -> OPSVC logmnemonic condandspace . CONST
+    (128) svcinstruction -> OPSVC logmnemonic condandspace . SHARP CONST
+
+    CONST           shift and go to state 144
+    SHARP           shift and go to state 145
+
+
+state 102
+
+    (129) multiplyinstruction -> OPMUL logmnemonic flagscondandspace . REG COMMA REG COMMA REG
+    (130) multiplyinstruction -> OPMUL logmnemonic flagscondandspace . REG COMMA REG COMMA REG COMMA REG
+    (131) multiplyinstruction -> OPMUL logmnemonic flagscondandspace . REG COMMA REG COMMA SHARP CONST
+
+    REG             shift and go to state 146
+
+
+state 103
+
+    (41) flagscondandspace -> CONDITION . MODIFYFLAGS SPACEORTAB
+    (42) flagscondandspace -> CONDITION . SPACEORTAB
+
+    MODIFYFLAGS     shift and go to state 147
+    SPACEORTAB      shift and go to state 148
+
+
+state 104
+
+    (43) flagscondandspace -> MODIFYFLAGS . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 149
+
+
+state 105
+
+    (44) flagscondandspace -> SPACEORTAB .
+
+    REG             reduce using rule 44 (flagscondandspace -> SPACEORTAB .)
+    error           reduce using rule 44 (flagscondandspace -> SPACEORTAB .)
+
+
+state 106
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace . REG COMMA REG COMMA REG COMMA REG
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace . REG COMMA REG COMMA REG COMMA SHARP CONST
+
+    REG             shift and go to state 150
+
+
+state 107
+
+    (135) nopinstruction -> OPNOP logmnemonic CONDITION .
+
+    SPACEORTAB      reduce using rule 135 (nopinstruction -> OPNOP logmnemonic CONDITION .)
+    ENDLINESPACES   reduce using rule 135 (nopinstruction -> OPNOP logmnemonic CONDITION .)
+
+
+state 108
+
+    (52) datainst2op -> OPDATA2OP logmnemonic flagscondandspace . REG COMMA op2
+    (53) datainst2op -> OPDATA2OP logmnemonic flagscondandspace . error COMMA op2
+    (54) datainst2op -> OPDATA2OP logmnemonic flagscondandspace . REG error op2
+    (55) datainst2op -> OPDATA2OP logmnemonic flagscondandspace . REG error COMMA op2
+
+    REG             shift and go to state 151
+    error           shift and go to state 152
+
+
+state 109
+
+    (56) datainst3op -> OPDATA3OP logmnemonic flagscondandspace . REG COMMA REG COMMA op2
+    (57) datainst3op -> OPDATA3OP logmnemonic flagscondandspace . REG error REG COMMA op2
+    (58) datainst3op -> OPDATA3OP logmnemonic flagscondandspace . REG COMMA REG error op2
+    (59) datainst3op -> OPDATA3OP logmnemonic flagscondandspace . REG COMMA REG
+    (60) datainst3op -> OPDATA3OP logmnemonic flagscondandspace . REG error COMMA REG COMMA op2
+    (61) datainst3op -> OPDATA3OP logmnemonic flagscondandspace . REG COMMA REG error COMMA op2
+
+    REG             shift and go to state 153
+
+
+state 110
+
+    (62) datainsttest -> OPDATATEST logmnemonic condandspace . REG COMMA op2
+
+    REG             shift and go to state 154
+
+
+state 111
+
+    (116) stackinstruction -> OPMULTIPLEMEM logmnemonic condandspace . listregswithpsr
+    (114) listregswithpsr -> . OPENBRACE LISTREGS CLOSEBRACE
+    (115) listregswithpsr -> . OPENBRACE LISTREGS CLOSEBRACE CARET
+
+    OPENBRACE       shift and go to state 156
+
+    listregswithpsr                shift and go to state 155
+
+state 112
+
+    (123) stmldminstruction -> OPMULTIPLEMEM logmnemonic stmldmmodifier . stmldmtargetreg COMMA listregswithpsr
+    (117) stmldmtargetreg -> . REG
+    (118) stmldmtargetreg -> . REG EXCLAMATION
+
+    REG             shift and go to state 158
+
+    stmldmtargetreg                shift and go to state 157
+
+state 113
+
+    (39) condandspace -> SPACEORTAB .
+    (119) stmldmmodifier -> SPACEORTAB .
+
+    OPENBRACE       reduce using rule 39 (condandspace -> SPACEORTAB .)
+    REG             reduce using rule 119 (stmldmmodifier -> SPACEORTAB .)
+
+
+state 114
+
+    (40) condandspace -> CONDITION . SPACEORTAB
+    (120) stmldmmodifier -> CONDITION . SPACEORTAB
+    (122) stmldmmodifier -> CONDITION . LDMSTMMODE SPACEORTAB
+
+    SPACEORTAB      shift and go to state 159
+    LDMSTMMODE      shift and go to state 160
+
+
+state 115
+
+    (121) stmldmmodifier -> LDMSTMMODE . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 161
+
+
+state 116
+
+    (78) shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace . REG COMMA REG COMMA SHARP CONST
+    (79) shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace . REG COMMA REG COMMA REG
+    (77) shiftinstrrrx -> OPSHIFT logmnemonic flagscondandspace . REG COMMA REG
+
+    REG             shift and go to state 162
+
+
+state 117
+
+    (24) linelabelinstr -> LABEL SPACEORTAB instruction SPACEORTAB . COMMENT
+
+    COMMENT         shift and go to state 163
+
+
+state 118
+
+    (18) linedeclaration -> LABEL SPACEORTAB declarationconst SPACEORTAB . COMMENT
+
+    COMMENT         shift and go to state 164
+
+
+state 119
+
+    (20) linedeclaration -> LABEL SPACEORTAB declarationsize SPACEORTAB . COMMENT
+
+    COMMENT         shift and go to state 165
+
+
+state 120
+
+    (136) declarationconst -> CONSTDEC LISTINIT .
+
+    SPACEORTAB      reduce using rule 136 (declarationconst -> CONSTDEC LISTINIT .)
+    ENDLINESPACES   reduce using rule 136 (declarationconst -> CONSTDEC LISTINIT .)
+
+
+state 121
+
+    (137) declarationconst -> CONSTDECWITHOUTSIZE LISTINIT .
+
+    SPACEORTAB      reduce using rule 137 (declarationconst -> CONSTDECWITHOUTSIZE LISTINIT .)
+    ENDLINESPACES   reduce using rule 137 (declarationconst -> CONSTDECWITHOUTSIZE LISTINIT .)
+
+
+state 122
+
+    (138) declarationsize -> VARDEC LISTINIT .
+
+    SPACEORTAB      reduce using rule 138 (declarationsize -> VARDEC LISTINIT .)
+    ENDLINESPACES   reduce using rule 138 (declarationsize -> VARDEC LISTINIT .)
+
+
+state 123
+
+    (139) declarationsize -> VARDECWITHOUTSIZE LISTINIT .
+
+    SPACEORTAB      reduce using rule 139 (declarationsize -> VARDECWITHOUTSIZE LISTINIT .)
+    ENDLINESPACES   reduce using rule 139 (declarationsize -> VARDECWITHOUTSIZE LISTINIT .)
+
+
+state 124
+
+    (14) sectiondeclaration -> SECTION SECTIONNAME SPACEORTAB COMMENT .
+
+    ENDLINESPACES   reduce using rule 14 (sectiondeclaration -> SECTION SECTIONNAME SPACEORTAB COMMENT .)
+
+
+state 125
+
+    (16) lineassertion -> ASSERTION ASSERTIONDATA SPACEORTAB COMMENT .
+
+    ENDLINESPACES   reduce using rule 16 (lineassertion -> ASSERTION ASSERTIONDATA SPACEORTAB COMMENT .)
+
+
+state 126
+
+    (80) meminstruction -> OPMEM logmnemonic accessmodifiersandspace REG . COMMA memaccess
+
+    COMMA           shift and go to state 166
+
+
+state 127
+
+    (81) meminstruction -> OPMEM logmnemonic CONDITION accessmodifiersandspace . REG COMMA memaccess
+
+    REG             shift and go to state 167
+
+
+state 128
+
+    (46) accessmodifiersandspace -> BYTEONLY SPACEORTAB .
+
+    REG             reduce using rule 46 (accessmodifiersandspace -> BYTEONLY SPACEORTAB .)
+
+
+state 129
+
+    (51) accessmodifiersandspace -> BYTEONLY MEMPRIVILEGED . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 168
+
+
+state 130
+
+    (47) accessmodifiersandspace -> HALFONLY SPACEORTAB .
+
+    REG             reduce using rule 47 (accessmodifiersandspace -> HALFONLY SPACEORTAB .)
+
+
+state 131
+
+    (48) accessmodifiersandspace -> SIGNEDBYTE SPACEORTAB .
+
+    REG             reduce using rule 48 (accessmodifiersandspace -> SIGNEDBYTE SPACEORTAB .)
+
+
+state 132
+
+    (49) accessmodifiersandspace -> SIGNEDHALF SPACEORTAB .
+
+    REG             reduce using rule 49 (accessmodifiersandspace -> SIGNEDHALF SPACEORTAB .)
+
+
+state 133
+
+    (50) accessmodifiersandspace -> MEMPRIVILEGED SPACEORTAB .
+
+    REG             reduce using rule 50 (accessmodifiersandspace -> MEMPRIVILEGED SPACEORTAB .)
+
+
+state 134
+
+    (109) branchinstruction -> OPBRANCH logmnemonic condandspace LABEL .
+
+    SPACEORTAB      reduce using rule 109 (branchinstruction -> OPBRANCH logmnemonic condandspace LABEL .)
+    ENDLINESPACES   reduce using rule 109 (branchinstruction -> OPBRANCH logmnemonic condandspace LABEL .)
+
+
+state 135
+
+    (110) branchinstruction -> OPBRANCH logmnemonic condandspace REG .
+
+    SPACEORTAB      reduce using rule 110 (branchinstruction -> OPBRANCH logmnemonic condandspace REG .)
+    ENDLINESPACES   reduce using rule 110 (branchinstruction -> OPBRANCH logmnemonic condandspace REG .)
+
+
+state 136
+
+    (111) branchinstruction -> OPBRANCH logmnemonic condandspace CONST . error
+
+    error           shift and go to state 169
+
+
+state 137
+
+    (40) condandspace -> CONDITION SPACEORTAB .
+
+    LABEL           reduce using rule 40 (condandspace -> CONDITION SPACEORTAB .)
+    REG             reduce using rule 40 (condandspace -> CONDITION SPACEORTAB .)
+    CONST           reduce using rule 40 (condandspace -> CONDITION SPACEORTAB .)
+    PSR             reduce using rule 40 (condandspace -> CONDITION SPACEORTAB .)
+    SHARP           reduce using rule 40 (condandspace -> CONDITION SPACEORTAB .)
+
+
+state 138
+
+    (105) swapinstruction -> OPSWP logmnemonic SPACEORTAB REG . COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    COMMA           shift and go to state 170
+
+
+state 139
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB . REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    REG             shift and go to state 171
+
+
+state 140
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB . REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    REG             shift and go to state 172
+
+
+state 141
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY . SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    SPACEORTAB      shift and go to state 173
+
+
+state 142
+
+    (124) psrinstruction -> OPPSR logmnemonic condandspace REG . COMMA PSR
+
+    COMMA           shift and go to state 174
+
+
+state 143
+
+    (125) psrinstruction -> OPPSR logmnemonic condandspace PSR . COMMA REG
+    (126) psrinstruction -> OPPSR logmnemonic condandspace PSR . COMMA SHARP CONST
+
+    COMMA           shift and go to state 175
+
+
+state 144
+
+    (127) svcinstruction -> OPSVC logmnemonic condandspace CONST .
+
+    SPACEORTAB      reduce using rule 127 (svcinstruction -> OPSVC logmnemonic condandspace CONST .)
+    ENDLINESPACES   reduce using rule 127 (svcinstruction -> OPSVC logmnemonic condandspace CONST .)
+
+
+state 145
+
+    (128) svcinstruction -> OPSVC logmnemonic condandspace SHARP . CONST
+
+    CONST           shift and go to state 176
+
+
+state 146
+
+    (129) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG . COMMA REG COMMA REG
+    (130) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG . COMMA REG COMMA REG COMMA REG
+    (131) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG . COMMA REG COMMA SHARP CONST
+
+    COMMA           shift and go to state 177
+
+
+state 147
+
+    (41) flagscondandspace -> CONDITION MODIFYFLAGS . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 178
+
+
+state 148
+
+    (42) flagscondandspace -> CONDITION SPACEORTAB .
+
+    REG             reduce using rule 42 (flagscondandspace -> CONDITION SPACEORTAB .)
+    error           reduce using rule 42 (flagscondandspace -> CONDITION SPACEORTAB .)
+
+
+state 149
+
+    (43) flagscondandspace -> MODIFYFLAGS SPACEORTAB .
+
+    REG             reduce using rule 43 (flagscondandspace -> MODIFYFLAGS SPACEORTAB .)
+    error           reduce using rule 43 (flagscondandspace -> MODIFYFLAGS SPACEORTAB .)
+
+
+state 150
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG . COMMA REG COMMA REG COMMA REG
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG . COMMA REG COMMA REG COMMA SHARP CONST
+
+    COMMA           shift and go to state 179
+
+
+state 151
+
+    (52) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG . COMMA op2
+    (54) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG . error op2
+    (55) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG . error COMMA op2
+
+    COMMA           shift and go to state 180
+    error           shift and go to state 181
+
+
+state 152
+
+    (53) datainst2op -> OPDATA2OP logmnemonic flagscondandspace error . COMMA op2
+
+    COMMA           shift and go to state 182
+
+
+state 153
+
+    (56) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG . COMMA REG COMMA op2
+    (57) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG . error REG COMMA op2
+    (58) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG . COMMA REG error op2
+    (59) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG . COMMA REG
+    (60) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG . error COMMA REG COMMA op2
+    (61) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG . COMMA REG error COMMA op2
+
+    COMMA           shift and go to state 183
+    error           shift and go to state 184
+
+
+state 154
+
+    (62) datainsttest -> OPDATATEST logmnemonic condandspace REG . COMMA op2
+
+    COMMA           shift and go to state 185
+
+
+state 155
+
+    (116) stackinstruction -> OPMULTIPLEMEM logmnemonic condandspace listregswithpsr .
+
+    SPACEORTAB      reduce using rule 116 (stackinstruction -> OPMULTIPLEMEM logmnemonic condandspace listregswithpsr .)
+    ENDLINESPACES   reduce using rule 116 (stackinstruction -> OPMULTIPLEMEM logmnemonic condandspace listregswithpsr .)
+
+
+state 156
+
+    (114) listregswithpsr -> OPENBRACE . LISTREGS CLOSEBRACE
+    (115) listregswithpsr -> OPENBRACE . LISTREGS CLOSEBRACE CARET
+
+    LISTREGS        shift and go to state 186
+
+
+state 157
+
+    (123) stmldminstruction -> OPMULTIPLEMEM logmnemonic stmldmmodifier stmldmtargetreg . COMMA listregswithpsr
+
+    COMMA           shift and go to state 187
+
+
+state 158
+
+    (117) stmldmtargetreg -> REG .
+    (118) stmldmtargetreg -> REG . EXCLAMATION
+
+    COMMA           reduce using rule 117 (stmldmtargetreg -> REG .)
+    EXCLAMATION     shift and go to state 188
+
+
+state 159
+
+    (40) condandspace -> CONDITION SPACEORTAB .
+    (120) stmldmmodifier -> CONDITION SPACEORTAB .
+
+    OPENBRACE       reduce using rule 40 (condandspace -> CONDITION SPACEORTAB .)
+    REG             reduce using rule 120 (stmldmmodifier -> CONDITION SPACEORTAB .)
+
+
+state 160
+
+    (122) stmldmmodifier -> CONDITION LDMSTMMODE . SPACEORTAB
+
+    SPACEORTAB      shift and go to state 189
+
+
+state 161
+
+    (121) stmldmmodifier -> LDMSTMMODE SPACEORTAB .
+
+    REG             reduce using rule 121 (stmldmmodifier -> LDMSTMMODE SPACEORTAB .)
+
+
+state 162
+
+    (78) shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG . COMMA REG COMMA SHARP CONST
+    (79) shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace REG . COMMA REG COMMA REG
+    (77) shiftinstrrrx -> OPSHIFT logmnemonic flagscondandspace REG . COMMA REG
+
+    COMMA           shift and go to state 190
+
+
+state 163
+
+    (24) linelabelinstr -> LABEL SPACEORTAB instruction SPACEORTAB COMMENT .
+
+    ENDLINESPACES   reduce using rule 24 (linelabelinstr -> LABEL SPACEORTAB instruction SPACEORTAB COMMENT .)
+
+
+state 164
+
+    (18) linedeclaration -> LABEL SPACEORTAB declarationconst SPACEORTAB COMMENT .
+
+    ENDLINESPACES   reduce using rule 18 (linedeclaration -> LABEL SPACEORTAB declarationconst SPACEORTAB COMMENT .)
+
+
+state 165
+
+    (20) linedeclaration -> LABEL SPACEORTAB declarationsize SPACEORTAB COMMENT .
+
+    ENDLINESPACES   reduce using rule 20 (linedeclaration -> LABEL SPACEORTAB declarationsize SPACEORTAB COMMENT .)
+
+
+state 166
+
+    (80) meminstruction -> OPMEM logmnemonic accessmodifiersandspace REG COMMA . memaccess
+    (82) memaccess -> . memaccesspre
+    (83) memaccess -> . memaccesspost
+    (84) memaccess -> . memaccesslabel
+    (85) memaccess -> . memaccesslabeladdr
+    (86) memaccess -> . memaccessimmediate
+    (87) memaccesspre -> . OPENBRACKET REG CLOSEBRACKET
+    (88) memaccesspre -> . OPENBRACKET REG COMMA signedoffsetreg memaccesspreclosing
+    (89) memaccesspre -> . OPENBRACKET REG COMMA SHARP CONST memaccesspreclosing
+    (90) memaccesspre -> . OPENBRACKET REG COMMA signedoffsetreg COMMA shiftnoreg memaccesspreclosing
+    (91) memaccesspre -> . OPENBRACKET REG COMMA REG error memaccesspreclosing
+    (99) memaccesspost -> . OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg
+    (100) memaccesspost -> . OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg COMMA shiftnoreg
+    (101) memaccesspost -> . OPENBRACKET REG CLOSEBRACKET COMMA SHARP CONST
+    (102) memaccesslabel -> . LABEL
+    (103) memaccesslabeladdr -> . EQUALS LABEL
+    (104) memaccessimmediate -> . EQUALS CONST
+
+    OPENBRACKET     shift and go to state 197
+    LABEL           shift and go to state 198
+    EQUALS          shift and go to state 199
+
+    memaccess                      shift and go to state 191
+    memaccesspre                   shift and go to state 192
+    memaccesspost                  shift and go to state 193
+    memaccesslabel                 shift and go to state 194
+    memaccesslabeladdr             shift and go to state 195
+    memaccessimmediate             shift and go to state 196
+
+state 167
+
+    (81) meminstruction -> OPMEM logmnemonic CONDITION accessmodifiersandspace REG . COMMA memaccess
+
+    COMMA           shift and go to state 200
+
+
+state 168
+
+    (51) accessmodifiersandspace -> BYTEONLY MEMPRIVILEGED SPACEORTAB .
+
+    REG             reduce using rule 51 (accessmodifiersandspace -> BYTEONLY MEMPRIVILEGED SPACEORTAB .)
+
+
+state 169
+
+    (111) branchinstruction -> OPBRANCH logmnemonic condandspace CONST error .
+
+    SPACEORTAB      reduce using rule 111 (branchinstruction -> OPBRANCH logmnemonic condandspace CONST error .)
+    ENDLINESPACES   reduce using rule 111 (branchinstruction -> OPBRANCH logmnemonic condandspace CONST error .)
+
+
+state 170
+
+    (105) swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA . REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    REG             shift and go to state 201
+
+
+state 171
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG . COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    COMMA           shift and go to state 202
+
+
+state 172
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG . COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    COMMA           shift and go to state 203
+
+
+state 173
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB . REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    REG             shift and go to state 204
+
+
+state 174
+
+    (124) psrinstruction -> OPPSR logmnemonic condandspace REG COMMA . PSR
+
+    PSR             shift and go to state 205
+
+
+state 175
+
+    (125) psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA . REG
+    (126) psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA . SHARP CONST
+
+    REG             shift and go to state 206
+    SHARP           shift and go to state 207
+
+
+state 176
+
+    (128) svcinstruction -> OPSVC logmnemonic condandspace SHARP CONST .
+
+    SPACEORTAB      reduce using rule 128 (svcinstruction -> OPSVC logmnemonic condandspace SHARP CONST .)
+    ENDLINESPACES   reduce using rule 128 (svcinstruction -> OPSVC logmnemonic condandspace SHARP CONST .)
+
+
+state 177
+
+    (129) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA . REG COMMA REG
+    (130) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA . REG COMMA REG COMMA REG
+    (131) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA . REG COMMA SHARP CONST
+
+    REG             shift and go to state 208
+
+
+state 178
+
+    (41) flagscondandspace -> CONDITION MODIFYFLAGS SPACEORTAB .
+
+    REG             reduce using rule 41 (flagscondandspace -> CONDITION MODIFYFLAGS SPACEORTAB .)
+    error           reduce using rule 41 (flagscondandspace -> CONDITION MODIFYFLAGS SPACEORTAB .)
+
+
+state 179
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA . REG COMMA REG COMMA REG
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA . REG COMMA REG COMMA SHARP CONST
+
+    REG             shift and go to state 209
+
+
+state 180
+
+    (52) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG COMMA . op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 211
+
+state 181
+
+    (54) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error . op2
+    (55) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error . COMMA op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    COMMA           shift and go to state 214
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 213
+
+state 182
+
+    (53) datainst2op -> OPDATA2OP logmnemonic flagscondandspace error COMMA . op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 215
+
+state 183
+
+    (56) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA . REG COMMA op2
+    (58) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA . REG error op2
+    (59) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA . REG
+    (61) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA . REG error COMMA op2
+
+    REG             shift and go to state 216
+
+
+state 184
+
+    (57) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error . REG COMMA op2
+    (60) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error . COMMA REG COMMA op2
+
+    REG             shift and go to state 217
+    COMMA           shift and go to state 218
+
+
+state 185
+
+    (62) datainsttest -> OPDATATEST logmnemonic condandspace REG COMMA . op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 219
+
+state 186
+
+    (114) listregswithpsr -> OPENBRACE LISTREGS . CLOSEBRACE
+    (115) listregswithpsr -> OPENBRACE LISTREGS . CLOSEBRACE CARET
+
+    CLOSEBRACE      shift and go to state 220
+
+
+state 187
+
+    (123) stmldminstruction -> OPMULTIPLEMEM logmnemonic stmldmmodifier stmldmtargetreg COMMA . listregswithpsr
+    (114) listregswithpsr -> . OPENBRACE LISTREGS CLOSEBRACE
+    (115) listregswithpsr -> . OPENBRACE LISTREGS CLOSEBRACE CARET
+
+    OPENBRACE       shift and go to state 156
+
+    listregswithpsr                shift and go to state 221
+
+state 188
+
+    (118) stmldmtargetreg -> REG EXCLAMATION .
+
+    COMMA           reduce using rule 118 (stmldmtargetreg -> REG EXCLAMATION .)
+
+
+state 189
+
+    (122) stmldmmodifier -> CONDITION LDMSTMMODE SPACEORTAB .
+
+    REG             reduce using rule 122 (stmldmmodifier -> CONDITION LDMSTMMODE SPACEORTAB .)
+
+
+state 190
+
+    (78) shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG COMMA . REG COMMA SHARP CONST
+    (79) shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace REG COMMA . REG COMMA REG
+    (77) shiftinstrrrx -> OPSHIFT logmnemonic flagscondandspace REG COMMA . REG
+
+    REG             shift and go to state 222
+
+
+state 191
+
+    (80) meminstruction -> OPMEM logmnemonic accessmodifiersandspace REG COMMA memaccess .
+
+    SPACEORTAB      reduce using rule 80 (meminstruction -> OPMEM logmnemonic accessmodifiersandspace REG COMMA memaccess .)
+    ENDLINESPACES   reduce using rule 80 (meminstruction -> OPMEM logmnemonic accessmodifiersandspace REG COMMA memaccess .)
+
+
+state 192
+
+    (82) memaccess -> memaccesspre .
+
+    SPACEORTAB      reduce using rule 82 (memaccess -> memaccesspre .)
+    ENDLINESPACES   reduce using rule 82 (memaccess -> memaccesspre .)
+
+
+state 193
+
+    (83) memaccess -> memaccesspost .
+
+    SPACEORTAB      reduce using rule 83 (memaccess -> memaccesspost .)
+    ENDLINESPACES   reduce using rule 83 (memaccess -> memaccesspost .)
+
+
+state 194
+
+    (84) memaccess -> memaccesslabel .
+
+    SPACEORTAB      reduce using rule 84 (memaccess -> memaccesslabel .)
+    ENDLINESPACES   reduce using rule 84 (memaccess -> memaccesslabel .)
+
+
+state 195
+
+    (85) memaccess -> memaccesslabeladdr .
+
+    SPACEORTAB      reduce using rule 85 (memaccess -> memaccesslabeladdr .)
+    ENDLINESPACES   reduce using rule 85 (memaccess -> memaccesslabeladdr .)
+
+
+state 196
+
+    (86) memaccess -> memaccessimmediate .
+
+    SPACEORTAB      reduce using rule 86 (memaccess -> memaccessimmediate .)
+    ENDLINESPACES   reduce using rule 86 (memaccess -> memaccessimmediate .)
+
+
+state 197
+
+    (87) memaccesspre -> OPENBRACKET . REG CLOSEBRACKET
+    (88) memaccesspre -> OPENBRACKET . REG COMMA signedoffsetreg memaccesspreclosing
+    (89) memaccesspre -> OPENBRACKET . REG COMMA SHARP CONST memaccesspreclosing
+    (90) memaccesspre -> OPENBRACKET . REG COMMA signedoffsetreg COMMA shiftnoreg memaccesspreclosing
+    (91) memaccesspre -> OPENBRACKET . REG COMMA REG error memaccesspreclosing
+    (99) memaccesspost -> OPENBRACKET . REG CLOSEBRACKET COMMA signedoffsetreg
+    (100) memaccesspost -> OPENBRACKET . REG CLOSEBRACKET COMMA signedoffsetreg COMMA shiftnoreg
+    (101) memaccesspost -> OPENBRACKET . REG CLOSEBRACKET COMMA SHARP CONST
+
+    REG             shift and go to state 223
+
+
+state 198
+
+    (102) memaccesslabel -> LABEL .
+
+    SPACEORTAB      reduce using rule 102 (memaccesslabel -> LABEL .)
+    ENDLINESPACES   reduce using rule 102 (memaccesslabel -> LABEL .)
+
+
+state 199
+
+    (103) memaccesslabeladdr -> EQUALS . LABEL
+    (104) memaccessimmediate -> EQUALS . CONST
+
+    LABEL           shift and go to state 224
+    CONST           shift and go to state 225
+
+
+state 200
+
+    (81) meminstruction -> OPMEM logmnemonic CONDITION accessmodifiersandspace REG COMMA . memaccess
+    (82) memaccess -> . memaccesspre
+    (83) memaccess -> . memaccesspost
+    (84) memaccess -> . memaccesslabel
+    (85) memaccess -> . memaccesslabeladdr
+    (86) memaccess -> . memaccessimmediate
+    (87) memaccesspre -> . OPENBRACKET REG CLOSEBRACKET
+    (88) memaccesspre -> . OPENBRACKET REG COMMA signedoffsetreg memaccesspreclosing
+    (89) memaccesspre -> . OPENBRACKET REG COMMA SHARP CONST memaccesspreclosing
+    (90) memaccesspre -> . OPENBRACKET REG COMMA signedoffsetreg COMMA shiftnoreg memaccesspreclosing
+    (91) memaccesspre -> . OPENBRACKET REG COMMA REG error memaccesspreclosing
+    (99) memaccesspost -> . OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg
+    (100) memaccesspost -> . OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg COMMA shiftnoreg
+    (101) memaccesspost -> . OPENBRACKET REG CLOSEBRACKET COMMA SHARP CONST
+    (102) memaccesslabel -> . LABEL
+    (103) memaccesslabeladdr -> . EQUALS LABEL
+    (104) memaccessimmediate -> . EQUALS CONST
+
+    OPENBRACKET     shift and go to state 197
+    LABEL           shift and go to state 198
+    EQUALS          shift and go to state 199
+
+    memaccess                      shift and go to state 226
+    memaccesspre                   shift and go to state 192
+    memaccesspost                  shift and go to state 193
+    memaccesslabel                 shift and go to state 194
+    memaccesslabeladdr             shift and go to state 195
+    memaccessimmediate             shift and go to state 196
+
+state 201
+
+    (105) swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA REG . COMMA OPENBRACKET REG CLOSEBRACKET
+
+    COMMA           shift and go to state 227
+
+
+state 202
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA . REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    REG             shift and go to state 228
+
+
+state 203
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA . REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    REG             shift and go to state 229
+
+
+state 204
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG . COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    COMMA           shift and go to state 230
+
+
+state 205
+
+    (124) psrinstruction -> OPPSR logmnemonic condandspace REG COMMA PSR .
+
+    SPACEORTAB      reduce using rule 124 (psrinstruction -> OPPSR logmnemonic condandspace REG COMMA PSR .)
+    ENDLINESPACES   reduce using rule 124 (psrinstruction -> OPPSR logmnemonic condandspace REG COMMA PSR .)
+
+
+state 206
+
+    (125) psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA REG .
+
+    SPACEORTAB      reduce using rule 125 (psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA REG .)
+    ENDLINESPACES   reduce using rule 125 (psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA REG .)
+
+
+state 207
+
+    (126) psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA SHARP . CONST
+
+    CONST           shift and go to state 231
+
+
+state 208
+
+    (129) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG . COMMA REG
+    (130) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG . COMMA REG COMMA REG
+    (131) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG . COMMA SHARP CONST
+
+    COMMA           shift and go to state 232
+
+
+state 209
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG . COMMA REG COMMA REG
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG . COMMA REG COMMA SHARP CONST
+
+    COMMA           shift and go to state 233
+
+
+state 210
+
+    (64) op2 -> REG .
+    (66) op2 -> REG . COMMA shift
+    (67) op2 -> REG . shift
+    (68) shift -> . shiftbyreg
+    (69) shift -> . shiftbyvalue
+    (70) shiftbyreg -> . INNERSHIFT
+    (71) shiftbyreg -> . INNERSHIFT SPACEORTAB REG
+    (72) shiftbyvalue -> . INNERSHIFT SHARP CONST
+    (73) shiftbyvalue -> . INNERSHIFT SPACEORTAB SHARP CONST
+
+    SPACEORTAB      reduce using rule 64 (op2 -> REG .)
+    ENDLINESPACES   reduce using rule 64 (op2 -> REG .)
+    COMMA           shift and go to state 234
+    INNERSHIFT      shift and go to state 238
+
+    shift                          shift and go to state 235
+    shiftbyreg                     shift and go to state 236
+    shiftbyvalue                   shift and go to state 237
+
+state 211
+
+    (52) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG COMMA op2 .
+
+    SPACEORTAB      reduce using rule 52 (datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG COMMA op2 .)
+    ENDLINESPACES   reduce using rule 52 (datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG COMMA op2 .)
+
+
+state 212
+
+    (65) op2 -> SHARP . CONST
+
+    CONST           shift and go to state 239
+
+
+state 213
+
+    (54) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error op2 .
+
+    SPACEORTAB      reduce using rule 54 (datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error op2 .)
+    ENDLINESPACES   reduce using rule 54 (datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error op2 .)
+
+
+state 214
+
+    (55) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error COMMA . op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 240
+
+state 215
+
+    (53) datainst2op -> OPDATA2OP logmnemonic flagscondandspace error COMMA op2 .
+
+    SPACEORTAB      reduce using rule 53 (datainst2op -> OPDATA2OP logmnemonic flagscondandspace error COMMA op2 .)
+    ENDLINESPACES   reduce using rule 53 (datainst2op -> OPDATA2OP logmnemonic flagscondandspace error COMMA op2 .)
+
+
+state 216
+
+    (56) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG . COMMA op2
+    (58) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG . error op2
+    (59) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG .
+    (61) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG . error COMMA op2
+
+    COMMA           shift and go to state 241
+    error           shift and go to state 242
+    SPACEORTAB      reduce using rule 59 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG .)
+    ENDLINESPACES   reduce using rule 59 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG .)
+
+
+state 217
+
+    (57) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error REG . COMMA op2
+
+    COMMA           shift and go to state 243
+
+
+state 218
+
+    (60) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error COMMA . REG COMMA op2
+
+    REG             shift and go to state 244
+
+
+state 219
+
+    (62) datainsttest -> OPDATATEST logmnemonic condandspace REG COMMA op2 .
+
+    SPACEORTAB      reduce using rule 62 (datainsttest -> OPDATATEST logmnemonic condandspace REG COMMA op2 .)
+    ENDLINESPACES   reduce using rule 62 (datainsttest -> OPDATATEST logmnemonic condandspace REG COMMA op2 .)
+
+
+state 220
+
+    (114) listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE .
+    (115) listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE . CARET
+
+    SPACEORTAB      reduce using rule 114 (listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE .)
+    ENDLINESPACES   reduce using rule 114 (listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE .)
+    CARET           shift and go to state 245
+
+
+state 221
+
+    (123) stmldminstruction -> OPMULTIPLEMEM logmnemonic stmldmmodifier stmldmtargetreg COMMA listregswithpsr .
+
+    SPACEORTAB      reduce using rule 123 (stmldminstruction -> OPMULTIPLEMEM logmnemonic stmldmmodifier stmldmtargetreg COMMA listregswithpsr .)
+    ENDLINESPACES   reduce using rule 123 (stmldminstruction -> OPMULTIPLEMEM logmnemonic stmldmmodifier stmldmtargetreg COMMA listregswithpsr .)
+
+
+state 222
+
+    (78) shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG . COMMA SHARP CONST
+    (79) shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG . COMMA REG
+    (77) shiftinstrrrx -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG .
+
+    COMMA           shift and go to state 246
+    SPACEORTAB      reduce using rule 77 (shiftinstrrrx -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG .)
+    ENDLINESPACES   reduce using rule 77 (shiftinstrrrx -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG .)
+
+
+state 223
+
+    (87) memaccesspre -> OPENBRACKET REG . CLOSEBRACKET
+    (88) memaccesspre -> OPENBRACKET REG . COMMA signedoffsetreg memaccesspreclosing
+    (89) memaccesspre -> OPENBRACKET REG . COMMA SHARP CONST memaccesspreclosing
+    (90) memaccesspre -> OPENBRACKET REG . COMMA signedoffsetreg COMMA shiftnoreg memaccesspreclosing
+    (91) memaccesspre -> OPENBRACKET REG . COMMA REG error memaccesspreclosing
+    (99) memaccesspost -> OPENBRACKET REG . CLOSEBRACKET COMMA signedoffsetreg
+    (100) memaccesspost -> OPENBRACKET REG . CLOSEBRACKET COMMA signedoffsetreg COMMA shiftnoreg
+    (101) memaccesspost -> OPENBRACKET REG . CLOSEBRACKET COMMA SHARP CONST
+
+    CLOSEBRACKET    shift and go to state 247
+    COMMA           shift and go to state 248
+
+
+state 224
+
+    (103) memaccesslabeladdr -> EQUALS LABEL .
+
+    SPACEORTAB      reduce using rule 103 (memaccesslabeladdr -> EQUALS LABEL .)
+    ENDLINESPACES   reduce using rule 103 (memaccesslabeladdr -> EQUALS LABEL .)
+
+
+state 225
+
+    (104) memaccessimmediate -> EQUALS CONST .
+
+    SPACEORTAB      reduce using rule 104 (memaccessimmediate -> EQUALS CONST .)
+    ENDLINESPACES   reduce using rule 104 (memaccessimmediate -> EQUALS CONST .)
+
+
+state 226
+
+    (81) meminstruction -> OPMEM logmnemonic CONDITION accessmodifiersandspace REG COMMA memaccess .
+
+    SPACEORTAB      reduce using rule 81 (meminstruction -> OPMEM logmnemonic CONDITION accessmodifiersandspace REG COMMA memaccess .)
+    ENDLINESPACES   reduce using rule 81 (meminstruction -> OPMEM logmnemonic CONDITION accessmodifiersandspace REG COMMA memaccess .)
+
+
+state 227
+
+    (105) swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA . OPENBRACKET REG CLOSEBRACKET
+
+    OPENBRACKET     shift and go to state 249
+
+
+state 228
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG . COMMA OPENBRACKET REG CLOSEBRACKET
+
+    COMMA           shift and go to state 250
+
+
+state 229
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG . COMMA OPENBRACKET REG CLOSEBRACKET
+
+    COMMA           shift and go to state 251
+
+
+state 230
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA . REG COMMA OPENBRACKET REG CLOSEBRACKET
+
+    REG             shift and go to state 252
+
+
+state 231
+
+    (126) psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA SHARP CONST .
+
+    SPACEORTAB      reduce using rule 126 (psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA SHARP CONST .)
+    ENDLINESPACES   reduce using rule 126 (psrinstruction -> OPPSR logmnemonic condandspace PSR COMMA SHARP CONST .)
+
+
+state 232
+
+    (129) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA . REG
+    (130) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA . REG COMMA REG
+    (131) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA . SHARP CONST
+
+    REG             shift and go to state 253
+    SHARP           shift and go to state 254
+
+
+state 233
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA . REG COMMA REG
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA . REG COMMA SHARP CONST
+
+    REG             shift and go to state 255
+
+
+state 234
+
+    (66) op2 -> REG COMMA . shift
+    (68) shift -> . shiftbyreg
+    (69) shift -> . shiftbyvalue
+    (70) shiftbyreg -> . INNERSHIFT
+    (71) shiftbyreg -> . INNERSHIFT SPACEORTAB REG
+    (72) shiftbyvalue -> . INNERSHIFT SHARP CONST
+    (73) shiftbyvalue -> . INNERSHIFT SPACEORTAB SHARP CONST
+
+    INNERSHIFT      shift and go to state 238
+
+    shift                          shift and go to state 256
+    shiftbyreg                     shift and go to state 236
+    shiftbyvalue                   shift and go to state 237
+
+state 235
+
+    (67) op2 -> REG shift .
+
+    SPACEORTAB      reduce using rule 67 (op2 -> REG shift .)
+    ENDLINESPACES   reduce using rule 67 (op2 -> REG shift .)
+
+
+state 236
+
+    (68) shift -> shiftbyreg .
+
+    SPACEORTAB      reduce using rule 68 (shift -> shiftbyreg .)
+    ENDLINESPACES   reduce using rule 68 (shift -> shiftbyreg .)
+
+
+state 237
+
+    (69) shift -> shiftbyvalue .
+
+    SPACEORTAB      reduce using rule 69 (shift -> shiftbyvalue .)
+    ENDLINESPACES   reduce using rule 69 (shift -> shiftbyvalue .)
+
+
+state 238
+
+    (70) shiftbyreg -> INNERSHIFT .
+    (71) shiftbyreg -> INNERSHIFT . SPACEORTAB REG
+    (72) shiftbyvalue -> INNERSHIFT . SHARP CONST
+    (73) shiftbyvalue -> INNERSHIFT . SPACEORTAB SHARP CONST
+
+  ! shift/reduce conflict for SPACEORTAB resolved as shift
+    ENDLINESPACES   reduce using rule 70 (shiftbyreg -> INNERSHIFT .)
+    SPACEORTAB      shift and go to state 257
+    SHARP           shift and go to state 258
+
+  ! SPACEORTAB      [ reduce using rule 70 (shiftbyreg -> INNERSHIFT .) ]
+
+
+state 239
+
+    (65) op2 -> SHARP CONST .
+
+    SPACEORTAB      reduce using rule 65 (op2 -> SHARP CONST .)
+    ENDLINESPACES   reduce using rule 65 (op2 -> SHARP CONST .)
+
+
+state 240
+
+    (55) datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error COMMA op2 .
+
+    SPACEORTAB      reduce using rule 55 (datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error COMMA op2 .)
+    ENDLINESPACES   reduce using rule 55 (datainst2op -> OPDATA2OP logmnemonic flagscondandspace REG error COMMA op2 .)
+
+
+state 241
+
+    (56) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG COMMA . op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 259
+
+state 242
+
+    (58) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error . op2
+    (61) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error . COMMA op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    COMMA           shift and go to state 260
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 261
+
+state 243
+
+    (57) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error REG COMMA . op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 262
+
+state 244
+
+    (60) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG . COMMA op2
+
+    COMMA           shift and go to state 263
+
+
+state 245
+
+    (115) listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE CARET .
+
+    SPACEORTAB      reduce using rule 115 (listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE CARET .)
+    ENDLINESPACES   reduce using rule 115 (listregswithpsr -> OPENBRACE LISTREGS CLOSEBRACE CARET .)
+
+
+state 246
+
+    (78) shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA . SHARP CONST
+    (79) shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA . REG
+
+    SHARP           shift and go to state 265
+    REG             shift and go to state 264
+
+
+state 247
+
+    (87) memaccesspre -> OPENBRACKET REG CLOSEBRACKET .
+    (99) memaccesspost -> OPENBRACKET REG CLOSEBRACKET . COMMA signedoffsetreg
+    (100) memaccesspost -> OPENBRACKET REG CLOSEBRACKET . COMMA signedoffsetreg COMMA shiftnoreg
+    (101) memaccesspost -> OPENBRACKET REG CLOSEBRACKET . COMMA SHARP CONST
+
+    SPACEORTAB      reduce using rule 87 (memaccesspre -> OPENBRACKET REG CLOSEBRACKET .)
+    ENDLINESPACES   reduce using rule 87 (memaccesspre -> OPENBRACKET REG CLOSEBRACKET .)
+    COMMA           shift and go to state 266
+
+
+state 248
+
+    (88) memaccesspre -> OPENBRACKET REG COMMA . signedoffsetreg memaccesspreclosing
+    (89) memaccesspre -> OPENBRACKET REG COMMA . SHARP CONST memaccesspreclosing
+    (90) memaccesspre -> OPENBRACKET REG COMMA . signedoffsetreg COMMA shiftnoreg memaccesspreclosing
+    (91) memaccesspre -> OPENBRACKET REG COMMA . REG error memaccesspreclosing
+    (95) signedoffsetreg -> . REG
+    (96) signedoffsetreg -> . SIGN REG
+
+    SHARP           shift and go to state 269
+    REG             shift and go to state 267
+    SIGN            shift and go to state 270
+
+    signedoffsetreg                shift and go to state 268
+
+state 249
+
+    (105) swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET . REG CLOSEBRACKET
+
+    REG             shift and go to state 271
+
+
+state 250
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA . OPENBRACKET REG CLOSEBRACKET
+
+    OPENBRACKET     shift and go to state 272
+
+
+state 251
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA . OPENBRACKET REG CLOSEBRACKET
+
+    OPENBRACKET     shift and go to state 273
+
+
+state 252
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG . COMMA OPENBRACKET REG CLOSEBRACKET
+
+    COMMA           shift and go to state 274
+
+
+state 253
+
+    (129) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG .
+    (130) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG . COMMA REG
+
+    SPACEORTAB      reduce using rule 129 (multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG .)
+    ENDLINESPACES   reduce using rule 129 (multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG .)
+    COMMA           shift and go to state 275
+
+
+state 254
+
+    (131) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA SHARP . CONST
+
+    CONST           shift and go to state 276
+
+
+state 255
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG . COMMA REG
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG . COMMA SHARP CONST
+
+    COMMA           shift and go to state 277
+
+
+state 256
+
+    (66) op2 -> REG COMMA shift .
+
+    SPACEORTAB      reduce using rule 66 (op2 -> REG COMMA shift .)
+    ENDLINESPACES   reduce using rule 66 (op2 -> REG COMMA shift .)
+
+
+state 257
+
+    (71) shiftbyreg -> INNERSHIFT SPACEORTAB . REG
+    (73) shiftbyvalue -> INNERSHIFT SPACEORTAB . SHARP CONST
+
+    REG             shift and go to state 278
+    SHARP           shift and go to state 279
+
+
+state 258
+
+    (72) shiftbyvalue -> INNERSHIFT SHARP . CONST
+
+    CONST           shift and go to state 280
+
+
+state 259
+
+    (56) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG COMMA op2 .
+
+    SPACEORTAB      reduce using rule 56 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG COMMA op2 .)
+    ENDLINESPACES   reduce using rule 56 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG COMMA op2 .)
+
+
+state 260
+
+    (61) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error COMMA . op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 281
+
+state 261
+
+    (58) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error op2 .
+
+    SPACEORTAB      reduce using rule 58 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error op2 .)
+    ENDLINESPACES   reduce using rule 58 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error op2 .)
+
+
+state 262
+
+    (57) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error REG COMMA op2 .
+
+    SPACEORTAB      reduce using rule 57 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error REG COMMA op2 .)
+    ENDLINESPACES   reduce using rule 57 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error REG COMMA op2 .)
+
+
+state 263
+
+    (60) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG COMMA . op2
+    (64) op2 -> . REG
+    (65) op2 -> . SHARP CONST
+    (66) op2 -> . REG COMMA shift
+    (67) op2 -> . REG shift
+
+    REG             shift and go to state 210
+    SHARP           shift and go to state 212
+
+    op2                            shift and go to state 282
+
+state 264
+
+    (79) shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA REG .
+
+    SPACEORTAB      reduce using rule 79 (shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA REG .)
+    ENDLINESPACES   reduce using rule 79 (shiftinstrreg -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA REG .)
+
+
+state 265
+
+    (78) shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA SHARP . CONST
+
+    CONST           shift and go to state 283
+
+
+state 266
+
+    (99) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA . signedoffsetreg
+    (100) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA . signedoffsetreg COMMA shiftnoreg
+    (101) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA . SHARP CONST
+    (95) signedoffsetreg -> . REG
+    (96) signedoffsetreg -> . SIGN REG
+
+    SHARP           shift and go to state 286
+    REG             shift and go to state 284
+    SIGN            shift and go to state 270
+
+    signedoffsetreg                shift and go to state 285
+
+state 267
+
+    (91) memaccesspre -> OPENBRACKET REG COMMA REG . error memaccesspreclosing
+    (95) signedoffsetreg -> REG .
+
+    error           shift and go to state 287
+    COMMA           reduce using rule 95 (signedoffsetreg -> REG .)
+    CLOSEBRACKET    reduce using rule 95 (signedoffsetreg -> REG .)
+
+
+state 268
+
+    (88) memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg . memaccesspreclosing
+    (90) memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg . COMMA shiftnoreg memaccesspreclosing
+    (97) memaccesspreclosing -> . CLOSEBRACKET
+    (98) memaccesspreclosing -> . CLOSEBRACKET EXCLAMATION
+
+    COMMA           shift and go to state 288
+    CLOSEBRACKET    shift and go to state 290
+
+    memaccesspreclosing            shift and go to state 289
+
+state 269
+
+    (89) memaccesspre -> OPENBRACKET REG COMMA SHARP . CONST memaccesspreclosing
+
+    CONST           shift and go to state 291
+
+
+state 270
+
+    (96) signedoffsetreg -> SIGN . REG
+
+    REG             shift and go to state 292
+
+
+state 271
+
+    (105) swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG . CLOSEBRACKET
+
+    CLOSEBRACKET    shift and go to state 293
+
+
+state 272
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET . REG CLOSEBRACKET
+
+    REG             shift and go to state 294
+
+
+state 273
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET . REG CLOSEBRACKET
+
+    REG             shift and go to state 295
+
+
+state 274
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA . OPENBRACKET REG CLOSEBRACKET
+
+    OPENBRACKET     shift and go to state 296
+
+
+state 275
+
+    (130) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA . REG
+
+    REG             shift and go to state 297
+
+
+state 276
+
+    (131) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST .
+
+    SPACEORTAB      reduce using rule 131 (multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST .)
+    ENDLINESPACES   reduce using rule 131 (multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST .)
+
+
+state 277
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA . REG
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA . SHARP CONST
+
+    REG             shift and go to state 298
+    SHARP           shift and go to state 299
+
+
+state 278
+
+    (71) shiftbyreg -> INNERSHIFT SPACEORTAB REG .
+
+    SPACEORTAB      reduce using rule 71 (shiftbyreg -> INNERSHIFT SPACEORTAB REG .)
+    ENDLINESPACES   reduce using rule 71 (shiftbyreg -> INNERSHIFT SPACEORTAB REG .)
+
+
+state 279
+
+    (73) shiftbyvalue -> INNERSHIFT SPACEORTAB SHARP . CONST
+
+    CONST           shift and go to state 300
+
+
+state 280
+
+    (72) shiftbyvalue -> INNERSHIFT SHARP CONST .
+
+    SPACEORTAB      reduce using rule 72 (shiftbyvalue -> INNERSHIFT SHARP CONST .)
+    ENDLINESPACES   reduce using rule 72 (shiftbyvalue -> INNERSHIFT SHARP CONST .)
+
+
+state 281
+
+    (61) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error COMMA op2 .
+
+    SPACEORTAB      reduce using rule 61 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error COMMA op2 .)
+    ENDLINESPACES   reduce using rule 61 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error COMMA op2 .)
+
+
+state 282
+
+    (60) datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG COMMA op2 .
+
+    SPACEORTAB      reduce using rule 60 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG COMMA op2 .)
+    ENDLINESPACES   reduce using rule 60 (datainst3op -> OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG COMMA op2 .)
+
+
+state 283
+
+    (78) shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST .
+
+    SPACEORTAB      reduce using rule 78 (shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST .)
+    ENDLINESPACES   reduce using rule 78 (shiftinstrconst -> OPSHIFT logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST .)
+
+
+state 284
+
+    (95) signedoffsetreg -> REG .
+
+    COMMA           reduce using rule 95 (signedoffsetreg -> REG .)
+    SPACEORTAB      reduce using rule 95 (signedoffsetreg -> REG .)
+    ENDLINESPACES   reduce using rule 95 (signedoffsetreg -> REG .)
+
+
+state 285
+
+    (99) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg .
+    (100) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg . COMMA shiftnoreg
+
+    SPACEORTAB      reduce using rule 99 (memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg .)
+    ENDLINESPACES   reduce using rule 99 (memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg .)
+    COMMA           shift and go to state 301
+
+
+state 286
+
+    (101) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA SHARP . CONST
+
+    CONST           shift and go to state 302
+
+
+state 287
+
+    (91) memaccesspre -> OPENBRACKET REG COMMA REG error . memaccesspreclosing
+    (97) memaccesspreclosing -> . CLOSEBRACKET
+    (98) memaccesspreclosing -> . CLOSEBRACKET EXCLAMATION
+
+    CLOSEBRACKET    shift and go to state 290
+
+    memaccesspreclosing            shift and go to state 303
+
+state 288
+
+    (90) memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg COMMA . shiftnoreg memaccesspreclosing
+    (92) shiftnoreg -> . INNERSHIFT
+    (93) shiftnoreg -> . INNERSHIFT SHARP CONST
+    (94) shiftnoreg -> . INNERSHIFT SPACEORTAB SHARP CONST
+
+    INNERSHIFT      shift and go to state 305
+
+    shiftnoreg                     shift and go to state 304
+
+state 289
+
+    (88) memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg memaccesspreclosing .
+
+    SPACEORTAB      reduce using rule 88 (memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg memaccesspreclosing .)
+    ENDLINESPACES   reduce using rule 88 (memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg memaccesspreclosing .)
+
+
+state 290
+
+    (97) memaccesspreclosing -> CLOSEBRACKET .
+    (98) memaccesspreclosing -> CLOSEBRACKET . EXCLAMATION
+
+    SPACEORTAB      reduce using rule 97 (memaccesspreclosing -> CLOSEBRACKET .)
+    ENDLINESPACES   reduce using rule 97 (memaccesspreclosing -> CLOSEBRACKET .)
+    EXCLAMATION     shift and go to state 306
+
+
+state 291
+
+    (89) memaccesspre -> OPENBRACKET REG COMMA SHARP CONST . memaccesspreclosing
+    (97) memaccesspreclosing -> . CLOSEBRACKET
+    (98) memaccesspreclosing -> . CLOSEBRACKET EXCLAMATION
+
+    CLOSEBRACKET    shift and go to state 290
+
+    memaccesspreclosing            shift and go to state 307
+
+state 292
+
+    (96) signedoffsetreg -> SIGN REG .
+
+    COMMA           reduce using rule 96 (signedoffsetreg -> SIGN REG .)
+    CLOSEBRACKET    reduce using rule 96 (signedoffsetreg -> SIGN REG .)
+    SPACEORTAB      reduce using rule 96 (signedoffsetreg -> SIGN REG .)
+    ENDLINESPACES   reduce using rule 96 (signedoffsetreg -> SIGN REG .)
+
+
+state 293
+
+    (105) swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .
+
+    SPACEORTAB      reduce using rule 105 (swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .)
+    ENDLINESPACES   reduce using rule 105 (swapinstruction -> OPSWP logmnemonic SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .)
+
+
+state 294
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG . CLOSEBRACKET
+
+    CLOSEBRACKET    shift and go to state 308
+
+
+state 295
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG . CLOSEBRACKET
+
+    CLOSEBRACKET    shift and go to state 309
+
+
+state 296
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET . REG CLOSEBRACKET
+
+    REG             shift and go to state 310
+
+
+state 297
+
+    (130) multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG .
+
+    SPACEORTAB      reduce using rule 130 (multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG .)
+    ENDLINESPACES   reduce using rule 130 (multiplyinstruction -> OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG .)
+
+
+state 298
+
+    (132) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG .
+
+    SPACEORTAB      reduce using rule 132 (multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG .)
+    ENDLINESPACES   reduce using rule 132 (multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA REG .)
+
+
+state 299
+
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA SHARP . CONST
+
+    CONST           shift and go to state 311
+
+
+state 300
+
+    (73) shiftbyvalue -> INNERSHIFT SPACEORTAB SHARP CONST .
+
+    SPACEORTAB      reduce using rule 73 (shiftbyvalue -> INNERSHIFT SPACEORTAB SHARP CONST .)
+    ENDLINESPACES   reduce using rule 73 (shiftbyvalue -> INNERSHIFT SPACEORTAB SHARP CONST .)
+
+
+state 301
+
+    (100) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg COMMA . shiftnoreg
+    (92) shiftnoreg -> . INNERSHIFT
+    (93) shiftnoreg -> . INNERSHIFT SHARP CONST
+    (94) shiftnoreg -> . INNERSHIFT SPACEORTAB SHARP CONST
+
+    INNERSHIFT      shift and go to state 305
+
+    shiftnoreg                     shift and go to state 312
+
+state 302
+
+    (101) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA SHARP CONST .
+
+    SPACEORTAB      reduce using rule 101 (memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA SHARP CONST .)
+    ENDLINESPACES   reduce using rule 101 (memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA SHARP CONST .)
+
+
+state 303
+
+    (91) memaccesspre -> OPENBRACKET REG COMMA REG error memaccesspreclosing .
+
+    SPACEORTAB      reduce using rule 91 (memaccesspre -> OPENBRACKET REG COMMA REG error memaccesspreclosing .)
+    ENDLINESPACES   reduce using rule 91 (memaccesspre -> OPENBRACKET REG COMMA REG error memaccesspreclosing .)
+
+
+state 304
+
+    (90) memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg COMMA shiftnoreg . memaccesspreclosing
+    (97) memaccesspreclosing -> . CLOSEBRACKET
+    (98) memaccesspreclosing -> . CLOSEBRACKET EXCLAMATION
+
+    CLOSEBRACKET    shift and go to state 290
+
+    memaccesspreclosing            shift and go to state 313
+
+state 305
+
+    (92) shiftnoreg -> INNERSHIFT .
+    (93) shiftnoreg -> INNERSHIFT . SHARP CONST
+    (94) shiftnoreg -> INNERSHIFT . SPACEORTAB SHARP CONST
+
+  ! shift/reduce conflict for SPACEORTAB resolved as shift
+    CLOSEBRACKET    reduce using rule 92 (shiftnoreg -> INNERSHIFT .)
+    ENDLINESPACES   reduce using rule 92 (shiftnoreg -> INNERSHIFT .)
+    SHARP           shift and go to state 314
+    SPACEORTAB      shift and go to state 315
+
+  ! SPACEORTAB      [ reduce using rule 92 (shiftnoreg -> INNERSHIFT .) ]
+
+
+state 306
+
+    (98) memaccesspreclosing -> CLOSEBRACKET EXCLAMATION .
+
+    SPACEORTAB      reduce using rule 98 (memaccesspreclosing -> CLOSEBRACKET EXCLAMATION .)
+    ENDLINESPACES   reduce using rule 98 (memaccesspreclosing -> CLOSEBRACKET EXCLAMATION .)
+
+
+state 307
+
+    (89) memaccesspre -> OPENBRACKET REG COMMA SHARP CONST memaccesspreclosing .
+
+    SPACEORTAB      reduce using rule 89 (memaccesspre -> OPENBRACKET REG COMMA SHARP CONST memaccesspreclosing .)
+    ENDLINESPACES   reduce using rule 89 (memaccesspre -> OPENBRACKET REG COMMA SHARP CONST memaccesspreclosing .)
+
+
+state 308
+
+    (106) swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .
+
+    SPACEORTAB      reduce using rule 106 (swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .)
+    ENDLINESPACES   reduce using rule 106 (swapinstruction -> OPSWP logmnemonic BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .)
+
+
+state 309
+
+    (107) swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .
+
+    SPACEORTAB      reduce using rule 107 (swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .)
+    ENDLINESPACES   reduce using rule 107 (swapinstruction -> OPSWP logmnemonic CONDITION SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .)
+
+
+state 310
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG . CLOSEBRACKET
+
+    CLOSEBRACKET    shift and go to state 316
+
+
+state 311
+
+    (133) multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA SHARP CONST .
+
+    SPACEORTAB      reduce using rule 133 (multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA SHARP CONST .)
+    ENDLINESPACES   reduce using rule 133 (multiplylonginstruction -> OPMULL logmnemonic flagscondandspace REG COMMA REG COMMA REG COMMA SHARP CONST .)
+
+
+state 312
+
+    (100) memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg COMMA shiftnoreg .
+
+    SPACEORTAB      reduce using rule 100 (memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg COMMA shiftnoreg .)
+    ENDLINESPACES   reduce using rule 100 (memaccesspost -> OPENBRACKET REG CLOSEBRACKET COMMA signedoffsetreg COMMA shiftnoreg .)
+
+
+state 313
+
+    (90) memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg COMMA shiftnoreg memaccesspreclosing .
+
+    SPACEORTAB      reduce using rule 90 (memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg COMMA shiftnoreg memaccesspreclosing .)
+    ENDLINESPACES   reduce using rule 90 (memaccesspre -> OPENBRACKET REG COMMA signedoffsetreg COMMA shiftnoreg memaccesspreclosing .)
+
+
+state 314
+
+    (93) shiftnoreg -> INNERSHIFT SHARP . CONST
+
+    CONST           shift and go to state 317
+
+
+state 315
+
+    (94) shiftnoreg -> INNERSHIFT SPACEORTAB . SHARP CONST
+
+    SHARP           shift and go to state 318
+
+
+state 316
+
+    (108) swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .
+
+    SPACEORTAB      reduce using rule 108 (swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .)
+    ENDLINESPACES   reduce using rule 108 (swapinstruction -> OPSWP logmnemonic CONDITION BYTEONLY SPACEORTAB REG COMMA REG COMMA OPENBRACKET REG CLOSEBRACKET .)
+
+
+state 317
+
+    (93) shiftnoreg -> INNERSHIFT SHARP CONST .
+
+    CLOSEBRACKET    reduce using rule 93 (shiftnoreg -> INNERSHIFT SHARP CONST .)
+    SPACEORTAB      reduce using rule 93 (shiftnoreg -> INNERSHIFT SHARP CONST .)
+    ENDLINESPACES   reduce using rule 93 (shiftnoreg -> INNERSHIFT SHARP CONST .)
+
+
+state 318
+
+    (94) shiftnoreg -> INNERSHIFT SPACEORTAB SHARP . CONST
+
+    CONST           shift and go to state 319
+
+
+state 319
+
+    (94) shiftnoreg -> INNERSHIFT SPACEORTAB SHARP CONST .
+
+    CLOSEBRACKET    reduce using rule 94 (shiftnoreg -> INNERSHIFT SPACEORTAB SHARP CONST .)
+    SPACEORTAB      reduce using rule 94 (shiftnoreg -> INNERSHIFT SPACEORTAB SHARP CONST .)
+    ENDLINESPACES   reduce using rule 94 (shiftnoreg -> INNERSHIFT SPACEORTAB SHARP CONST .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for SPACEORTAB in state 238 resolved as shift
+WARNING: shift/reduce conflict for SPACEORTAB in state 305 resolved as shift
