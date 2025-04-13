@@ -13,12 +13,11 @@ import io
 import binascii
 import signal
 import base64
-import threading
 import i18n
 from urllib.parse import quote, unquote
 from copy import copy
 from collections import OrderedDict, defaultdict
-from multiprocessing import Process
+from multiprocessing import Process, freeze_support
 import smtplib
 from email.mime.text import MIMEText
 
@@ -26,10 +25,9 @@ try:
     import uvloop
 except ImportError:
     pass
-
 import websockets
-import bottle
 from gevent import monkey; monkey.patch_all()
+import bottle
 from bottle import route, static_file, get, post, request, template, response
 from bottle_i18n import I18NPlugin, I18NMiddleware, i18n_defaults, i18n_view, i18n_template
 from bs4 import BeautifulSoup
@@ -59,7 +57,7 @@ connected = set()
 
 DEBUG = 'DEBUG' in sys.argv
 
-default_lang = 'en'
+default_lang = 'fr'
 i18n_defaults(bottle.SimpleTemplate, bottle.request)
 i18NPlugin = I18NPlugin(domain='interface', default=default_lang, locale_dir='./locale')
 
@@ -100,10 +98,8 @@ async def update_ui(ws, to_send):
         await asyncio.sleep(0.02)
 
 
-async def handler(websocket):
+async def handler(websocket): # , path
     print("User {} connected.".format(websocket))
-    print("\nState of WebSocket: ", websocket.state)
-
     connected.add(websocket)
     to_send = []
     received = []
@@ -114,7 +110,7 @@ async def handler(websocket):
         to_run_task = asyncio.ensure_future(run_instance(websocket))
         update_ui_task = asyncio.ensure_future(update_ui(websocket, to_send))
         while True:
-            if websocket.state != 1:
+            if websocket.state != True: # not websocket.open:
                 break
             done, pending = await asyncio.wait(
                 [listener_task, producer_task, to_run_task, update_ui_task],
@@ -589,7 +585,7 @@ def encodeWSGIb(data):
 
 
 def readFileBrokenEncoding(filename):
-    if locale.getdefaultlocale() == (None, None):
+    if locale.getlocale() == (None, None):
         with open(filename, 'rb') as fhdl:
             data = fhdl.read()
         data = encodeWSGIb(data)
@@ -599,7 +595,7 @@ def readFileBrokenEncoding(filename):
     return data
 
 
-if locale.getdefaultlocale() == (None, None):
+if locale.getlocale() == (None, None):
     index_template = open('./interface/index.html', 'rb').read()
     simulator_template = open('./interface/simulateur.html', 'rb').read()
     index_template = encodeWSGIb(index_template)
@@ -607,7 +603,6 @@ if locale.getdefaultlocale() == (None, None):
 else:
     index_template = open('./interface/index.html', 'r').read()
     simulator_template = open('./interface/simulateur.html', 'r').read()
-
 
 def get():
     app = bottle.Bottle()
@@ -657,7 +652,7 @@ def get():
 
                     # YAHOG -- When in WSGI, we must add 0xdc00 to every extended (e.g. accentuated) character in order for the
                     # open() call to understand correctly the path
-                    if locale.getdefaultlocale() == (None, None):
+                    if locale.getlocale() == (None, None):
                         request.query["sim"] = decodeWSGI(request.query["sim"])
                         with open(os.path.join("exercices", request.query["sim"]), 'rb') as fhdl:
                             exercice_html = fhdl.read()
@@ -702,7 +697,7 @@ def get():
 
                 # YAHOG -- When in WSGI, Python adds 0xdc00 to every extended (e.g. accentuated) character, leading to
                 # errors in utf-8 re-interpretation.
-                if locale.getdefaultlocale() == (None, None):
+                if locale.getlocale() == (None, None):
                     f = encodeWSGI(f)
 
                 fs = f.split(os.sep)
@@ -799,41 +794,51 @@ def translate_retval(lang, values):
     return values
 
 
+async def init_webserver():
+    print("Started WebSocket on port 31415")
+    async with websockets.serve(handler, "0.0.0.0", 31415):
+        await asyncio.Future()
+
+def init_httpserver():
+    import gevent.monkey
+    gevent.monkey.patch_all()
+
+    p = Process(target=http_server)
+    p.daemon = True
+    p.start()
+    return p
+
+
 if hasattr(signal, 'SIGUSR1'):
     signal.signal(signal.SIGUSR1, display_amount_users)
 
 
-async def start_websockets():
-    #print("test")
-    # Avvia il server WebSocket
-    #start_server = websockets.serve(handler, '0.0.0.0', 31415)
-    print("il server e' attivo sulla porta 31415")
-    await websockets.serve(handler, '0.0.0.0', 31415)
-    await asyncio.Future()  # Mantiene il server attivo
-
-def start_http_server():
-    p = Process(target=http_server)
-    p.start()
-
-
 if __name__ == '__main__':
-    # Avvia il server HTTP su un thread separato
-    #if DEBUG:
-    http_thread = threading.Thread(target=start_http_server)
-    http_thread.start()
-    print("Server HTTP avviato in un thread separato.")
+    ## SPOSTATO IN init_webserver()
+    # start_server = websockets.serve(handler, '0.0.0.0', 31415)
+    ##
 
-    # Avvia il server WebSocket su un thread separato
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    websocket_thread = threading.Thread(target=lambda: loop.run_until_complete(start_websockets()))
-    websocket_thread.start()
-    print("Server WebSocket avviato in un thread separato.")
+    ### INUTILE PERCHÈ uvloop NON È SUPPORTATO SU WINDOWS (sarebbe solo per ottimizzare gli asyncio default di python)
+    # if "uvloop" in globals():
+    #     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+    #     print("Using uvloop")
+    ###
 
-    # Unisci i thread per assicurarti che il programma non finisca subito
-    http_thread.join()
-    websocket_thread.join()
+    ## SCRITTO CON FUNZIONI MENO OBSOLETE IN init_webserver()
+    # asyncio.get_event_loop().run_until_complete(start_server)
+    # asyncio.get_event_loop().run_forever()
+    ##
 
-    if "uvloop" in globals():
-        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-        print("Uso di uvloop")    
+    ## Rimosso perchè inutile
+    # if DEBUG:
+    
+    #### SOLUZIONE FUNZIONANTE ESEGUENDO ENTRAMBI I SERVER CONTEMPORANAMENTE
+    freeze_support() # necessario nell'utilizzo di multiprocessing su Windows
+
+    p = init_httpserver()
+    try:
+        asyncio.run(init_webserver())
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt")
+        p.terminate()
+        p.join()
