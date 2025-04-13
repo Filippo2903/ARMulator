@@ -35,7 +35,6 @@ from bs4 import BeautifulSoup
 from assembler import parse as ASMparser
 from bytecodeinterpreter import BCInterpreter
 
-
 try:
     with open("emailpass.txt") as fhdl:
         email_password = fhdl.read().strip()
@@ -633,7 +632,7 @@ def get():
 
         # Liste privee
         try:
-            with open("exercices/prive.txt", "r") as fhdl:
+            with open("exercises/prive.txt", "r") as fhdl:
                 prive = fhdl.read().replace("/", os.sep).splitlines()
         except FileNotFoundError:
             prive = []
@@ -654,15 +653,15 @@ def get():
                     # open() call to understand correctly the path
                     if locale.getlocale() == (None, None):
                         request.query["sim"] = decodeWSGI(request.query["sim"])
-                        with open(os.path.join("exercices", request.query["sim"]), 'rb') as fhdl:
-                            exercice_html = fhdl.read()
-                        exercice_html = encodeWSGIb(exercice_html)
+                        with open(os.path.join("exercises", request.query["sim"]), 'rb') as fhdl:
+                            exercise_html = fhdl.read()
+                        exercise_html = encodeWSGIb(exercise_html)
                     else:
                         request.query["sim"] = request.query["sim"].decode("utf-8")
 
-                        with open(os.path.join("exercices", request.query["sim"]), 'r') as fhdl:
-                            exercice_html = fhdl.read()
-                    soup = BeautifulSoup(exercice_html, "html.parser")
+                        with open(os.path.join("exercises", request.query["sim"]), 'r') as fhdl:
+                            exercise_html = fhdl.read()
+                    soup = BeautifulSoup(exercise_html, "html.parser")
                     enonce = soup.find("div", {"id": "enonce"})
                     code = soup.find("div", {"id": "code"}).text
                     solution = soup.find("div", {"id": "solution"})
@@ -678,14 +677,14 @@ def get():
             this_template = index_template
             files = []
             if page in ("demo", "exo", "tp"):
-                tomatch = "exercices/{}/*/*.html"
+                tomatch = "exercises/{}/*/*.html"
                 if page == "tp":
-                    tomatch = "exercices/{}/*.html"
+                    tomatch = "exercises/{}/*.html"
                 files = glob.glob(tomatch.format(page), recursive=True)
                 files = [os.sep.join(re.split("\\/", x)[1:]) for x in files]
             elif page == "accueil":
                 try:
-                    enonce = readFileBrokenEncoding(os.path.join("exercices", "accueil.html"))
+                    enonce = readFileBrokenEncoding(os.path.join("exercises", "accueil.html"))
                 except FileNotFoundError:
                     enonce = "<h1>Bienvenue!</h1>"
 
@@ -701,7 +700,7 @@ def get():
                     f = encodeWSGI(f)
 
                 fs = f.split(os.sep)
-                soup = BeautifulSoup(readFileBrokenEncoding(os.path.join("exercices", f)), "html.parser")
+                soup = BeautifulSoup(readFileBrokenEncoding(os.path.join("exercises", f)), "html.parser")
                 title = soup.find("h1")
                 if title:
                     title = title.text
@@ -716,7 +715,7 @@ def get():
                     k1r = fs[1].replace("_", " ").encode('utf-8', 'replace')
                     if k1r not in sections_names:
                         try:
-                            k1 = readFileBrokenEncoding(os.path.join("exercices", page, fs[1], 'nom.txt'))
+                            k1 = readFileBrokenEncoding(os.path.join("exercises", page, fs[1], 'nom.txt'))
                         except FileNotFoundError:
                             k1 = fs[1].replace("_", " ").encode('utf-8', 'replace')
                         sections_names[k1r] = k1
@@ -735,7 +734,7 @@ def get():
                 sections = {"Aucune section n'est disponible en ce moment.": {}}
 
             if page == "exo":
-                title = "Exercices formatifs"
+                title = "Exercises formatifs"
             elif page == "tp":
                 title = "Travaux pratiques"
             elif page == "demo":
@@ -774,7 +773,6 @@ def get():
 def http_server():
     bottle.run(app=get(), host='0.0.0.0', port=8000, server="gevent", debug=True)
 
-
 def display_amount_users(signum, stack):
     print("Number of clients:", len(connected))
     print(connected)
@@ -808,31 +806,12 @@ def init_httpserver():
     p.start()
     return p
 
-
 if hasattr(signal, 'SIGUSR1'):
     signal.signal(signal.SIGUSR1, display_amount_users)
 
-
 if __name__ == '__main__':
-    ## SPOSTATO IN init_webserver()
-    # start_server = websockets.serve(handler, '0.0.0.0', 31415)
-    ##
+    print("calling mainweb.py")
 
-    ### INUTILE PERCHÈ uvloop NON È SUPPORTATO SU WINDOWS (sarebbe solo per ottimizzare gli asyncio default di python)
-    # if "uvloop" in globals():
-    #     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    #     print("Using uvloop")
-    ###
-
-    ## SCRITTO CON FUNZIONI MENO OBSOLETE IN init_webserver()
-    # asyncio.get_event_loop().run_until_complete(start_server)
-    # asyncio.get_event_loop().run_forever()
-    ##
-
-    ## Rimosso perchè inutile
-    # if DEBUG:
-    
-    #### SOLUZIONE FUNZIONANTE ESEGUENDO ENTRAMBI I SERVER CONTEMPORANAMENTE
     freeze_support() # necessario nell'utilizzo di multiprocessing su Windows
 
     p = init_httpserver()
