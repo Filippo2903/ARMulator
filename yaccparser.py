@@ -915,7 +915,7 @@ def p_declarationsize_error(p):
 #    print("End wrong data")
 #    return
 
-parser = yacc.yacc()
+parser = yacc.yacc(debug=False, write_tables=False, errorlog=yacc.NullLogger())
 
 
 if __name__ == '__main__':
