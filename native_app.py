@@ -2,6 +2,9 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineProfile
 from PyQt5.QtNetwork import QNetworkCookie
+from stateManager import StateManager
+
+appState = StateManager()
 
 class NativeApp(QApplication):
     def __init__(self):
@@ -12,7 +15,7 @@ class NativeApp(QApplication):
         browser = QWebEngineView()
 
         # Carica il sito web
-        browser.setUrl(QUrl("http://localhost:8000"))  # Adatta l'URL se necessario
+        browser.setUrl(QUrl(f"http://localhost:{appState.getHttpPort()}"))  # Adatta l'URL se necessario
         window.setCentralWidget(browser)
 
         window.setWindowTitle("App Web Nativa")

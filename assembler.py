@@ -7,6 +7,8 @@ from tokenizer import ParserError, lexer
 import yaccparser
 from settings import getSetting
 
+from stateManager import StateManager
+
 memory_configs = {
     "simulation": {"INTVEC": 0x00, "CODE": 0x80, "DATA": 0x1000},
     "test": {"INTVEC": 0x100000, "CODE": 0x100080, "DATA": 0x101000}
@@ -40,6 +42,9 @@ class ParseError:
         return "{} : {}".format(self.t, self.m)
 
 def parse(code, memLayout="simulation"):
+    appState = StateManager()
+    print("From parser: ", appState.getLang())
+
     """
     Parse and compile ARM assembly code.
     :param code: a string containing ARM assembly

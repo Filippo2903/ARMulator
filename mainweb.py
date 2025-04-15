@@ -32,7 +32,9 @@ from translation import dictionary
 translate = dictionary.create_main_dict()
 
 from native_app import NativeApp #GUI
-lang = "en"
+from stateManager import StateManager
+
+appState = StateManager()
 
 try:
     with open("emailpass.txt") as fhdl:
@@ -314,8 +316,6 @@ def updateDisplay(interp, force_all=False):
 
 
 def process(ws, msg_in):
-    global lang
-
     """
     Output: List of messages to send.
     """
@@ -331,13 +331,13 @@ def process(ws, msg_in):
             newLang = newLang.strip()
 
             print("New language: ", newLang)
-            print("Old language: ", lang)
+            print("Old language: ", appState.getLang())
     
-            if(newLang != lang):
+            if(newLang != appState.getLang()):
                 print("Changing lang")
-                lang = newLang
+                appState.setLang(newLang)
 
-            print("New lang: ", lang)
+            print("New lang: ", appState.getLang())
 
             data = json.loads(msg)
 
@@ -351,10 +351,12 @@ def process(ws, msg_in):
             elif data[0] == 'assemble':
                 # lang = data[2]
                 code = ''.join(s for s in data[1].replace("\t", " ") if s in string.printable)
+
                 if ws in interpreters:
                     del interpreters[ws]
 
                 bytecode, bcinfos, line2addr, assertions, snippetMode, errors = ASMparser(code.splitlines())
+
                 if errors:
                     retval.extend(errors)
                     retval.append(["edit_mode"])
@@ -703,8 +705,8 @@ def get():
                 try:
                     enonce = readFileBrokenEncoding(os.path.join("exercises", "accueil.html"))
                 except FileNotFoundError:
-                    print(translate[lang])
-                    enonce = f"<h1>{translate[lang]["welcome"]}</h1>"
+                    print(translate[appState.getLang()])
+                    enonce = f"<h1>{translate[appState.getLang()]["welcome"]}</h1>"
 
             sections = OrderedDict()
             sections_names = {}
@@ -775,7 +777,7 @@ def get():
 
 
 def http_server():
-    bottle.run(app=get(), host='0.0.0.0', port=8000, server="gevent", debug=True)
+    bottle.run(app=get(), host='0.0.0.0', port=appState.getHttpPort(), server="gevent", debug=True)
 
 def display_amount_users(signum, stack):
     print("Number of clients:", len(connected))
@@ -785,8 +787,9 @@ def display_amount_users(signum, stack):
     sys.stdout.flush()
 
 async def async_webserver():
-    print("Started WebSocket on port 31415")
-    async with websockets.serve(handler, "0.0.0.0", 31415):
+    port = appState.getWebPort()
+    print(f"Started WebSocket on port {port}")
+    async with websockets.serve(handler, "0.0.0.0", port):
         await asyncio.Future()
 
 def web_server():

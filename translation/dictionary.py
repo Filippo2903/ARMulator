@@ -8,7 +8,7 @@ def load_python_file(file_path):
     spec.loader.exec_module(module)
     return getattr(module, 'dict', None)
 
-def create_main_dict(directory="translation\\dictionaries"):
+def create_main_dict(directory=os.path.join("translation", "dictionaries")):
     main_dict = {}
 
     dir_path = os.path.join(os.getcwd(), directory)
