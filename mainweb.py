@@ -13,29 +13,26 @@ import io
 import binascii
 import signal
 import base64
-import i18n
 from urllib.parse import quote, unquote
 from copy import copy
-from collections import OrderedDict, defaultdict
+from collections import OrderedDict
 from multiprocessing import Process, freeze_support
-import smtplib
 from email.mime.text import MIMEText
 
-try:
-    import uvloop
-except ImportError:
-    pass
 import websockets
 from gevent import monkey; monkey.patch_all()
 import bottle
-from bottle import route, static_file, get, post, request, template, response
-from bottle_i18n import I18NPlugin, I18NMiddleware, i18n_defaults, i18n_view, i18n_template
+from bottle import static_file, get, request, template, response
 from bs4 import BeautifulSoup
 
 from assembler import parse as ASMparser
 from bytecodeinterpreter import BCInterpreter
 
+from translation import dictionary
+translate = dictionary.create_main_dict()
+
 from native_app import NativeApp #GUI
+lang = "en"
 
 try:
     with open("emailpass.txt") as fhdl:
@@ -55,12 +52,7 @@ UPDATE_THROTTLE_SEC = 0.3
 interpreters = {}
 connected = set()
 
-
 DEBUG = 'DEBUG' in sys.argv
-
-default_lang = 'fr'
-i18n_defaults(bottle.SimpleTemplate, bottle.request)
-i18NPlugin = I18NPlugin(domain='interface', default=default_lang, locale_dir='./locale')
 
 async def producer(ws, data_list):
     while True:
@@ -98,21 +90,31 @@ async def update_ui(ws, to_send):
                 return
         await asyncio.sleep(0.02)
 
+def get_cookie(cookie_str, cookie_name):
+    pattern = f"{cookie_name}=([^;]+)"
+    match = re.search(pattern, cookie_str)
+    if match:
+        return match.group(1)
+    return None
 
-async def handler(websocket): # , path
+async def handler(websocket):
     print("User {} connected.".format(websocket))
     connected.add(websocket)
+
     to_send = []
     received = []
     ui_update_queue = []
+
     try:
         listener_task = asyncio.ensure_future(websocket.recv())
         producer_task = asyncio.ensure_future(producer(websocket, to_send))
         to_run_task = asyncio.ensure_future(run_instance(websocket))
         update_ui_task = asyncio.ensure_future(update_ui(websocket, to_send))
+
         while True:
             if websocket.state != True: # not websocket.open:
                 break
+
             done, pending = await asyncio.wait(
                 [listener_task, producer_task, to_run_task, update_ui_task],
                 timeout=3600, return_when=asyncio.FIRST_COMPLETED)
@@ -129,6 +131,7 @@ async def handler(websocket): # , path
                     message = listener_task.result()
                 except websockets.exceptions.ConnectionClosed:
                     break
+
                 if message:
                     received.append(message)
 
@@ -190,21 +193,21 @@ async def handler(websocket): # , path
                     code = interpreters[websocket].code__
                 except (KeyError, AttributeError):
                     code = ""
-                try:
-                    hist = interpreters[websocket].history__
-                except (KeyError, AttributeError):
-                    hist = []
-                body = """<html><head></head>
-    (Simulator crash)
-    <h4>Traceback:</h4>
-    <pre>{ex}</pre>
-    <h4>Code:</h4>
-    <pre>{code}</pre>
-    <h4>Operation history:</h4>
-    <pre>{hist}</pre>
-    </html>""".format(code=code, ex=ex, hist="<br/>".join(str(x) for x in hist))
-                sendEmail(body)
-                print("Email sent!")
+    #             try:
+    #                 hist = interpreters[websocket].history__
+    #             except (KeyError, AttributeError):
+    #                 hist = []
+    #             body = """<html><head></head>
+    # (Simulator crash)
+    # <h4>Traceback:</h4>
+    # <pre>{ex}</pre>
+    # <h4>Code:</h4>
+    # <pre>{code}</pre>
+    # <h4>Operation history:</h4>
+    # <pre>{hist}</pre>
+    # </html>""".format(code=code, ex=ex, hist="<br/>".join(str(x) for x in hist))
+    #             sendEmail(body)
+    #             print("Email sent!")
     finally:
         if websocket in interpreters:
             del interpreters[websocket]
@@ -212,21 +215,21 @@ async def handler(websocket): # , path
         print("User {} disconnected.".format(websocket))
 
 
-def sendEmail(msg):
-    if email_password is None:
-        return
+# def sendEmail(msg):
+#     if email_password is None:
+#         return
         
-    msg = MIMEText(msg, 'html')
+#     msg = MIMEText(msg, 'html')
 
-    msg['Subject'] = "Error happened on ASM Simulator"
-    msg['From'] = "simulateurosa@gmail.com"
-    msg['To'] = "simulateurosa@gmail.com"
+#     msg['Subject'] = "Error happened on ASM Simulator"
+#     msg['From'] = "simulateurosa@gmail.com"
+#     msg['To'] = "simulateurosa@gmail.com"
 
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-    s.starttls()
-    s.login("simulateurosa@gmail.com", email_password)
-    s.send_message(msg)
-    s.quit()
+#     s = smtplib.SMTP('smtp.gmail.com', 587)
+#     s.starttls()
+#     s.login("simulateurosa@gmail.com", email_password)
+#     s.send_message(msg)
+#     s.quit()
 
 
 def generateUpdate(inter):
@@ -307,10 +310,12 @@ def updateDisplay(interp, force_all=False):
 
     retval.append(["cycles_count", interp.getCycleCount()])
 
-    return translate_retval(interp.lang, retval)
+    return retval
 
 
 def process(ws, msg_in):
+    global lang
+
     """
     Output: List of messages to send.
     """
@@ -321,17 +326,30 @@ def process(ws, msg_in):
 
     try:
         for msg in msg_in:
+            msg, newLang = msg.rsplit(']', 1)
+            msg += ']'
+            newLang = newLang.strip()
+
+            print("New language: ", newLang)
+            print("Old language: ", lang)
+    
+            if(newLang != lang):
+                print("Changing lang")
+                lang = newLang
+
+            print("New lang: ", lang)
+
             data = json.loads(msg)
 
             if ws in interpreters:
                 interpreters[ws].history__.append(data)
 
             if data[0] != 'assemble' and ws not in interpreters:
-                lang = default_lang
+                # lang = default_lang
                 if data[0] != "interrupt":
                     retval.append(["error", "Veuillez assembler le code avant d'effectuer cette opération."])
             elif data[0] == 'assemble':
-                lang = data[2]
+                # lang = data[2]
                 code = ''.join(s for s in data[1].replace("\t", " ") if s in string.printable)
                 if ws in interpreters:
                     del interpreters[ws]
@@ -350,9 +368,9 @@ def process(ws, msg_in):
                     interpreters[ws].num_exec__ = 0
                     interpreters[ws].user_asked_stop__ = True
                     retval.append(["line2addr", line2addr])
-                    interpreters[ws].lang = lang
+                    # interpreters[ws].lang = lang
             else:
-                lang = interpreters[ws].lang
+                # lang = interpreters[ws].lang
                 if data[0] == 'stepback':
                     interpreters[ws].stepBack()
                     force_update_all = True
@@ -473,25 +491,25 @@ def process(ws, msg_in):
                 cmd = msg
             except NameError:
                 cmd = ""
-            body = """<html><head></head>
-(Handling loop crash)
-<h4>Traceback:</h4>
-<pre>{ex}</pre>
-<h4>Code:</h4>
-<pre>{code}</pre>
-<h4>Operation history:</h4>
-<pre>{hist}</pre>
-<h4>Current command:</h4>
-<pre>{cmd}</pre>
-</html>""".format(code=code, ex=ex, hist="<br/>".join(str(x) for x in hist), cmd=cmd)
-            sendEmail(body)
-            print("Email sent!")
+
+#             body = """<html><head></head>
+# (Handling loop crash)
+# <h4>Traceback:</h4>
+# <pre>{ex}</pre>
+# <h4>Code:</h4>
+# <pre>{code}</pre>
+# <h4>Operation history:</h4>
+# <pre>{hist}</pre>
+# <h4>Current command:</h4>
+# <pre>{cmd}</pre>
+# </html>""".format(code=code, ex=ex, hist="<br/>".join(str(x) for x in hist), cmd=cmd)
+#             sendEmail(body)
+#             print("Email sent!")
 
     del msg_in[:]
 
-    if None == lang:
-        lang = interpreters[ws].lang
-    retval = translate_retval(lang, retval)
+    # if None == lang:
+    #     lang = interpreters[ws].lang
 
     if ws in interpreters:
         retval.extend(updateDisplay(interpreters[ws], force_update_all))
@@ -632,7 +650,6 @@ def get():
         if is_private_session:
             extra_left = """<a href="?prive="><div class="left_item"><div class="left_item_inner">Retour mode normal</div></div></a>"""
 
-        # Liste privee
         try:
             with open("exercises/prive.txt", "r") as fhdl:
                 prive = fhdl.read().replace("/", os.sep).splitlines()
@@ -648,11 +665,9 @@ def get():
                 try:
                     request.query["sim"] = base64.b64decode(unquote(request.query["sim"]))
 
-                    if request.query["sim"].decode("utf-8")  in prive and not is_private_session:
+                    if request.query["sim"].decode("utf-8") in prive and not is_private_session:
                         raise FileNotFoundError()
 
-                    # YAHOG -- When in WSGI, we must add 0xdc00 to every extended (e.g. accentuated) character in order for the
-                    # open() call to understand correctly the path
                     if locale.getlocale() == (None, None):
                         request.query["sim"] = decodeWSGI(request.query["sim"])
                         with open(os.path.join("exercises", request.query["sim"]), 'rb') as fhdl:
@@ -660,9 +675,9 @@ def get():
                         exercise_html = encodeWSGIb(exercise_html)
                     else:
                         request.query["sim"] = request.query["sim"].decode("utf-8")
-
                         with open(os.path.join("exercises", request.query["sim"]), 'r') as fhdl:
                             exercise_html = fhdl.read()
+
                     soup = BeautifulSoup(exercise_html, "html.parser")
                     enonce = soup.find("div", {"id": "enonce"})
                     code = soup.find("div", {"id": "code"}).text
@@ -688,7 +703,8 @@ def get():
                 try:
                     enonce = readFileBrokenEncoding(os.path.join("exercises", "accueil.html"))
                 except FileNotFoundError:
-                    enonce = "<h1>Bienvenue!</h1>"
+                    print(translate[lang])
+                    enonce = f"<h1>{translate[lang]["welcome"]}</h1>"
 
             sections = OrderedDict()
             sections_names = {}
@@ -696,8 +712,6 @@ def get():
                 if f in prive and not is_private_session:
                     continue
 
-                # YAHOG -- When in WSGI, Python adds 0xdc00 to every extended (e.g. accentuated) character, leading to
-                # errors in utf-8 re-interpretation.
                 if locale.getlocale() == (None, None):
                     f = encodeWSGI(f)
 
@@ -708,10 +722,7 @@ def get():
                     title = title.text
 
                 if page == "tp":
-                    if title:
-                        k1 = title
-                    else:
-                        k1 = fs[1].replace(".html", "").replace("_", " ").encode('utf-8', 'replace')
+                    k1 = title if title else fs[1].replace(".html", "").replace("_", " ").encode('utf-8', 'replace')
                     sections[k1] = quote(base64.b64encode(f.encode('utf-8', 'replace')), safe='')
                 else:
                     k1r = fs[1].replace("_", " ").encode('utf-8', 'replace')
@@ -725,11 +736,7 @@ def get():
                     if sections_names[k1r] not in sections:
                         sections[sections_names[k1r]] = OrderedDict()
 
-                    if title:
-                        k2 = title
-                    else:
-                        k2 = fs[2].replace(".html", "").replace("_", " ").encode('utf-8', 'replace')
-
+                    k2 = title if title else fs[2].replace(".html", "").replace("_", " ").encode('utf-8', 'replace')
                     sections[sections_names[k1r]][k2] = quote(base64.b64encode(f.encode('utf-8', 'replace')), safe='')
 
             if page != "accueil" and len(sections) == 0:
@@ -741,20 +748,14 @@ def get():
                 title = "Travaux pratiques"
             elif page == "demo":
                 title = "Démonstrations"
-        lang = request.get_cookie("lang")
-        if lang not in ['fr', 'en']:
-            lang = default_lang
-        i18NPlugin.set_lang(lang)
 
-        return template(this_template, code=code, lang=lang, enonce=enonce, solution=solution,
+        return template(this_template, code=code, enonce=enonce, solution=solution,
                         page=page, title=title, sections=sections, identifier=identifier,
                         rand=random.randint(0, 2**16), extra_left=extra_left)
-
 
     @app.route('/static/<filename:path>')
     def static_serve(filename):
         return static_file(filename, root='./interface/static/')
-
 
     @app.post('/download/')
     def download():
@@ -769,7 +770,8 @@ def get():
         response.headers['Content-Type'] = 'text/plain; charset=UTF-8'
         response.headers['Content-Disposition'] = 'attachment; filename="%s.txt"' % filename
         return data
-    return I18NMiddleware(app, i18NPlugin)
+
+    return app
 
 
 def http_server():
@@ -781,18 +783,6 @@ def display_amount_users(signum, stack):
     print("Number of interpreters:", len(interpreters))
     print(interpreters)
     sys.stdout.flush()
-
-def translate_retval(lang, values):
-    for i in range(len(values)):
-        # Verification if message support i18n
-        if values[i][0] == 'codeerror':
-            if type(values[i][2]) == i18n.I18n:
-                values[i] = (values[i][0], values[i][1], values[i][2].getText(lang))
-        elif values[i][0] == 'disassembly':
-            if type(values[i][1]) == i18n.I18n:
-                values[i][1] = values[i][1].getText(lang)
-    return values
-
 
 async def async_webserver():
     print("Started WebSocket on port 31415")
@@ -815,29 +805,10 @@ def init_server(server_type):
 if hasattr(signal, 'SIGUSR1'):
     signal.signal(signal.SIGUSR1, display_amount_users)
 
-
 if __name__ == '__main__':
-    ## SPOSTATO IN init_webserver()
-    # start_server = websockets.serve(handler, '0.0.0.0', 31415)
-    ##
-
-    ### INUTILE PERCHÈ uvloop NON È SUPPORTATO SU WINDOWS (sarebbe solo per ottimizzare gli asyncio default di python)
-    # if "uvloop" in globals():
-    #     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-    #     print("Using uvloop")
-    ###
-
-    ## SCRITTO CON FUNZIONI MENO OBSOLETE IN init_webserver()
-    # asyncio.get_event_loop().run_until_complete(start_server)
-    # asyncio.get_event_loop().run_forever()
-    ##
-
-    ## Rimosso perchè inutile
-    # if DEBUG:
-    
-    #### SOLUZIONE FUNZIONANTE ESEGUENDO ENTRAMBI I SERVER CONTEMPORANAMENTE
-    freeze_support() # necessario nell'utilizzo di multiprocessing su Windows
+    freeze_support()
 
     http_server = init_server(http_server)
     web_server = init_server(web_server)
+
     app = NativeApp()
