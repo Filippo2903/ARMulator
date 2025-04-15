@@ -6,7 +6,6 @@ from ply.lex import LexError
 from tokenizer import ParserError, lexer
 import yaccparser
 from settings import getSetting
-from i18n import I18n as _
 
 memory_configs = {
     "simulation": {"INTVEC": 0x00, "CODE": 0x80, "DATA": 0x1000},
@@ -121,7 +120,7 @@ def parse(code, memLayout="simulation"):
 
         if "SECTION" in parsedLine:
             if snippetMode:
-                listErrors.append(("codeerror", i, _('assembler.beforeSection')))
+                listErrors.append(("codeerror", i, "Vous ne pouvez pas écrire d'instruction avant le premier mot clé SECTION; si vous souhaitez tester un extrait de code, ne déclarez aucune section."))
                 continue
             lastLineType = "SECTION"
             if "SNIPPET_DUMMY_SECTION" in bytecode['__MEMINFOSTART']:

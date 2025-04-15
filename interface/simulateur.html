@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="{{_('langCode')}}">
+<html>
     <head>
         <meta charset="UTF-8">
-        <title>Simulateur ARM</title>
+        <title>ARM-Compiler</title>
         <link rel="stylesheet" type="text/css" media="screen" href="static/css/style.min.css"/>
         <link rel="stylesheet" type="text/css" media="screen" href="static/css/jquery-ui.min.css"/>
         <script src="static/js/ace/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -20,15 +20,16 @@
         <link rel="stylesheet" href="static/js/editablegrid/editablegrid.css" type="text/css" media="screen">
         <link rel="stylesheet" href="static/css/contained-bootstrap.min.css" type="text/css" media="screen">
     </head>
+
     <body>
     <div id="message_bar"></div>
     <table id="content-main">
         <tr>
             <td id="left_menu">
-                <a href="?page=accueil"><div class="left_item{{!' current_page' if page == "accueil" else ""}}"><div class="left_item_inner">Accueil</div></div></a>
-                <a href="?page=demo"><div class="left_item{{!' current_page' if page == "demo" else ""}}"><div class="left_item_inner">D&eacute;mo</div></div></a>
-                <a href="?page=exo"><div class="left_item{{!' current_page' if page == "exo" else ""}}"><div class="left_item_inner">Exercices formatifs</div></div></a>
-                <a href="?page=tp"><div class="left_item{{!' current_page' if page == "tp" else ""}}"><div class="left_item_inner">Travaux pratiques</div></div></a>
+                <a href="?page=accueil"><div class="left_item"><div class="left_item_inner">Accueil</div></div></a>
+                <a href="?page=demo"><div class="left_item"><div class="left_item_inner">D&eacute;mo</div></div></a>
+                <a href="?page=exo"><div class="left_item"><div class="left_item_inner">Exercices formatifs</div></div></a>
+                <a href="?page=tp"><div class="left_item"><div class="left_item_inner">Travaux pratiques</div></div></a>
                 <a href="?sim=nouveau&r={{ rand }}#tabsmain-simulation"><div class="left_item"><div class="left_item_inner">Simulation libre</div></div></a>
                 <div class="left_item" id="slideout">
                     <div class="left_item_inner_top">&#10095;</div>
@@ -73,7 +74,7 @@
                                             <li class="tab-reg"><a href="#tabs1-SVC">SVC</a></li>
                                         </ul>
                                         <div id="tabs1-User" class="border_container_reg">
-                                            <h4 id="gp-user">{{_('simulator.generalPurposeRegisters')}}</h4>
+                                            <h4 id="gp-user">General Purpose Registers</h4>
                                             <table class="registers">
                                                 <thead>
                                                 <tr>
@@ -435,16 +436,19 @@
                                             <hr/>
                                             Vitesse d'ex&eacute;cution : &nbsp;<input class="config_input" id="animate_speed" type="text" value="0"/>ms<br/>
                                             <hr/>
-                                            <!-- Language selection is temporary hidden until english translation is complete -->
-                                            <div style="display: none;> 
-                                                Langage : &nbsp;
+
+                                            <!-- Language selection -->
+                                            <div> 
+                                                Language: &nbsp;
                                                 <select id='language'>
-                                                      <option value="fr">Français</option>
-                                                      <option value="en">English</option>
+                                                    <option value="it">Italiano</option>
+                                                    <option value="en">English</option>
+                                                    <option value="fr">Fran&#231;ais</option>
                                                 </select>
-                                                <br/>
-                                                <hr/>
                                             </div>
+
+                                            <br>
+
                                             <button id="lightmode">Modifier l'arrière-plan</button>
                                             <div style="height: 3em;"></div>
                                         </div>
@@ -452,7 +456,7 @@
                                 </td>
                                 <td id="editorPanel">
                                     <div id="debugger_buttons">
-                                        <button onclick="assemble('{{ lang }}')" id="assemble" class="top_buttons">D&eacute;marrer</button>
+                                        <button onclick="assemble()" id="assemble" class="top_buttons">D&eacute;marrer</button>
                                         <button onclick="reset()" id="reset" class="top_buttons" disable="disabled">R&eacute;initialiser</button>
                                         <button id="run" onclick="simulate('run')" disable="disabled" class="top_buttons"><img src="static/image/run.png" alt="run"/></button>
                                         <button id="stepback" onclick="simulate('stepback')" disable="disabled" class="top_buttons"><img src="static/image/back.png" alt="step back"/></button>
@@ -465,7 +469,7 @@
                                 </td>
                                 <td id="dashboard">
                                     <div class="border_container">
-                                        <h4>{{_('simulator.currentInstruction')}}</h4>
+                                        <h4>Current Instruction</h4>
                                         <div id="disassembly"></div>
                                     </div>
                                     <div class="border_container">
@@ -496,6 +500,12 @@
     </table>
 
     <script type="text/javascript">
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!document.cookie.split(';').some((item) => item.trim().startsWith('lang='))) {
+                document.cookie = "lang=en; path=/; SameSite=Lax";
+            }
+        });
+
         var editor = ace.edit("editor");
         var assembly_armMode = ace.require("ace/mode/assembly_arm").Mode;
 

@@ -4,7 +4,6 @@ from ply.lex import LexToken
 
 from tokenizer import tokens, ParserError, lexer
 from settings import getSetting
-from i18n import I18n as _
 
 import simulatorOps.utils as instruction
 
@@ -845,7 +844,7 @@ def p_multiplylonginstruction(p):
     # RdHi, RdLo, and Rm must all specify different registers.
     sameRegister = [reg for reg in regs if regs.count(reg) > 1]
     if sameRegister:
-        raise YaccError(_('yaccparser.sameRegister').format(sameRegister[0]))
+        raise YaccError(f"Le registre R{sameRegister[0]} ne peut être utilisé plus d'une fois.")
 
     p[0] |= p[4] << 12          # Set RdLo
     p[0] |= p[6] << 16          # Set RdHi
