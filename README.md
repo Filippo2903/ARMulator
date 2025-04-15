@@ -4,6 +4,8 @@
 
 ### 2. **Fixed flags for registers**
 
+### 3. **Added linux executable**
+
 # Work to do
 
 ### 1. Add port check for webserver and http server
