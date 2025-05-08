@@ -310,7 +310,7 @@ class BCInterpreter:
     def getCurrentInfos(self):
         """
         Return the current simulator state, with information relevant to the UI. The value is returned as :
-        [["highlightread", ["r3", "SVC_r12", "z", "sz"]], ["highlightwrite", ["r1", "MEM_adresseHexa"]], ["nextline", 42], ["disassembly", ""]]
+        [["highlightRead", ["r3", "SVC_r12", "z", "sz"]], ["highlightwrite", ["r1", "MEM_adresseHexa"]], ["nextline", 42], ["disassembly", ""]]
 
         See the interface for an explanation of this syntax
         """

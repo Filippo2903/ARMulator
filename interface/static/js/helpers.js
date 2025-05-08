@@ -1,3 +1,5 @@
+const LOCAL_STORAGE_KEY = "savedEditorSession";
+
 function clearSelection() {
     var sel;
     if ((sel = document.selection) && sel.empty) {
@@ -10,31 +12,13 @@ function clearSelection() {
         if (activeEl) {
             var tagName = activeEl.nodeName.toLowerCase();
             if (
-                tagName == "textarea" ||
-                (tagName == "input" && activeEl.type == "text")
+                tagName === "textarea" ||
+                (tagName === "input" && activeEl.type === "text")
             ) {
-                // Collapse the selection to the end
                 activeEl.selectionStart = activeEl.selectionEnd;
             }
         }
     }
-}
-
-// //////////
-// Get parameters
-function getSearchParameters() {
-    var prmstr = window.location.search.substr(1);
-    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
-}
-
-function transformToAssocArray(prmstr) {
-    var params = {};
-    var prmarr = prmstr.split("&");
-    for (var i = 0; i < prmarr.length; i++) {
-        var tmparr = prmarr[i].split("=");
-        params[tmparr[0]] = tmparr[1];
-    }
-    return params;
 }
 
 // //////////
@@ -53,17 +37,7 @@ function destroyClickedElement(event) {
     document.body.removeChild(event.target);
 }
 
-function getURLParameter(param) {
-    var pageURL = window.location.search.substring(1);
-    var URLVariables = pageURL.split("&");
-    for (var i = 0; i < URLVariables.length; i++) {
-        var parameterName = URLVariables[i].split("=");
-        if (parameterName[0] == param) {
-            return parameterName[1];
-        }
-    }
-}
-
+// 🔄 VERSIONE AGGIORNATA
 function saveTextAsFile() {
     var textToWrite = editor.getValue();
 
@@ -72,9 +46,11 @@ function saveTextAsFile() {
     form.setAttribute("action", "/download/");
     form.setAttribute("target", "_blank");
 
-    var sim = getURLParameter("sim");
-
-    params = { sim: sim, data: textToWrite };
+    // Usa una chiave fissa per inviare nel form POST
+    var params = {
+        sim: LOCAL_STORAGE_KEY, // o un altro nome se vuoi cambiarlo nel backend
+        data: textToWrite,
+    };
 
     for (var key in params) {
         if (params.hasOwnProperty(key)) {
@@ -108,15 +84,12 @@ $(window).bind("keydown", function (e) {
                 case 37: // left
                     simulate("stepforward");
                     break;
-
                 case 38: // up
                     assemble();
                     break;
-
                 case 39: // right
                     simulate("stepout");
                     break;
-
                 case 40: // down
                     simulate("stepinto");
                     break;
@@ -135,9 +108,8 @@ function loadFileAsText() {
 }
 
 function setLang(lang) {
-    previousLang = getLang();
-
-    if (previousLang != lang) {
+    var previousLang = getLang();
+    if (previousLang !== lang) {
         document.cookie = "lang=" + lang;
         location.reload();
     }
@@ -145,8 +117,6 @@ function setLang(lang) {
 
 function getLang() {
     var value = "; " + document.cookie;
-
     var parts = value.split("; lang=");
-
-    if (parts.length == 2) return parts.pop().split(";").shift();
+    if (parts.length === 2) return parts.pop().split(";").shift();
 }

@@ -124,7 +124,7 @@ Il est possible de mettre en place des points d'arrêt (\textit{breakpoints}) en
 \caption{Un point d'arrêt (\textit{breakpoint}) peut être mis en place en cliquant sur le numéro de ligne.}
 \end{figure}
 
-\paragraph{\textbf{Note importante :}}un point d'arrêt peut être placé sur n'importe quelle ligne si le programme n'est \emph{pas assemblé}. Une fois le programme \emph{assemblé} (le bouton ``Démarrer'' pressé et le code assemblé sans erreur), un point d'arrêt peut seulement être placé sur une ligne \emph{contenant une instruction} et un point d'arrêt invalide est désactivé ou déplacé sur la prochaine ligne. Si l'utilisateur clique sur une ligne ne contenant pas d'instruction, le point d'arrêt sera placé sur la prochaine ligne contenant une instruction. Par exemple, à la figure \ref{f:editeurbkpt}, cliquer sur la ligne 17 placera un point d'arrêt à la ligne \emph{18}.
+\paragraph{\textbf{Note importante :}}un point d'arrêt peut être placé sur n'importe quelle ligne si le programme n'est \emph{pas assemblé}. Une fois le programme \emph{assemblé} (le bouton ``Start'' pressé et le code assemblé sans erreur), un point d'arrêt peut seulement être placé sur une ligne \emph{contenant une instruction} et un point d'arrêt invalide est désactivé ou déplacé sur la prochaine ligne. Si l'utilisateur clique sur une ligne ne contenant pas d'instruction, le point d'arrêt sera placé sur la prochaine ligne contenant une instruction. Par exemple, à la figure \ref{f:editeurbkpt}, cliquer sur la ligne 17 placera un point d'arrêt à la ligne \emph{18}.
 
 Lors de l'exécution, l'éditeur passe en mode lecture seule. Il affiche cependant certaines informations. La ligne en cours d'exécution est surlignée en rouge bourgogne :
 \begin{figure}[h!]
@@ -147,7 +147,7 @@ De même, lorsque l'instruction courante est un branchement ou un appel de fonct
 \subsection{Contrôles du simulateur}
 
 Les boutons de contrôle du simulateur permettent d'agir sur la simulation. 
-Cette interface diffère selon le mode actuel. Dans le mode \emph{édition} (figure~\ref{f:controles1}), seul le bouton \textit{Démarrer} est actif. Dans le mode \emph{exécution}, que l'on peut accéder en pressant sur \textit{Démarrer}, tous les boutons sont actifs, et le bouton \textit{Démarrer} devient \textit{Arrêter}. 
+Cette interface diffère selon le mode actuel. Dans le mode \emph{édition} (figure~\ref{f:controles1}), seul le bouton \textit{Start} est actif. Dans le mode \emph{exécution}, que l'on peut accéder en pressant sur \textit{Start}, tous les boutons sont actifs, et le bouton \textit{Start} devient \textit{Arrêter}. 
 \begin{figure}[h!]
 \raggedleft
 \includegraphics[width=0.8\linewidth]{pics/controles_1b.png}
@@ -162,7 +162,7 @@ Cette interface diffère selon le mode actuel. Dans le mode \emph{édition} (fig
 \caption{Barre de contrôle en mode \emph{exécution}}
 \end{figure}
 
-Lorsque le bouton \textit{Démarrer} est pressé, le simulateur tente d'abord d'assembler le code. Si aucune erreur n'est détectée, il passe alors en mode exécution. Dans ce mode, tous les boutons sont actifs et sont, respectivement, de gauche à droite :
+Lorsque le bouton \textit{Start} est pressé, le simulateur tente d'abord d'assembler le code. Si aucune erreur n'est détectée, il passe alors en mode exécution. Dans ce mode, tous les boutons sont actifs et sont, respectivement, de gauche à droite :
 \begin{enumerate}
 	\item \textbf{Arrêt} : interrompt la simulation et revient en mode édition.
 	\item \textbf{Réinitialisation} : effectue l'équivalent d'une interruption \emph{reset} sur le microprocesseur. La valeur de PC est mise à $0$. Notez que cela n'affecte \emph{pas} la valeur des autres registres et des drapeaux.
