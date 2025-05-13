@@ -38,7 +38,7 @@ class NativeApp(QApplication):
         self.window.setCentralWidget(self.browser)
         self.window.setWindowTitle("ARM-Compiler")
         self.window.resize(800, 600)
-        self.window.show()
+        self.window.showMaximized()
 
         self.watcher = QFileSystemWatcher(self)
         self.addInitialWatchedFiles("interface")

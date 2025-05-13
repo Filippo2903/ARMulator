@@ -47,1379 +47,1116 @@
     </head>
 
     <body>
-        <div id="message_bar"></div>
-        <div id="slideout_inner">
-            <div id="slide_buttons">
-                <button id="session_delete" class="session_delete">
-                    Effacer
-                </button>
+        <div id="main-container">
+            <div id="message_bar"></div>
 
-                <button id="session_delete_all" class="delete_button">
-                    Effacer tout
-                </button>
+            <div id="session-bar">
+                <div id="sessions"></div>
 
-                <button id="session_new">Nouvelle session</button>
+                <div id="top-buttons">
+                    <button id="session_new">+</button>
+                    <button id="configurations">Settings</button>
+                </div>
+
+                <div id="config_diag" style="display: hidden">
+                    <h1>Configurations</h1>
+                    <h4>Interruptions</h4>
+                    <input
+                        type="checkbox"
+                        id="interrupt_active"
+                        name="interrupt_active"
+                        value="activate" />Activer<br />
+                    Type
+                    <select id="interrupt_type">
+                        <option value="FIQ">FIQ</option>
+                        <option value="IRQ">IRQ</option></select
+                    ><br />
+                    <input
+                        class="config_input"
+                        id="interrupt_cycles"
+                        type="text"
+                        value="50"
+                        name="interrupt_cycles" />&nbsp;cycles<br />
+                    <input
+                        class="config_input"
+                        id="interrupt_cycles_first"
+                        type="text"
+                        value="50"
+                        name="interrupt_cycles_first" />&nbsp;cycles (premier)
+                    <hr />
+                    Vitesse d'ex&eacute;cution : &nbsp;<input
+                        class="config_input"
+                        id="animate_speed"
+                        type="text"
+                        value="0" />ms<br />
+                    <hr />
+                    <!-- Language selection -->
+                    <div>
+                        Language: &nbsp;
+                        <select id="language">
+                            <option value="it">Italiano</option>
+                            <option value="en">English</option>
+                            <option value="fr">Fran&#231;ais</option>
+                        </select>
+                    </div>
+                    <br />
+                    <button id="lightmode">Modifier l'arrière-plan</button>
+                    <div style="height: 3em"></div>
+                </div>
             </div>
-            <div id="session_content"></div>
-        </div>
 
-        <table id="content-main">
-            <tr>
-                <td id="content-td">
-                    <div id="tabmain-container" class="tab-container">
-                        <ul class="etabs-main">
-                            <li class="tab-main">
-                                <a href="#tabsmain-simulation">Test</a>
-                            </li>
-                        </ul>
+            <div id="simulator-container" class="tab-container">
+                <ul class="etabs-main">
+                    <li class="tab-main">
+                        <a href="#tabsmain-simulation">Test</a>
+                    </li>
+                </ul>
 
-                        <div id="tabsmain-simulation">
-                            <table id="content-sim">
-                                <tr>
-                                    <td id="regView">
-                                        <div
-                                            id="tab-container"
-                                            class="tab-container">
-                                            <ul class="etabs-reg">
-                                                <li class="tab-reg">
-                                                    <a href="#tabs1-User"
-                                                        >User</a
-                                                    >
-                                                </li>
-                                                <li class="tab-reg">
-                                                    <a href="#tabs1-FIQ">FIQ</a>
-                                                </li>
-                                                <li class="tab-reg">
-                                                    <a href="#tabs1-IRQ">IRQ</a>
-                                                </li>
-                                                <li class="tab-reg">
-                                                    <a href="#tabs1-SVC">SVC</a>
-                                                </li>
-                                            </ul>
-                                            <div
-                                                id="tabs1-User"
-                                                class="border_container_reg">
-                                                <h4 id="gp-user">
-                                                    General Purpose Registers
-                                                </h4>
-                                                <table class="registers">
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                class="regh_name">
-                                                                Nom
-                                                            </th>
-                                                            <th
-                                                                class="regh_val">
-                                                                Valeur
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tr
-                                                        id="user_r0"
-                                                        class="register_row">
-                                                        <td>R0</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r0"
-                                                                type="text"
-                                                                name="r0" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r1"
-                                                        class="register_row">
-                                                        <td>R1</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r1"
-                                                                type="text"
-                                                                name="r1" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r2"
-                                                        class="register_row">
-                                                        <td>R2</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r2"
-                                                                type="text"
-                                                                name="r2" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r3"
-                                                        class="register_row">
-                                                        <td>R3</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r3"
-                                                                type="text"
-                                                                name="r3" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r4"
-                                                        class="register_row">
-                                                        <td>R4</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r4"
-                                                                type="text"
-                                                                name="r4" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r5"
-                                                        class="register_row">
-                                                        <td>R5</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r5"
-                                                                type="text"
-                                                                name="r5" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r6"
-                                                        class="register_row">
-                                                        <td>R6</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r6"
-                                                                type="text"
-                                                                name="r6" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r7"
-                                                        class="register_row">
-                                                        <td>R7</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r7"
-                                                                type="text"
-                                                                name="r7" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r8"
-                                                        class="register_row">
-                                                        <td>R8</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r8"
-                                                                type="text"
-                                                                name="r8" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r9"
-                                                        class="register_row">
-                                                        <td>R9</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r9"
-                                                                type="text"
-                                                                name="r9" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r10"
-                                                        class="register_row">
-                                                        <td>R10</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r10"
-                                                                type="text"
-                                                                name="r10" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r11"
-                                                        class="register_row">
-                                                        <td>R11</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r11"
-                                                                type="text"
-                                                                name="r11" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r12"
-                                                        class="register_row">
-                                                        <td>R12</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r12"
-                                                                type="text"
-                                                                name="r12" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r13"
-                                                        class="register_row">
-                                                        <td>
-                                                            R13<span
-                                                                class="smaller_font">
-                                                                (sp)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r13"
-                                                                type="text"
-                                                                name="r13" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r14"
-                                                        class="register_row">
-                                                        <td>
-                                                            R14<span
-                                                                class="smaller_font">
-                                                                (lr)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r14"
-                                                                type="text"
-                                                                name="r14" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="user_r15"
-                                                        class="register_row">
-                                                        <td>
-                                                            R15<span
-                                                                class="smaller_font">
-                                                                (pc)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="r15"
-                                                                type="text"
-                                                                name="r15" />
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div
-                                                id="tabs1-FIQ"
-                                                class="border_container_reg">
-                                                <h4 id="gp-fiq">
-                                                    Registre
-                                                    G&eacute;n&eacute;raux (FIQ)
-                                                </h4>
-                                                <table class="registers">
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                class="regh_name">
-                                                                Nom
-                                                            </th>
-                                                            <th
-                                                                class="regh_val">
-                                                                Valeur
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tr
-                                                        id="fiq_r0"
-                                                        class="register_row">
-                                                        <td>R0</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r0"
-                                                                type="text"
-                                                                name="r0" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r1"
-                                                        class="register_row">
-                                                        <td>R1</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r1"
-                                                                type="text"
-                                                                name="r1" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r2"
-                                                        class="register_row">
-                                                        <td>R2</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r2"
-                                                                type="text"
-                                                                name="r2" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r3"
-                                                        class="register_row">
-                                                        <td>R3</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r3"
-                                                                type="text"
-                                                                name="r3" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r4"
-                                                        class="register_row">
-                                                        <td>R4</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r4"
-                                                                type="text"
-                                                                name="r4" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r5"
-                                                        class="register_row">
-                                                        <td>R5</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r5"
-                                                                type="text"
-                                                                name="r5" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r6"
-                                                        class="register_row">
-                                                        <td>R6</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r6"
-                                                                type="text"
-                                                                name="r6" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r7"
-                                                        class="register_row">
-                                                        <td>R7</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r7"
-                                                                type="text"
-                                                                name="r7" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r8"
-                                                        class="register_row">
-                                                        <td>
-                                                            R8<span
-                                                                class="smaller_font">
-                                                                FIQ</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r8"
-                                                                type="text"
-                                                                name="r8" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r9"
-                                                        class="register_row">
-                                                        <td>
-                                                            R9<span
-                                                                class="smaller_font">
-                                                                FIQ</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r9"
-                                                                type="text"
-                                                                name="r9" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r10"
-                                                        class="register_row">
-                                                        <td>
-                                                            R10<span
-                                                                class="smaller_font">
-                                                                FIQ</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r10"
-                                                                type="text"
-                                                                name="r10" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r11"
-                                                        class="register_row">
-                                                        <td>
-                                                            R11<span
-                                                                class="smaller_font">
-                                                                FIQ</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r11"
-                                                                type="text"
-                                                                name="r11" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r12"
-                                                        class="register_row">
-                                                        <td>
-                                                            R12<span
-                                                                class="smaller_font">
-                                                                FIQ</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r12"
-                                                                type="text"
-                                                                name="r12" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r13"
-                                                        class="register_row">
-                                                        <td>
-                                                            R13<span
-                                                                class="smaller_font">
-                                                                FIQ (sp)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r13"
-                                                                type="text"
-                                                                name="r13" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r14"
-                                                        class="register_row">
-                                                        <td>
-                                                            R14<span
-                                                                class="smaller_font">
-                                                                FIQ (lr)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r14"
-                                                                type="text"
-                                                                name="r14" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="fiq_r15"
-                                                        class="register_row">
-                                                        <td>
-                                                            R15<span
-                                                                class="smaller_font">
-                                                                (pc)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="FIQ_r15"
-                                                                type="text"
-                                                                name="r15" />
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div
-                                                id="tabs1-IRQ"
-                                                class="border_container_reg">
-                                                <h4 id="gp-irq">
-                                                    Registre
-                                                    G&eacute;n&eacute;raux (IRQ)
-                                                </h4>
-                                                <table class="registers">
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                class="regh_name">
-                                                                Nom
-                                                            </th>
-                                                            <th
-                                                                class="regh_val">
-                                                                Valeur
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tr
-                                                        id="irq_r0"
-                                                        class="register_row">
-                                                        <td>R0</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r0"
-                                                                type="text"
-                                                                name="r0" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r1"
-                                                        class="register_row">
-                                                        <td>R1</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r1"
-                                                                type="text"
-                                                                name="r1" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r2"
-                                                        class="register_row">
-                                                        <td>R2</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r2"
-                                                                type="text"
-                                                                name="r2" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r3"
-                                                        class="register_row">
-                                                        <td>R3</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r3"
-                                                                type="text"
-                                                                name="r3" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r4"
-                                                        class="register_row">
-                                                        <td>R4</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r4"
-                                                                type="text"
-                                                                name="r4" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r5"
-                                                        class="register_row">
-                                                        <td>R5</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r5"
-                                                                type="text"
-                                                                name="r5" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r6"
-                                                        class="register_row">
-                                                        <td>R6</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r6"
-                                                                type="text"
-                                                                name="r6" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r7"
-                                                        class="register_row">
-                                                        <td>R7</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r7"
-                                                                type="text"
-                                                                name="r7" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r8"
-                                                        class="register_row">
-                                                        <td>R8</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r8"
-                                                                type="text"
-                                                                name="r8" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r9"
-                                                        class="register_row">
-                                                        <td>R9</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r9"
-                                                                type="text"
-                                                                name="r9" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r10"
-                                                        class="register_row">
-                                                        <td>R10</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r10"
-                                                                type="text"
-                                                                name="r10" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r11"
-                                                        class="register_row">
-                                                        <td>R11</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r11"
-                                                                type="text"
-                                                                name="r11" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r12"
-                                                        class="register_row">
-                                                        <td>R12</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r12"
-                                                                type="text"
-                                                                name="r12" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r13"
-                                                        class="register_row">
-                                                        <td>
-                                                            R13<span
-                                                                class="smaller_font">
-                                                                IRQ (sp)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r13"
-                                                                type="text"
-                                                                name="r13" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r14"
-                                                        class="register_row">
-                                                        <td>
-                                                            R14<span
-                                                                class="smaller_font">
-                                                                IRQ (lr)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r14"
-                                                                type="text"
-                                                                name="r14" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="irq_r15"
-                                                        class="register_row">
-                                                        <td>
-                                                            R15<span
-                                                                class="smaller_font">
-                                                                (pc)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="IRQ_r15"
-                                                                type="text"
-                                                                name="r15" />
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div
-                                                id="tabs1-SVC"
-                                                class="border_container_reg">
-                                                <h4 id="gp-svc">
-                                                    Registre
-                                                    G&eacute;n&eacute;raux (SVC)
-                                                </h4>
-                                                <table class="registers">
-                                                    <thead>
-                                                        <tr>
-                                                            <th
-                                                                class="regh_name">
-                                                                Nom
-                                                            </th>
-                                                            <th
-                                                                class="regh_val">
-                                                                Valeur
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tr
-                                                        id="svc_r0"
-                                                        class="register_row">
-                                                        <td>R0</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r0"
-                                                                type="text"
-                                                                name="r0" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r1"
-                                                        class="register_row">
-                                                        <td>R1</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r1"
-                                                                type="text"
-                                                                name="r1" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r2"
-                                                        class="register_row">
-                                                        <td>R2</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r2"
-                                                                type="text"
-                                                                name="r2" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r3"
-                                                        class="register_row">
-                                                        <td>R3</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r3"
-                                                                type="text"
-                                                                name="r3" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r4"
-                                                        class="register_row">
-                                                        <td>R4</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r4"
-                                                                type="text"
-                                                                name="r4" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r5"
-                                                        class="register_row">
-                                                        <td>R5</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r5"
-                                                                type="text"
-                                                                name="r5" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r6"
-                                                        class="register_row">
-                                                        <td>R6</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r6"
-                                                                type="text"
-                                                                name="r6" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r7"
-                                                        class="register_row">
-                                                        <td>R7</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r7"
-                                                                type="text"
-                                                                name="r7" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r8"
-                                                        class="register_row">
-                                                        <td>R8</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r8"
-                                                                type="text"
-                                                                name="r8" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r9"
-                                                        class="register_row">
-                                                        <td>R9</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r9"
-                                                                type="text"
-                                                                name="r9" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r10"
-                                                        class="register_row">
-                                                        <td>R10</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r10"
-                                                                type="text"
-                                                                name="r10" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r11"
-                                                        class="register_row">
-                                                        <td>R11</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r11"
-                                                                type="text"
-                                                                name="r11" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r12"
-                                                        class="register_row">
-                                                        <td>R12</td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r12"
-                                                                type="text"
-                                                                name="r12" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r13"
-                                                        class="register_row">
-                                                        <td>
-                                                            R13<span
-                                                                class="smaller_font">
-                                                                SVC (sp)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r13"
-                                                                type="text"
-                                                                name="r13" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r14"
-                                                        class="register_row">
-                                                        <td>
-                                                            R14<span
-                                                                class="smaller_font">
-                                                                SVC (lr)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r14"
-                                                                type="text"
-                                                                name="r14" />
-                                                        </td>
-                                                    </tr>
-                                                    <tr
-                                                        id="svc_r15"
-                                                        class="register_row">
-                                                        <td>
-                                                            R15<span
-                                                                class="smaller_font">
-                                                                (pc)</span
-                                                            >
-                                                        </td>
-                                                        <td>
-                                                            <input
-                                                                class="regVal formatted_value"
-                                                                id="SVC_r15"
-                                                                type="text"
-                                                                name="r15" />
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                            <div id="after-reg">
-                                                <select id="valueformat">
-                                                    <option value="hex">
-                                                        Hexad&eacute;cimal
-                                                    </option>
-                                                    <option value="decsign">
-                                                        D&eacute;cimal
-                                                        (sign&eacute;)
-                                                    </option>
-                                                    <option value="dec">
-                                                        D&eacute;cimal
-                                                        (non-sign&eacute;)
-                                                    </option>
-                                                    <option value="bin">
-                                                        Binaire
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="border_container smaller_font">
-                                            <h4>&Eacute;tat courant</h4>
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>&nbsp;</th>
-                                                        <th>CPSR</th>
-                                                        <th id="spsr_title">
-                                                            SPSR
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>Negatif (N)</td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="n">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="n"
-                                                                    type="text"
-                                                                    name="n"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="sn">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="sn"
-                                                                    type="text"
-                                                                    name="sn"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Zero (Z)</td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="z">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="z"
-                                                                    type="text"
-                                                                    name="z"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="sz">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="sz"
-                                                                    type="text"
-                                                                    name="sz"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Retenue (C)</td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="c">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="c"
-                                                                    type="text"
-                                                                    name="c"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="sc">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="sc"
-                                                                    type="text"
-                                                                    name="sc"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            D&eacute;passement
-                                                            (V)
-                                                        </td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="v">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="v"
-                                                                    type="text"
-                                                                    name="v"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="sv">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="sv"
-                                                                    type="text"
-                                                                    name="sv"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Ignore IRQ</td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="i">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="i"
-                                                                    type="text"
-                                                                    name="i"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="si">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="si"
-                                                                    type="text"
-                                                                    name="si"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Ignore FIQ</td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="f">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="f"
-                                                                    type="text"
-                                                                    name="f"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                        <td>
-                                                            <button
-                                                                class="flag_btn"
-                                                                name="sf">
-                                                                <input
-                                                                    class="statusVal pointer"
-                                                                    id="sf"
-                                                                    type="text"
-                                                                    name="sf"
-                                                                    readonly />
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div id="config_wrapper">
-                                            <button id="configurations">
-                                                Paramètres
-                                            </button>
-
-                                            <div
-                                                id="config_diag"
-                                                style="display: hidden">
-                                                <h1>Configurations</h1>
-                                                <h4>Interruptions</h4>
-                                                <input
-                                                    type="checkbox"
-                                                    id="interrupt_active"
-                                                    name="interrupt_active"
-                                                    value="activate" />Activer<br />
-                                                Type
-                                                <select id="interrupt_type">
-                                                    <option value="FIQ">
-                                                        FIQ
-                                                    </option>
-                                                    <option value="IRQ">
-                                                        IRQ
-                                                    </option></select
-                                                ><br />
-                                                <input
-                                                    class="config_input"
-                                                    id="interrupt_cycles"
-                                                    type="text"
-                                                    value="50"
-                                                    name="interrupt_cycles" />&nbsp;cycles<br />
-                                                <input
-                                                    class="config_input"
-                                                    id="interrupt_cycles_first"
-                                                    type="text"
-                                                    value="50"
-                                                    name="interrupt_cycles_first" />&nbsp;cycles
-                                                (premier)
-                                                <hr />
-                                                Vitesse d'ex&eacute;cution :
-                                                &nbsp;<input
-                                                    class="config_input"
-                                                    id="animate_speed"
-                                                    type="text"
-                                                    value="0" />ms<br />
-                                                <hr />
-
-                                                <!-- Language selection -->
-                                                <div>
-                                                    Language: &nbsp;
-                                                    <select id="language">
-                                                        <option value="it">
-                                                            Italiano
-                                                        </option>
-                                                        <option value="en">
-                                                            English
-                                                        </option>
-                                                        <option value="fr">
-                                                            Fran&#231;ais
-                                                        </option>
-                                                    </select>
-                                                </div>
-
-                                                <br />
-
-                                                <button id="lightmode">
-                                                    Modifier l'arrière-plan
-                                                </button>
-                                                <div style="height: 3em"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td id="editorPanel">
-                                        <div id="debugger_buttons">
-                                            <button
-                                                onclick="assemble()"
-                                                id="assemble"
-                                                class="top_buttons">
-                                                D&eacute;marrer
-                                            </button>
-                                            <button
-                                                onclick="reset()"
-                                                id="reset"
-                                                class="top_buttons"
-                                                disable="disabled">
-                                                R&eacute;initialiser
-                                            </button>
-                                            <button
-                                                id="run"
-                                                onclick="simulate('run')"
-                                                disable="disabled"
-                                                class="top_buttons">
-                                                <img
-                                                    src="static/image/run.png"
-                                                    alt="run" />
-                                            </button>
-                                            <button
-                                                id="stepback"
-                                                onclick="simulate('stepback')"
-                                                disable="disabled"
-                                                class="top_buttons">
-                                                <img
-                                                    src="static/image/back.png"
-                                                    alt="step back" />
-                                            </button>
-                                            <button
-                                                id="stepout"
-                                                onclick="simulate('stepout')"
-                                                disable="disabled"
-                                                class="top_buttons">
-                                                <img
-                                                    src="static/image/out.png"
-                                                    alt="step out" />
-                                            </button>
-                                            <button
-                                                id="stepforward"
-                                                onclick="simulate('stepforward')"
-                                                disable="disabled"
-                                                class="top_buttons">
-                                                <img
-                                                    src="static/image/over.png"
-                                                    alt="step forward" />
-                                            </button>
-                                            <button
-                                                id="stepin"
-                                                onclick="simulate('stepinto')"
-                                                disable="disabled"
-                                                class="top_buttons">
-                                                <img
-                                                    src="static/image/into.png"
-                                                    alt="step into" />
-                                            </button>
-                                        </div>
-                                        <div id="editor">{{ code }}</div>
-                                        <br />
-                                    </td>
-                                    <td id="dashboard">
-                                        <div class="border_container">
-                                            <h4>Current Instruction</h4>
-                                            <div id="disassembly"></div>
-                                        </div>
-                                        <div class="border_container">
-                                            <h4>M&eacute;moire</h4>
-                                            <div id="memoryview"></div>
-                                            <div id="paginator"></div>
+                <div id="tabsmain-simulation">
+                    <div id="regView">
+                        <div id="tab-container" class="tab-container">
+                            <ul class="etabs-reg">
+                                <li class="tab-reg">
+                                    <a href="#tabs1-User">User</a>
+                                </li>
+                                <li class="tab-reg">
+                                    <a href="#tabs1-FIQ">FIQ</a>
+                                </li>
+                                <li class="tab-reg">
+                                    <a href="#tabs1-IRQ">IRQ</a>
+                                </li>
+                                <li class="tab-reg">
+                                    <a href="#tabs1-SVC">SVC</a>
+                                </li>
+                            </ul>
+                            <div id="tabs1-User" class="border_container_reg">
+                                <h4 id="gp-user">General Purpose Registers</h4>
+                                <table class="registers">
+                                    <thead>
+                                        <tr>
+                                            <th class="regh_name">Nom</th>
+                                            <th class="regh_val">Valeur</th>
+                                        </tr>
+                                    </thead>
+                                    <tr id="user_r0" class="register_row">
+                                        <td>R0</td>
+                                        <td>
                                             <input
-                                                type="checkbox"
-                                                id="follow_pc"
-                                                checked="checked" />Suivre PC<br />
-                                            Cycle courant :
-                                            <input
-                                                id="cycles_count"
+                                                class="regVal formatted_value"
+                                                id="r0"
                                                 type="text"
-                                                value="0" />
-                                        </div>
-                                        <div>
-                                            <br />
-                                            <div style="float: left">
+                                                name="r0" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r1" class="register_row">
+                                        <td>R1</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r1"
+                                                type="text"
+                                                name="r1" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r2" class="register_row">
+                                        <td>R2</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r2"
+                                                type="text"
+                                                name="r2" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r3" class="register_row">
+                                        <td>R3</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r3"
+                                                type="text"
+                                                name="r3" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r4" class="register_row">
+                                        <td>R4</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r4"
+                                                type="text"
+                                                name="r4" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r5" class="register_row">
+                                        <td>R5</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r5"
+                                                type="text"
+                                                name="r5" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r6" class="register_row">
+                                        <td>R6</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r6"
+                                                type="text"
+                                                name="r6" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r7" class="register_row">
+                                        <td>R7</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r7"
+                                                type="text"
+                                                name="r7" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r8" class="register_row">
+                                        <td>R8</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r8"
+                                                type="text"
+                                                name="r8" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r9" class="register_row">
+                                        <td>R9</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r9"
+                                                type="text"
+                                                name="r9" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r10" class="register_row">
+                                        <td>R10</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r10"
+                                                type="text"
+                                                name="r10" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r11" class="register_row">
+                                        <td>R11</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r11"
+                                                type="text"
+                                                name="r11" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r12" class="register_row">
+                                        <td>R12</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r12"
+                                                type="text"
+                                                name="r12" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r13" class="register_row">
+                                        <td>
+                                            R13<span class="smaller_font">
+                                                (sp)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r13"
+                                                type="text"
+                                                name="r13" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r14" class="register_row">
+                                        <td>
+                                            R14<span class="smaller_font">
+                                                (lr)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r14"
+                                                type="text"
+                                                name="r14" />
+                                        </td>
+                                    </tr>
+                                    <tr id="user_r15" class="register_row">
+                                        <td>
+                                            R15<span class="smaller_font">
+                                                (pc)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="r15"
+                                                type="text"
+                                                name="r15" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="tabs1-FIQ" class="border_container_reg">
+                                <h4 id="gp-fiq">
+                                    Registre G&eacute;n&eacute;raux (FIQ)
+                                </h4>
+                                <table class="registers">
+                                    <thead>
+                                        <tr>
+                                            <th class="regh_name">Nom</th>
+                                            <th class="regh_val">Valeur</th>
+                                        </tr>
+                                    </thead>
+                                    <tr id="fiq_r0" class="register_row">
+                                        <td>R0</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r0"
+                                                type="text"
+                                                name="r0" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r1" class="register_row">
+                                        <td>R1</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r1"
+                                                type="text"
+                                                name="r1" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r2" class="register_row">
+                                        <td>R2</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r2"
+                                                type="text"
+                                                name="r2" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r3" class="register_row">
+                                        <td>R3</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r3"
+                                                type="text"
+                                                name="r3" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r4" class="register_row">
+                                        <td>R4</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r4"
+                                                type="text"
+                                                name="r4" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r5" class="register_row">
+                                        <td>R5</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r5"
+                                                type="text"
+                                                name="r5" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r6" class="register_row">
+                                        <td>R6</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r6"
+                                                type="text"
+                                                name="r6" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r7" class="register_row">
+                                        <td>R7</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r7"
+                                                type="text"
+                                                name="r7" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r8" class="register_row">
+                                        <td>
+                                            R8<span class="smaller_font">
+                                                FIQ</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r8"
+                                                type="text"
+                                                name="r8" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r9" class="register_row">
+                                        <td>
+                                            R9<span class="smaller_font">
+                                                FIQ</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r9"
+                                                type="text"
+                                                name="r9" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r10" class="register_row">
+                                        <td>
+                                            R10<span class="smaller_font">
+                                                FIQ</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r10"
+                                                type="text"
+                                                name="r10" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r11" class="register_row">
+                                        <td>
+                                            R11<span class="smaller_font">
+                                                FIQ</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r11"
+                                                type="text"
+                                                name="r11" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r12" class="register_row">
+                                        <td>
+                                            R12<span class="smaller_font">
+                                                FIQ</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r12"
+                                                type="text"
+                                                name="r12" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r13" class="register_row">
+                                        <td>
+                                            R13<span class="smaller_font">
+                                                FIQ (sp)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r13"
+                                                type="text"
+                                                name="r13" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r14" class="register_row">
+                                        <td>
+                                            R14<span class="smaller_font">
+                                                FIQ (lr)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r14"
+                                                type="text"
+                                                name="r14" />
+                                        </td>
+                                    </tr>
+                                    <tr id="fiq_r15" class="register_row">
+                                        <td>
+                                            R15<span class="smaller_font">
+                                                (pc)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="FIQ_r15"
+                                                type="text"
+                                                name="r15" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="tabs1-IRQ" class="border_container_reg">
+                                <h4 id="gp-irq">
+                                    Registre G&eacute;n&eacute;raux (IRQ)
+                                </h4>
+                                <table class="registers">
+                                    <thead>
+                                        <tr>
+                                            <th class="regh_name">Nom</th>
+                                            <th class="regh_val">Valeur</th>
+                                        </tr>
+                                    </thead>
+                                    <tr id="irq_r0" class="register_row">
+                                        <td>R0</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r0"
+                                                type="text"
+                                                name="r0" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r1" class="register_row">
+                                        <td>R1</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r1"
+                                                type="text"
+                                                name="r1" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r2" class="register_row">
+                                        <td>R2</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r2"
+                                                type="text"
+                                                name="r2" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r3" class="register_row">
+                                        <td>R3</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r3"
+                                                type="text"
+                                                name="r3" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r4" class="register_row">
+                                        <td>R4</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r4"
+                                                type="text"
+                                                name="r4" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r5" class="register_row">
+                                        <td>R5</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r5"
+                                                type="text"
+                                                name="r5" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r6" class="register_row">
+                                        <td>R6</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r6"
+                                                type="text"
+                                                name="r6" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r7" class="register_row">
+                                        <td>R7</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r7"
+                                                type="text"
+                                                name="r7" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r8" class="register_row">
+                                        <td>R8</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r8"
+                                                type="text"
+                                                name="r8" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r9" class="register_row">
+                                        <td>R9</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r9"
+                                                type="text"
+                                                name="r9" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r10" class="register_row">
+                                        <td>R10</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r10"
+                                                type="text"
+                                                name="r10" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r11" class="register_row">
+                                        <td>R11</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r11"
+                                                type="text"
+                                                name="r11" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r12" class="register_row">
+                                        <td>R12</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r12"
+                                                type="text"
+                                                name="r12" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r13" class="register_row">
+                                        <td>
+                                            R13<span class="smaller_font">
+                                                IRQ (sp)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r13"
+                                                type="text"
+                                                name="r13" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r14" class="register_row">
+                                        <td>
+                                            R14<span class="smaller_font">
+                                                IRQ (lr)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r14"
+                                                type="text"
+                                                name="r14" />
+                                        </td>
+                                    </tr>
+                                    <tr id="irq_r15" class="register_row">
+                                        <td>
+                                            R15<span class="smaller_font">
+                                                (pc)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="IRQ_r15"
+                                                type="text"
+                                                name="r15" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="tabs1-SVC" class="border_container_reg">
+                                <h4 id="gp-svc">
+                                    Registre G&eacute;n&eacute;raux (SVC)
+                                </h4>
+                                <table class="registers">
+                                    <thead>
+                                        <tr>
+                                            <th class="regh_name">Nom</th>
+                                            <th class="regh_val">Valeur</th>
+                                        </tr>
+                                    </thead>
+                                    <tr id="svc_r0" class="register_row">
+                                        <td>R0</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r0"
+                                                type="text"
+                                                name="r0" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r1" class="register_row">
+                                        <td>R1</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r1"
+                                                type="text"
+                                                name="r1" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r2" class="register_row">
+                                        <td>R2</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r2"
+                                                type="text"
+                                                name="r2" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r3" class="register_row">
+                                        <td>R3</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r3"
+                                                type="text"
+                                                name="r3" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r4" class="register_row">
+                                        <td>R4</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r4"
+                                                type="text"
+                                                name="r4" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r5" class="register_row">
+                                        <td>R5</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r5"
+                                                type="text"
+                                                name="r5" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r6" class="register_row">
+                                        <td>R6</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r6"
+                                                type="text"
+                                                name="r6" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r7" class="register_row">
+                                        <td>R7</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r7"
+                                                type="text"
+                                                name="r7" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r8" class="register_row">
+                                        <td>R8</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r8"
+                                                type="text"
+                                                name="r8" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r9" class="register_row">
+                                        <td>R9</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r9"
+                                                type="text"
+                                                name="r9" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r10" class="register_row">
+                                        <td>R10</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r10"
+                                                type="text"
+                                                name="r10" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r11" class="register_row">
+                                        <td>R11</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r11"
+                                                type="text"
+                                                name="r11" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r12" class="register_row">
+                                        <td>R12</td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r12"
+                                                type="text"
+                                                name="r12" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r13" class="register_row">
+                                        <td>
+                                            R13<span class="smaller_font">
+                                                SVC (sp)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r13"
+                                                type="text"
+                                                name="r13" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r14" class="register_row">
+                                        <td>
+                                            R14<span class="smaller_font">
+                                                SVC (lr)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r14"
+                                                type="text"
+                                                name="r14" />
+                                        </td>
+                                    </tr>
+                                    <tr id="svc_r15" class="register_row">
+                                        <td>
+                                            R15<span class="smaller_font">
+                                                (pc)</span
+                                            >
+                                        </td>
+                                        <td>
+                                            <input
+                                                class="regVal formatted_value"
+                                                id="SVC_r15"
+                                                type="text"
+                                                name="r15" />
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="after-reg">
+                                <select id="valueformat">
+                                    <option value="hex">
+                                        Hexad&eacute;cimal
+                                    </option>
+                                    <option value="decsign">
+                                        D&eacute;cimal (sign&eacute;)
+                                    </option>
+                                    <option value="dec">
+                                        D&eacute;cimal (non-sign&eacute;)
+                                    </option>
+                                    <option value="bin">Binaire</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="border_container smaller_font">
+                            <h4>&Eacute;tat courant</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>&nbsp;</th>
+                                        <th>CPSR</th>
+                                        <th id="spsr_title">SPSR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Negatif (N)</td>
+                                        <td>
+                                            <button class="flag_btn" name="n">
                                                 <input
-                                                    type="file"
-                                                    onchange="loadFileAsText()"
-                                                    id="fileToLoad"
-                                                    style="display: none" />
-                                                <label
-                                                    for="fileToLoad"
-                                                    class="flat_button"
-                                                    >Restaurer</label
-                                                >
-                                            </div>
-                                            <div style="float: right">
-                                                <button
-                                                    onclick="saveTextAsFile()">
-                                                    Sauvegarder
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                                    class="statusVal pointer"
+                                                    id="n"
+                                                    type="text"
+                                                    name="n"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="flag_btn" name="sn">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="sn"
+                                                    type="text"
+                                                    name="sn"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Zero (Z)</td>
+                                        <td>
+                                            <button class="flag_btn" name="z">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="z"
+                                                    type="text"
+                                                    name="z"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="flag_btn" name="sz">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="sz"
+                                                    type="text"
+                                                    name="sz"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Retenue (C)</td>
+                                        <td>
+                                            <button class="flag_btn" name="c">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="c"
+                                                    type="text"
+                                                    name="c"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="flag_btn" name="sc">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="sc"
+                                                    type="text"
+                                                    name="sc"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>D&eacute;passement (V)</td>
+                                        <td>
+                                            <button class="flag_btn" name="v">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="v"
+                                                    type="text"
+                                                    name="v"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="flag_btn" name="sv">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="sv"
+                                                    type="text"
+                                                    name="sv"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ignore IRQ</td>
+                                        <td>
+                                            <button class="flag_btn" name="i">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="i"
+                                                    type="text"
+                                                    name="i"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="flag_btn" name="si">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="si"
+                                                    type="text"
+                                                    name="si"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ignore FIQ</td>
+                                        <td>
+                                            <button class="flag_btn" name="f">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="f"
+                                                    type="text"
+                                                    name="f"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button class="flag_btn" name="sf">
+                                                <input
+                                                    class="statusVal pointer"
+                                                    id="sf"
+                                                    type="text"
+                                                    name="sf"
+                                                    readonly />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
-                </td>
-            </tr>
-        </table>
+
+                    <div id="editorPanel">
+                        <div id="debugger_buttons">
+                            <button
+                                onclick="assemble()"
+                                id="assemble"
+                                class="top_buttons">
+                                D&eacute;marrer
+                            </button>
+                            <button
+                                onclick="reset()"
+                                id="reset"
+                                class="top_buttons"
+                                disable="disabled">
+                                R&eacute;initialiser
+                            </button>
+                            <button
+                                id="run"
+                                onclick="simulate('run')"
+                                disable="disabled"
+                                class="top_buttons">
+                                <img src="static/image/run.png" alt="run" />
+                            </button>
+                            <button
+                                id="stepback"
+                                onclick="simulate('stepback')"
+                                disable="disabled"
+                                class="top_buttons">
+                                <img
+                                    src="static/image/back.png"
+                                    alt="step back" />
+                            </button>
+                            <button
+                                id="stepout"
+                                onclick="simulate('stepout')"
+                                disable="disabled"
+                                class="top_buttons">
+                                <img
+                                    src="static/image/out.png"
+                                    alt="step out" />
+                            </button>
+                            <button
+                                id="stepforward"
+                                onclick="simulate('stepforward')"
+                                disable="disabled"
+                                class="top_buttons">
+                                <img
+                                    src="static/image/over.png"
+                                    alt="step forward" />
+                            </button>
+                            <button
+                                id="stepin"
+                                onclick="simulate('stepinto')"
+                                disable="disabled"
+                                class="top_buttons">
+                                <img
+                                    src="static/image/into.png"
+                                    alt="step into" />
+                            </button>
+                        </div>
+                        <div id="editor">{{ code }}</div>
+                        <br />
+                    </div>
+
+                    <div id="dashboard">
+                        <div class="border_container">
+                            <h4>Current Instruction</h4>
+                            <div id="disassembly"></div>
+                        </div>
+                        <div class="border_container">
+                            <h4>M&eacute;moire</h4>
+                            <div id="memoryview"></div>
+                            <div id="paginator"></div>
+                            <input
+                                type="checkbox"
+                                id="follow_pc"
+                                checked="checked" />Suivre PC<br />
+                            Cycle courant :
+                            <input id="cycles_count" type="text" value="0" />
+                        </div>
+                        <div>
+                            <br />
+                            <div style="float: left">
+                                <input
+                                    type="file"
+                                    onchange="loadFileAsText()"
+                                    id="fileToLoad"
+                                    style="display: none" />
+                                <label for="fileToLoad" class="flat_button"
+                                    >Restaurer</label
+                                >
+                            </div>
+                            <div style="float: right">
+                                <button onclick="saveTextAsFile()">
+                                    Sauvegarder
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script type="text/javascript">
             window.addEventListener("DOMContentLoaded", () => {
@@ -1487,7 +1224,7 @@
             var blockSelect = 0;
             var selectLine = -1;
 
-            $("#tabmain-container").easytabs({
+            $("#simulator-container").easytabs({
                 animate: false,
             });
 
@@ -1643,10 +1380,6 @@
                         refreshBreakpoints();
                     }
                 });
-
-                /* $('a[href$="#tabsmain-simulation"]').click(function () {
-                    editor.resize();
-                }); */
 
                 $("#interrupt_type").change(function () {
                     if (document.getElementById("interrupt_active").checked) {

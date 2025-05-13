@@ -26,12 +26,11 @@ var saveEditorTimer = window.setInterval(onTimer, 60000);
 })();
 
 // Bind per eliminare una sessione
-$(document).on("click", ".delete_button", function () {
+$(document).on("click", ".delete_session", function () {
     const sessionId = parseInt($(this).data("session-index"));
     deleteSession(sessionId);
 });
 
-// Gestisci la cancellazione di una sessione
 function deleteSession(sessionId) {
     var savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
 
@@ -48,20 +47,25 @@ function deleteSession(sessionId) {
                 savedEditor = JSON.parse(
                     localStorage.getItem(LOCAL_STORAGE_KEY)
                 );
+
                 savedEditor.data.splice(sessionId, 1);
-                savedEditor.current =
-                    savedEditor.current === sessionId ? 0 : sessionId;
-                editor.setValue(savedEditor.data[0].code, -1);
+
+                if (savedEditor.current === sessionId) {
+                    savedEditor.current = Math.max(sessionId - 1, 0);
+                } else if (savedEditor.current > sessionId) {
+                    savedEditor.current -= 1;
+                }
+
+                editor.setValue(savedEditor.data[savedEditor.current].code, -1);
             }
 
             localStorage.setItem(
                 LOCAL_STORAGE_KEY,
                 JSON.stringify(savedEditor)
             );
-
             updateSessionPanel();
 
-            if (savedEditor["data"].length === 0) {
+            if (savedEditor.data.length === 0) {
                 createNewSession();
             }
         }
@@ -71,7 +75,6 @@ function deleteSession(sessionId) {
 // Binding per nuova sessione
 $(document).on("click", "#session_new", createNewSession);
 
-// Gestisci la creazione di una nuova sessione
 function createNewSession() {
     var savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {
         defaultEditor: editor.getValue(),
@@ -79,14 +82,23 @@ function createNewSession() {
         data: [],
     };
 
+    if (savedEditor.data.length >= 10) {
+        alert("Max number of sessions reached");
+        return;
+    }
+
     if (savedEditor.current !== null) {
         saveCurrentEditor();
         savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-        savedEditor.data.unshift({
+
+        // Aggiunge alla fine
+        savedEditor.data.push({
             name: "New Session",
             code: editor.getValue(),
         });
-        savedEditor.current = 0;
+
+        // Imposta l'indice corrente sull'ultimo elemento
+        savedEditor.current = savedEditor.data.length - 1;
     } else {
         savedEditor.current = 0;
         savedEditor.data = [
@@ -104,24 +116,34 @@ function createNewSession() {
 }
 
 // Previene l'inserimento di nuove righe nel pannello delle sessioni
-$("#session_content").keydown(function (e) {
+$("#sessions").keydown(function (e) {
     if (e.keyCode === 13) return false;
 });
 
-// Salva il nome nel localStorage quando viene cambiato
-$(document).on("input", "#session_name", function () {
-    var newName = $(this).text().trim(); // Ottieni il nuovo nome (senza spazi prima e dopo)
+$(document).on("keydown", ".session_name", function (e) {
+    var $this = $(this);
+    var text = $this.text();
+
+    // Se l'utente preme backspace e il testo ha solo un carattere, blocca l'azione
+    if (e.key === "Backspace" && text.length === 1) {
+        e.preventDefault();
+    }
+});
+
+$(document).on("input", ".session_name", function () {
+    var $this = $(this);
+    var newName = $this.text().trim();
+
     if (!newName) {
-        newName = "New Session"; // Imposta un nome predefinito se il campo è vuoto
+        newName = "New Session";
+        $this.text(newName);
     }
 
-    // Ottieni la sessione attualmente selezionata
     var savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
 
     if (savedEditor.current !== null) {
-        // Aggiorna il nome della sessione nel salvataggio
         savedEditor.data[savedEditor.current].name = newName;
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedEditor)); // Salva nel localStorage
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(savedEditor));
     }
 });
 
@@ -133,7 +155,7 @@ function saveCurrentEditor(forceNewName = false) {
         data: [],
     };
 
-    var name = $("#selected #session_name").html();
+    var name = $("#selected .session_name").html();
     if (!name || forceNewName) {
         name = "New Session";
     }
@@ -182,9 +204,10 @@ function getDateOrHour(p_date) {
 
 // Funzione per aggiornare il pannello delle sessioni
 function updateSessionPanel() {
-    var content = $("#session_content");
+    var content = $("#sessions");
     var savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
     content.html("");
+
     if (savedEditor.current !== null) {
         var current = savedEditor.current;
 
@@ -197,20 +220,10 @@ function updateSessionPanel() {
                 selectedProperty = 'id="selected"';
                 editable = 'contenteditable="true"';
             }
-            var message =
-                "<div " +
-                selectedProperty +
-                ' class="session_item">' +
-                '<div id="session_id">' +
-                (i + 1) +
-                "</div>" +
-                '<div class="session_item_right">' +
-                '<div id="session_name" ' +
-                editable +
-                ">" +
-                data.name +
-                `</div><div><button class="delete_button" data-session-index="${i}">Delete</button></div>` +
-                "</div></div>";
+            var message = `<div ${selectedProperty} class="session_item">
+            <div class="session_name" ${editable}>${data.name}</div>
+            <button class="delete_session" data-session-index="${i}">X</button>
+            </div>`;
 
             content.append(message);
         }
