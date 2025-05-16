@@ -8,6 +8,9 @@ from stateManager import StateManager
 appState = StateManager()
 
 class CustomWebEnginePage(QWebEnginePage):
+    """
+    @private
+    """
     def javaScriptConsoleMessage(self, level, message, lineNumber, sourceID):
         print("\n====== JavaScript Console Log ======")
         print(f"{message}\n")
@@ -15,7 +18,28 @@ class CustomWebEnginePage(QWebEnginePage):
         print("====================================\n")
 
 class NativeApp(QApplication):
+    """
+    A Qt-based native desktop application that embeds a browser window using QWebEngineView.
+
+    This class sets up a GUI window that loads a local web interface, manages cookies,
+    watches for file changes in the interface directory to enable live reload, and injects
+    custom JavaScript into the browser console for better log formatting.
+
+    The application is designed to work alongside a local HTTP server (e.g., Bottle or WSGI-based)
+    and provides a desktop wrapper around it.
+
+    Attributes:
+        window (QMainWindow): The main window containing the web browser.
+        browser (QWebEngineView): Embedded web view for loading the local web app.
+        profile (QWebEngineProfile): Manages browser profile, including cookies and cache.
+        cookies (list): A list of collected cookies from the session.
+        watcher (QFileSystemWatcher): Monitors file changes to enable live reloading.
+    """
     def __init__(self):
+        """
+        Initializes the application, sets up the browser, connects signals, and starts the event loop.
+        """
+        
         super().__init__([])
         print("calling start_webview")
 
@@ -49,6 +73,10 @@ class NativeApp(QApplication):
         self.exec_()
 
     def injectConsoleFormatter(self):
+        """
+        Injects JavaScript into the web page to enhance console output formatting.
+        """
+        
         self.browser.page().runJavaScript("""
             (function () {
                 const logTypes = ['log', 'warn', 'error'];
@@ -73,6 +101,13 @@ class NativeApp(QApplication):
         """)
 
     def addInitialWatchedFiles(self, path):
+        """
+        Recursively adds all files in the specified directory to the file system watcher.
+        
+        Args:
+            path (str): The directory to scan and watch for changes.
+        """
+        
         for root, _, files in os.walk(path):
             for file in files:
                 full_path = os.path.join(root, file)

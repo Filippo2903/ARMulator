@@ -46,3 +46,6 @@ urllib3==2.2.3
 websockets==15.0.1
 zope.event==5.0
 zope.interface==7.2
+PyQt5==5.15.10
+PyQtWebEngine==5.15.10
+pdoc==15.0.3

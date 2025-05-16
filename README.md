@@ -1,12 +1,11 @@
 # Changes
 
-### 1. **Added global state management**
+### 1. **Added documentation whit pdoc**
 
-### 2. **Fixed flags for registers**
+### 2. **Fixed requirements.txt**
 
-### 3. **Added linux executable**
+### 3. **Added comments for pdoc**
 
 # Work to do
 
-### 1. Add port check for webserver and http server
-### 2. Translate ALL error codes and html pages
+### 1. GUI

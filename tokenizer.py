@@ -1,10 +1,3 @@
-import re
-from collections import namedtuple
-from itertools import chain
-import ply.lex as lex
-
-import simulatorOps.utils as instrInfos
-
 """
 This is the lexer definiton for the ARM assembly parser.
 It was not designed with performance in mind, but to ease its usage. In particular :
@@ -14,14 +7,24 @@ It was not designed with performance in mind, but to ease its usage. In particul
 - However, it must NOT allow a construction that can mislead the user. For instance, allowing the use of "XOR" as
     label is misleading because one could think that this is actually an instruction (which is not).
 
-This lexer is structured around _conditional lexing_ (see http://www.dabeaz.com/ply/ply.html#ply_nn21 for more
-information). Each line is independently considered. When the parser encounters a mnemonic, it enters a special state,
+This lexer is structured around _conditional lexing_. 
+Each line is independently considered. When the parser encounters a mnemonic, it enters a special state,
 where suffixes are allowed. For instance, with data operation, 'S' is an allowed suffixes (to set the flags), along
 with the usual conditional suffixes. With LDR/STR, 'B' and 'H' are allowed, but not 'S', and so on.
 Once the parser reaches a space (or tab) character in this mode, it switches to instruction mode. In this mode, the
 available tokens are only the ones that are allowed. For instance, a data instruction does not allow memory acces
 (with [ and ]), so these characters trigger an error. At the end of each line, the state of the lexer is reset.
 """
+
+
+import re
+from collections import namedtuple
+from itertools import chain
+import ply.lex as lex
+
+import simulatorOps.utils as instrInfos
+
+__all__ = []
 
 
 states = (
