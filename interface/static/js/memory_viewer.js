@@ -272,7 +272,7 @@ function resetMemoryViewer() {
                 }
                 var addr =
                     parseInt($("td:first", rowref).text(), 16) + (col - 1);
-                sendCmd(["memchange", addr, newValue]);
+                sendData(["memchange", addr, newValue]);
             } else {
                 editableGrid.setValueAt(row, col, "--", true);
             }
@@ -309,13 +309,13 @@ function cellClick(e) {
             $("td:first", $(e.target).closest("tr")).text().slice(0, 9) +
             suffix;
         if (e.shiftKey) {
-            sendCmd(["breakpointsmem", addr, "r"]);
+            sendData(["breakpointsmem", addr, "r"]);
         }
         if (e.ctrlKey || e.metaKey) {
-            sendCmd(["breakpointsmem", addr, "w"]);
+            sendData(["breakpointsmem", addr, "w"]);
         }
         if (e.altKey) {
-            sendCmd(["breakpointsmem", addr, "e"]);
+            sendData(["breakpointsmem", addr, "e"]);
         }
     }
 }

@@ -1,71 +1,72 @@
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 * {
-  --page-background: #181d24;
-  --app-background: #242a32;
+    --page-background: #181d24;
+    --app-background: #242a32;
 }
 
 html {
-  min-height: 100dvh;
+    min-height: 100dvh;
 }
 
 body {
-  width: 100%;
-  min-height: 100svh;
-  height: fit-content;
-  padding: 0;
-  margin: 0;
-  background-color: #383737;
-  color: #fff;
-  font-family: sans-serif;
+    width: 100%;
+    min-height: 100vh;
+    padding: 32px;
+    margin: 0;
+    background-color: #383737;
+    color: #fff;
+    font-family: sans-serif;
+
+    display: flex;
+    flex-direction: column;
 }
 
 li {
-  padding-bottom: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 a {
-  color: white;
+    color: white;
 }
 
 #main-container {
-  padding: 32px;
-  background-color: var(--background-color);
-  min-height: calc(100svh - 64px);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+    background-color: var(--background-color);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 #simulator-container {
-  flex: 1;
-  background-color: blue;
-  display: flex;
-  flex-direction: column;
+    flex: 1;
+    background-color: blue;
+    display: flex;
+    flex-direction: column;
 }
 
 #content-main {
-  height: 100%;
-  border-spacing: 0;
-  width: 100%;
+    height: 100%;
+    border-spacing: 0;
+    width: 100%;
 }
 
 #content-main td {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 #tabsmain-simulation {
-  background-color: mediumaquamarine;
-  width: 100%;
-  flex: 1;
+    background-color: mediumaquamarine;
+    width: 100%;
+    flex: 1;
 
-  display: flex;
-  align-items: stretch;
+    display: flex;
+    align-items: stretch;
 }
 
 /* ==================
@@ -73,75 +74,75 @@ a {
 ================== */
 
 #session-bar {
-  height: 3rem;
-  width: 100%;
-  background-color: rosybrown;
+    height: 3rem;
+    width: 100%;
+    background-color: rosybrown;
 
-  display: flex;
+    display: flex;
 }
 
 #sessions {
-  flex: 1;
-  display: flex;
-  background-color: blueviolet;
-  margin-right: 16px;
+    flex: 1;
+    display: flex;
+    background-color: blueviolet;
+    margin-right: 16px;
 }
 
 #selected.session_item {
-  background-color: var(--background-color);
-  font-weight: bold;
+    background-color: var(--background-color);
+    font-weight: bold;
 }
 
 .session_item {
-  display: flex;
-  max-width: 300px;
-  background-color: #1f242f;
-  position: relative;
-  overflow: visible;
-  border: 1px solid #ccc;
-  margin-bottom: 8px;
-  padding: 8px;
+    display: flex;
+    max-width: 300px;
+    background-color: #1f242f;
+    position: relative;
+    overflow: visible;
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+    padding: 8px;
 }
 
 /* Nome sessione base */
 .session_name {
-  padding: 4px 8px;
-  border: 1px solid transparent;
-  display: block;
-  cursor: pointer;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    display: block;
+    cursor: pointer;
 }
 
 /* Modalità "chiusa" con ellissi */
 .session_name.view-mode {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 /* Modalità modifica */
 .session_name.edit-mode {
-  white-space: nowrap;
-  overflow: visible;
-  background: white;
-  border: 1px solid #aaa;
-  outline: none;
+    white-space: nowrap;
+    overflow: visible;
+    background: white;
+    border: 1px solid #aaa;
+    outline: none;
 } /* Pulsante chiusura "X" */
 .delete_session {
-  background: transparent;
-  color: #ccc;
-  border: none;
-  margin-left: 6px;
-  cursor: pointer;
-  font-weight: bold;
+    background: transparent;
+    color: #ccc;
+    border: none;
+    margin-left: 6px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 .delete_session:hover {
-  color: red;
+    color: red;
 }
 
 #top-buttons {
-  background-color: darkmagenta;
+    background-color: darkmagenta;
 }
 
 /* ==================
@@ -149,530 +150,530 @@ a {
 ================== */
 
 #regView {
-  background-color: chartreuse;
-  flex: 0.5;
+    background-color: chartreuse;
+    flex: 0.5;
 
-  margin-right: 8px;
+    margin-right: 8px;
 }
 
 #editorPanel {
-  background-color: tan;
-  display: flex;
-  flex: 2;
-  flex-direction: column;
+    background-color: tan;
+    display: flex;
+    flex: 2;
+    flex-direction: column;
 }
 
 #editor {
-  width: 100%;
-  background-color: grey;
+    width: 100%;
+    background-color: grey;
 }
 
 #dashboard {
-  background-color: red;
-  flex: 1;
+    background-color: red;
+    flex: 1;
 
-  margin-left: 8px;
+    margin-left: 8px;
 }
 
 #run:disabled img {
-  content: url("/static/image/run_disabled.png");
+    content: url("/static/image/run_disabled.png");
 }
 
 #stepin:disabled img {
-  content: url("/static/image/into_disabled.png");
+    content: url("/static/image/into_disabled.png");
 }
 
 #stepforward:disabled img {
-  content: url("/static/image/over_disabled.png");
+    content: url("/static/image/over_disabled.png");
 }
 
 #stepout:disabled img {
-  content: url("/static/image/out_disabled.png");
+    content: url("/static/image/out_disabled.png");
 }
 
 #stepback:disabled img {
-  content: url("/static/image/back_disabled.png");
+    content: url("/static/image/back_disabled.png");
 }
 
 select:disabled,
 button:disabled,
 input[type="submit"]:disabled {
-  background-color: #383737;
-  border: 1px solid #7e8082;
+    background-color: #383737;
+    border: 1px solid #7e8082;
 }
 
 #disassembly {
-  height: 130px;
-  width: 430px;
-  overflow-y: auto;
-  padding: 10px;
+    height: 130px;
+    width: 430px;
+    overflow-y: auto;
+    padding: 10px;
 }
 
 #disassembly ol {
-  font-size: 0.9em;
-  margin-bottom: 0;
+    font-size: 0.9em;
+    margin-bottom: 0;
 }
 
 .regh_r,
 .regh_w {
-  width: 5px;
-  padding: 0;
-  text-align: center !important;
+    width: 5px;
+    padding: 0;
+    text-align: center !important;
 }
 
 .regh_val {
-  text-align: center !important;
+    text-align: center !important;
 }
 
 .reg_bkp_w td {
-  background-color: #9a2d54 !important;
+    background-color: #9a2d54 !important;
 }
 .reg_bkp_r td {
-  background-color: #4d878f !important;
+    background-color: #4d878f !important;
 }
 .reg_bkp_w.reg_bkp_r td {
-  background-color: #6e569b !important;
+    background-color: #6e569b !important;
 }
 
 .regVal {
-  width: 100px;
-  font-family: monospace;
-  height: 16px;
-  border: 2px solid #383737;
+    width: 100px;
+    font-family: monospace;
+    height: 16px;
+    border: 2px solid #383737;
 }
 
 /* Current operation highlights */
 .registers .highlightRead {
-  border: 2px solid #4d878f !important;
+    border: 2px solid #4d878f !important;
 }
 
 .registers .highlightwrite {
-  border: 2px solid #9a2d54 !important;
+    border: 2px solid #9a2d54 !important;
 }
 
 .registers .highlightRead.highlightwrite {
-  border: 2px solid #6e569b !important;
+    border: 2px solid #6e569b !important;
 }
 
 #memoryview .highlightRead {
-  color: hsl(187, 30%, 65%) !important;
+    color: hsl(187, 30%, 65%) !important;
 }
 
 #memoryview .highlightwrite {
-  color: hsl(338.5, 54.8%, 65%) !important;
+    color: hsl(338.5, 54.8%, 65%) !important;
 }
 
 #memoryview .highlightRead.highlightwrite {
-  color: hsl(260.9, 28.6%, 65%) !important;
+    color: hsl(260.9, 28.6%, 65%) !important;
 }
 
 .smaller_font {
-  font-size: 0.8em;
+    font-size: 0.8em;
 }
 
 .statusVal {
-  width: 35px;
-  height: 1em;
+    width: 35px;
+    height: 1em;
 }
 
 .flag_btn,
 .pointer {
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
 }
 
 #stdin_ {
-  width: 300px;
-  height: 50px;
+    width: 300px;
+    height: 50px;
 }
 
 #stdout_ {
-  width: 300px;
-  height: 100px;
+    width: 300px;
+    height: 100px;
 }
 
 .ts-error {
-  border-radius: 5px;
-  border: 2px solid #f00;
+    border-radius: 5px;
+    border: 2px solid #f00;
 
-  color: #fff;
+    color: #fff;
 }
 
 .ts-error .tooltipster-content {
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  line-height: 16px;
-  padding: 8px 10px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 16px;
+    padding: 8px 10px;
 }
 
 .ace_editor {
-  border: none;
+    border: none;
 }
 
 .ace_gutter-layer {
-  color: #fff;
-  background-color: #585858;
+    color: #fff;
+    background-color: #585858;
 }
 
 .ace_content {
-  background-color: #383737;
+    background-color: #383737;
 }
 
 .ace_gutter-active-line {
-  background-color: rgba(255, 255, 255, 0.25) !important;
-  z-index: 1;
+    background-color: rgba(255, 255, 255, 0.25) !important;
+    z-index: 1;
 }
 
 .ace_active-line {
-  background: rgba(255, 255, 255, 0.07) !important;
+    background: rgba(255, 255, 255, 0.07) !important;
 }
 
 .ace_gutter-cell.ace_breakpoint {
-  border-radius: 20px 0px 0px 20px;
-  box-shadow: 0px 0px 1px 1px red inset;
+    border-radius: 20px 0px 0px 20px;
+    box-shadow: 0px 0px 1px 1px red inset;
 }
 
 .ace-tm {
-  color: #fff !important;
+    color: #fff !important;
 }
 .ace_keyword {
-  color: #70a0f5 !important;
+    color: #70a0f5 !important;
 }
 .ace_constant {
-  color: #fb7b4b !important;
+    color: #fb7b4b !important;
 }
 .ace_variable {
-  color: #95d1de !important;
+    color: #95d1de !important;
 }
 .ace_asmcomment {
-  color: #95989a;
-  font-style: italic;
+    color: #95989a;
+    font-style: italic;
 }
 .ace_sectiontitle {
-  color: #fb2472;
+    color: #fb2472;
 }
 .ace_memdeclare {
-  color: #63d8e8;
+    color: #63d8e8;
 }
 .ace_label {
-  color: #a477ff;
+    color: #a477ff;
 }
 
 .debug_line.ace_start {
-  position: absolute;
-  background: rgba(135, 35, 35, 0.5);
-  z-index: 20;
-  width: 100% !important;
+    position: absolute;
+    background: rgba(135, 35, 35, 0.5);
+    z-index: 20;
+    width: 100% !important;
 }
 
 .next_debug_line.ace_start {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 20;
-  width: 100% !important;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    width: 100% !important;
 }
 
 #memoryview {
-  font-size: 10pt;
-  width: 100%;
-  height: 390px;
+    font-size: 10pt;
+    width: 100%;
+    height: 390px;
 }
 
 #memoryview th {
-  width: 17px;
-  font-size: 14px;
-  padding: 0;
+    width: 17px;
+    font-size: 14px;
+    padding: 0;
 }
 
 #memoryview td {
-  text-align: center;
-  font-size: 0.9em;
-  font-family: monospace;
+    text-align: center;
+    font-size: 0.9em;
+    font-family: monospace;
 }
 
 .testgrid {
-  width: 450px;
+    width: 450px;
 }
 .testgrid td {
-  border: 1px solid transparent;
+    border: 1px solid transparent;
 }
 .mem_mousehighlight {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 .mem_r {
-  background-color: #4d878f;
+    background-color: #4d878f;
 }
 .mem_w {
-  background-color: #9a2d54;
+    background-color: #9a2d54;
 }
 .mem_rw {
-  background-color: #6e569b;
+    background-color: #6e569b;
 }
 /*.mem_e.help {
     border: 2px solid red !important;
 }*/
 .mem_e {
-  border: 1px solid red !important;
+    border: 1px solid red !important;
 }
 /*.mem_instr.help {
     border: 2px solid green !important;
 }*/
 .mem_instr {
-  border: 1px solid green !important;
+    border: 1px solid green !important;
 }
 
 #paginator {
-  text-align: center;
+    text-align: center;
 }
 
 #jump_memory_go {
-  margin: 0 10px 0 0;
+    margin: 0 10px 0 0;
 }
 
 #jump_memory {
-  margin: 0 0 0 10px;
-  height: calc(1.6em + 4px);
-  border: 1px solid #28648f;
+    margin: 0 0 0 10px;
+    height: calc(1.6em + 4px);
+    border: 1px solid #28648f;
 }
 
 #debugger_buttons {
-  padding: 0 5px 5px;
+    padding: 0 5px 5px;
 }
 
 .assemble_edit {
-  background-color: #b75b5b !important;
+    background-color: #b75b5b !important;
 }
 
 #assemble {
-  width: 100px;
+    width: 100px;
 }
 
 .top_buttons {
-  height: 35px;
-  vertical-align: top;
+    height: 35px;
+    vertical-align: top;
 }
 
 .border_container {
-  border: 1px solid #95989a;
+    border: 1px solid #95989a;
 }
 
 .border_container_reg {
-  border: 1px solid #95989a;
-  border-bottom: none;
+    border: 1px solid #95989a;
+    border-bottom: none;
 }
 
 #after-reg {
-  text-align: center;
-  padding: 5px 0;
-  border: 1px solid #95989a;
-  border-top: none;
+    text-align: center;
+    padding: 5px 0;
+    border: 1px solid #95989a;
+    border-top: none;
 }
 
 #config_wrapper {
-  padding: 10px;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    padding: 10px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 #configurations {
-  padding: 10px 20px;
-  height: auto;
+    padding: 10px 20px;
+    height: auto;
 }
 
 .registers {
-  border-spacing: 0;
-  width: 100%;
+    border-spacing: 0;
+    width: 100%;
 }
 
 .registers tr:nth-child(odd) td {
-  background-color: #585858;
+    background-color: #585858;
 }
 .registers th,
 .registers td {
-  text-align: right;
-  font-family: "Lucida Console", Monaco, monospace;
-  font-size: 0.8em;
+    text-align: right;
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 0.8em;
 }
 
 .ui-widget-header {
-  border: none !important;
-  background: none !important;
+    border: none !important;
+    background: none !important;
 }
 
 /* Tabs */
 .etabs-main {
-  display: none;
-  margin: 0 0 10px 0;
-  padding: 0;
+    display: none;
+    margin: 0 0 10px 0;
+    padding: 0;
 }
 
 .tab-main {
-  display: inline-block;
-  zoom: 1;
-  display: inline;
-  background: #28648f;
-  border: solid 1px #1476bd;
-  border-bottom: none;
-  width: 200px;
-  text-align: center;
-  margin: 0 -5px 0 0;
+    display: inline-block;
+    zoom: 1;
+    display: inline;
+    background: #28648f;
+    border: solid 1px #1476bd;
+    border-bottom: none;
+    width: 200px;
+    text-align: center;
+    margin: 0 -5px 0 0;
 }
 .tab-main a {
-  line-height: 0.7em;
-  display: block;
-  padding: 8px 0 0;
-  outline: none;
-  text-decoration: none;
-  font-size: 1.5em;
+    line-height: 0.7em;
+    display: block;
+    padding: 8px 0 0;
+    outline: none;
+    text-decoration: none;
+    font-size: 1.5em;
 }
 .tab-main a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 .tab-main.active {
-  background: #383737;
-  position: relative;
-  top: 3px;
-  border-top: solid 4px #1476bd;
-  border-bottom: none;
-  height: 21px;
+    background: #383737;
+    position: relative;
+    top: 3px;
+    border-top: solid 4px #1476bd;
+    border-bottom: none;
+    height: 21px;
 }
 .tab-main a.active {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 /* IE 10... */
 #tabsmain-simulation {
-  min-height: 600px;
+    min-height: 600px;
 }
 .ace_editor {
-  flex-grow: 1;
+    flex-grow: 1;
 }
 
 .etabs-reg {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 .tab-reg {
-  display: inline-block;
-  zoom: 1;
-  display: inline;
-  background: #383737;
-  border: solid 1px #95989a;
-  border-bottom: none;
-  text-align: center;
-  margin: 0 -5px 0 0;
+    display: inline-block;
+    zoom: 1;
+    display: inline;
+    background: #383737;
+    border: solid 1px #95989a;
+    border-bottom: none;
+    text-align: center;
+    margin: 0 -5px 0 0;
 }
 .tab-reg a {
-  line-height: 0.7em;
-  display: block;
-  padding: 8px 10px 0;
-  outline: none;
-  text-decoration: none;
-  font-size: 12px;
+    line-height: 0.7em;
+    display: block;
+    padding: 8px 10px 0;
+    outline: none;
+    text-decoration: none;
+    font-size: 12px;
 }
 .tab-reg a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 .tab-reg.active {
-  background: #383737;
-  position: relative;
-  top: 3px;
-  border-top: solid 4px #95989a;
-  border-bottom: none;
-  height: 14px;
+    background: #383737;
+    position: relative;
+    top: 3px;
+    border-top: solid 4px #95989a;
+    border-bottom: none;
+    height: 14px;
 }
 .tab-reg a.active {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 /* Message */
 #message_bar {
-  cursor: pointer;
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 50px;
-  line-height: 50px;
-  width: 100%;
-  background: rgba(200, 100, 100, 0.8);
-  z-index: 1000;
-  vertical-align: middle;
-  text-align: center;
+    cursor: pointer;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 50px;
+    line-height: 50px;
+    width: 100%;
+    background: rgba(200, 100, 100, 0.8);
+    z-index: 1000;
+    vertical-align: middle;
+    text-align: center;
 }
 
 .flat_button {
-  text-decoration: none;
-  padding: 2px 6px 2px 6px;
-  background-color: #28648f;
-  border: 1px solid #1476bd;
-  color: #fff;
-  font-size: 1.1em;
+    text-decoration: none;
+    padding: 2px 6px 2px 6px;
+    background-color: #28648f;
+    border: 1px solid #1476bd;
+    color: #fff;
+    font-size: 1.1em;
 }
 
 #solution pre {
-  color: inherit !important;
-  background: none !important;
-  font-weight: bold;
+    color: inherit !important;
+    background: none !important;
+    font-weight: bold;
 }
 
 .pre {
-  white-space: pre;
-  font-family: monospace;
-  margin: 1em 0 1em;
-  color: #bea3f5;
+    white-space: pre;
+    font-family: monospace;
+    margin: 1em 0 1em;
+    color: #bea3f5;
 }
 
 /* Light mode */
 .lightmode {
-  background-color: #fff;
-  color: #000;
+    background-color: #fff;
+    color: #000;
 }
 .ace_indent-guide {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQI12MwNjb+z5SWlsYAAA5sAs38puDrAAAAAElFTkSuQmCC)
-    right repeat-y !important;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQI12MwNjb+z5SWlsYAAA5sAs38puDrAAAAAElFTkSuQmCC)
+        right repeat-y !important;
 }
 .lightmode .ace_indent-guide {
-  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==)
-    right repeat-y !important;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==)
+        right repeat-y !important;
 }
 .lightmode .ace-tm {
-  color: #000 !important;
+    color: #000 !important;
 }
 .lightmode .ace_keyword {
-  color: #0000ff !important;
+    color: #0000ff !important;
 }
 .lightmode .ace_asmcomment {
-  color: #000;
+    color: #000;
 }
 .lightmode .ace_sectiontitle {
-  color: #fb2472;
+    color: #fb2472;
 }
 .lightmode .ace_memdeclare {
-  color: #63d8e8;
+    color: #63d8e8;
 }
 .lightmode .ace_label {
-  color: #a477ff;
+    color: #a477ff;
 }
 
 .lightmode .debug_line.ace_start {
-  position: absolute;
-  background: rgba(135, 35, 35, 0.5);
-  z-index: 20;
-  width: 100% !important;
+    position: absolute;
+    background: rgba(135, 35, 35, 0.5);
+    z-index: 20;
+    width: 100% !important;
 }
 
 .lightmode .next_debug_line.ace_start {
-  position: absolute;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 20;
-  width: 100% !important;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    width: 100% !important;
 }
 
 .lightmode #memoryview {
-  background-color: #fff;
-  color: #000;
+    background-color: #fff;
+    color: #000;
 }
