@@ -8,11 +8,6 @@
             type="text/css"
             media="screen"
             href="static/css/style.css" />
-        <link
-            rel="stylesheet"
-            type="text/css"
-            media="screen"
-            href="static/css/jquery-ui.min.css" />
         <script
             src="static/js/ace/ace.js"
             type="text/javascript"
@@ -39,11 +34,9 @@
             href="static/js/editablegrid/editablegrid.css"
             type="text/css"
             media="screen" />
-        <!-- <link
-            rel="stylesheet"
-            href="static/css/contained-bootstrap.min.css"
-            type="text/css"
-            media="screen" /> -->
+        <script
+            src="https://kit.fontawesome.com/df57a58519.js"
+            crossorigin="anonymous"></script>
     </head>
 
     <body>
@@ -51,57 +44,130 @@
             <div id="message_bar"></div>
 
             <div id="session-bar">
-                <div id="sessions"></div>
-
-                <div id="top-buttons">
-                    <button id="session_new">+</button>
-                    <button id="configurations">Settings</button>
+                <div id="sessions">
+                    <div id="new_session">
+                        <i class="fa-solid fa-plus fa-sm"></i>
+                    </div>
                 </div>
 
-                <div id="config_diag" style="display: hidden">
-                    <h1>Configurations</h1>
-                    <h4>Interruptions</h4>
-                    <input
-                        type="checkbox"
-                        id="interrupt_active"
-                        name="interrupt_active"
-                        value="activate" />Activer<br />
-                    Type
-                    <select id="interrupt_type">
-                        <option value="FIQ">FIQ</option>
-                        <option value="IRQ">IRQ</option></select
-                    ><br />
-                    <input
-                        class="config_input"
-                        id="interrupt_cycles"
-                        type="text"
-                        value="50"
-                        name="interrupt_cycles" />&nbsp;cycles<br />
-                    <input
-                        class="config_input"
-                        id="interrupt_cycles_first"
-                        type="text"
-                        value="50"
-                        name="interrupt_cycles_first" />&nbsp;cycles (premier)
-                    <hr />
-                    Vitesse d'ex&eacute;cution : &nbsp;<input
-                        class="config_input"
-                        id="animate_speed"
-                        type="text"
-                        value="0" />ms<br />
-                    <hr />
-                    <!-- Language selection -->
-                    <div>
-                        Language: &nbsp;
-                        <select id="language">
-                            <option value="it">Italiano</option>
-                            <option value="en">English</option>
-                            <option value="fr">Fran&#231;ais</option>
-                        </select>
+                <button id="settings" class="button">Settings</button>
+
+                <div
+                    id="config_overlay"
+                    class="dialog-overlay"
+                    style="display: none">
+                    <div
+                        id="config_diag"
+                        class="config-dialog"
+                        onclick="event.stopPropagation();">
+                        <h1>Settings</h1>
+
+                        <div class="input-row">
+                            <label for="interrupt_active"
+                                >Enable interrupts:</label
+                            >
+                            <label class="ui-switch">
+                                <input
+                                    type="checkbox"
+                                    id="interrupt_active"
+                                    name="interrupt_active"
+                                    value="activate" />
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="input-row">
+                            <label for="interrupt_type">Interrupt type:</label>
+                            <select id="interrupt_type" class="config-input">
+                                <option value="FIQ">FIQ</option>
+                                <option value="IRQ">IRQ</option>
+                            </select>
+                        </div>
+
+                        <div class="input-row">
+                            <label for="interrupt_cycles_first"
+                                >First interrupt after:</label
+                            >
+                            <div class="input-with-unit">
+                                <input
+                                    id="interrupt_cycles_first"
+                                    class="config-input"
+                                    type="number"
+                                    value="50"
+                                    placeholder="e.g. 50" />
+                                <span class="unit">cycles</span>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <label for="interrupt_cycles">Then every:</label>
+                            <div class="input-with-unit">
+                                <input
+                                    id="interrupt_cycles"
+                                    class="config-input"
+                                    type="number"
+                                    value="50"
+                                    placeholder="e.g. 50" />
+                                <span class="unit">cycles</span>
+                            </div>
+                        </div>
+
+                        <div class="input-row">
+                            <label for="animate_speed"
+                                >Execution speed (ms)</label
+                            >
+                            <input
+                                id="animate_speed"
+                                class="config-input"
+                                type="text"
+                                value="0" />
+                        </div>
+
+                        <div class="input-row">
+                            <label for="language">Language</label>
+                            <select id="language" class="config-input">
+                                <option value="it">Italiano</option>
+                                <option value="en">English</option>
+                                <option value="fr">Français</option>
+                            </select>
+                        </div>
+
+                        <div class="config-buttons">
+                            <button id="closeConfig" class="button">
+                                Close
+                            </button>
+                            <button id="saveConfig" class="button primary">
+                                Save
+                            </button>
+                        </div>
                     </div>
-                    <br />
-                    <button id="lightmode">Modifier l'arrière-plan</button>
-                    <div style="height: 3em"></div>
+                </div>
+
+                <div
+                    id="delete_overlay"
+                    class="dialog-overlay"
+                    style="display: none">
+                    <div
+                        id="delete_diag"
+                        class="delete-dialog"
+                        onclick="event.stopPropagation();">
+                        <h1>Delete session?</h1>
+                        <p>
+                            You are about to permanently delete this session.<br />
+                            <strong>This action cannot be undone.</strong
+                            ><br /><br />
+                            Do you want to continue?
+                        </p>
+
+                        <div class="delete-modal-buttons">
+                            <button id="cancel-delete" class="button primary">
+                                Cancel
+                            </button>
+                            <button id="confirm-delete" class="button">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1057,63 +1123,63 @@
                     </div>
 
                     <div id="editorPanel">
-                        <div id="debugger_buttons">
-                            <button id="assemble" class="top_buttons">
-                                Assemble
-                            </button>
-                            <button
-                                onclick="reset()"
-                                id="reset"
-                                class="top_buttons"
-                                disable="disabled">
-                                R&eacute;initialiser
-                            </button>
-                            <button
-                                id="run"
-                                onclick="simulate('run')"
-                                disable="disabled"
-                                class="top_buttons">
-                                <img src="static/image/run.png" alt="run" />
-                            </button>
-                            <button
-                                id="stepback"
-                                onclick="simulate('stepback')"
-                                disable="disabled"
-                                class="top_buttons">
-                                <img
-                                    src="static/image/back.png"
-                                    alt="step back" />
-                            </button>
-                            <button
-                                id="stepout"
-                                onclick="simulate('stepout')"
-                                disable="disabled"
-                                class="top_buttons">
-                                <img
-                                    src="static/image/out.png"
-                                    alt="step out" />
-                            </button>
-                            <button
-                                id="stepforward"
-                                onclick="simulate('stepforward')"
-                                disable="disabled"
-                                class="top_buttons">
-                                <img
-                                    src="static/image/over.png"
-                                    alt="step forward" />
-                            </button>
-                            <button
-                                id="stepin"
-                                onclick="simulate('stepinto')"
-                                disable="disabled"
-                                class="top_buttons">
-                                <img
-                                    src="static/image/into.png"
-                                    alt="step into" />
-                            </button>
+                        <div id="editorTopBar">
+                            <div id="simulationTitle">Simulation</div>
+                            <div id="debugger_buttons">
+                                <button id="assemble" class="button primary">
+                                    Assemble
+                                </button>
+
+                                <button
+                                    onclick="reset()"
+                                    id="reset"
+                                    class="button"
+                                    disable="disabled">
+                                    Reset
+                                </button>
+
+                                <button
+                                    id="run"
+                                    onclick="simulate('run')"
+                                    disable="disabled"
+                                    class="button">
+                                    <i class="fa-solid fa-eject"></i>
+                                </button>
+
+                                <button
+                                    id="stepback"
+                                    onclick="simulate('stepback')"
+                                    disable="disabled"
+                                    class="button">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+
+                                <button
+                                    id="stepforward"
+                                    onclick="simulate('stepforward')"
+                                    disable="disabled"
+                                    class="button">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+
+                                <button
+                                    id="stepout"
+                                    onclick="simulate('stepout')"
+                                    disable="disabled"
+                                    class="button">
+                                    <i class="fa-solid fa-arrow-turn-up"></i>
+                                </button>
+
+                                <button
+                                    id="stepin"
+                                    onclick="simulate('stepinto')"
+                                    disable="disabled"
+                                    class="button">
+                                    <i class="fa-solid fa-arrow-turn-up"></i>
+                                </button>
+                            </div>
                         </div>
                         <div id="editor">{{ code }}</div>
-                        <br />
                     </div>
 
                     <div id="dashboard">
@@ -1141,12 +1207,12 @@
                                     id="fileToLoad"
                                     style="display: none" />
                                 <label for="fileToLoad" class="flat_button"
-                                    >Restaurer</label
+                                    >Upload</label
                                 >
                             </div>
                             <div style="float: right">
                                 <button onclick="saveTextAsFile()">
-                                    Sauvegarder
+                                    Download
                                 </button>
                             </div>
                         </div>
@@ -1188,10 +1254,7 @@
             src="static/js/jquery-1.11.1.min.js"
             type="text/javascript"
             charset="utf-8"></script>
-        <script
-            src="static/js/jquery-ui-1.12.1.min.js"
-            type="text/javascript"
-            charset="utf-8"></script>
+
         <script
             src="static/js/tooltipster/js/jquery.tooltipster.min.js"
             type="text/javascript"
@@ -1235,14 +1298,11 @@
                 $(this).slideToggle("normal", "easeInOutBack", function () {});
             });
 
-            $("#assemble").click(assemble());
+            $("#assemble").click(function () {
+                assemble();
+            });
 
             $(document).ready(function () {
-                if (localStorage.getItem("lightmode") === "1") {
-                    $(".ace_content").addClass("lightmode");
-                    $("#memoryview").addClass("lightmode");
-                }
-
                 $(".register_row").click(function (e) {
                     var mode = "";
                     if (e.ctrlKey || e.metaKey) {
@@ -1270,25 +1330,75 @@
                     clearSelection();
                 });
 
-                $("#config_diag").dialog({
-                    autoOpen: false,
-                    modal: true,
-                    width: 700,
-                    buttons: [],
-                    open: function () {
-                        $("#language option").each(function (index, option) {
-                            if (option.value == getLang()) {
+                function openConfigDialog() {
+                    $("#config_overlay").fadeIn(150, function () {
+                        $("#language option").each(function (_, option) {
+                            if (option.value === getLang()) {
                                 option.selected = true;
                             }
                         });
-                    },
-                    close: function () {
+                        $("body").css("overflow", "hidden");
+                    });
+                }
+
+                function closeConfigDialog() {
+                    $("#config_overlay").fadeOut(150, function () {
                         setLang($("#language").val());
-                    },
+                        $("body").css("overflow", "");
+                    });
+                }
+
+                $("#config_overlay").on("click", function (e) {
+                    if (e.target.id === "config_overlay") {
+                        closeConfigDialog();
+                    }
                 });
 
-                $("#configurations").click(function () {
-                    $("#config_diag").dialog("open");
+                function saveConfig() {
+                    setLang($("#language").val());
+                    closeConfigDialog();
+                }
+
+                $("#settings").on("click", openConfigDialog);
+                $("#saveConfig").on("click", saveConfig);
+                $("#closeConfig").on("click", closeConfigDialog);
+
+                let sessionToDelete = null;
+
+                function openDeleteDialog(index) {
+                    sessionToDelete = index;
+                    $("#delete_overlay").fadeIn(150, function () {
+                        $("body").css("overflow", "hidden");
+                    });
+                }
+
+                function closeDeleteDialog() {
+                    $("#delete_overlay").fadeOut(150, function () {
+                        $("body").css("overflow", "");
+                    });
+                }
+
+                $("#delete_overlay").on("click", function (e) {
+                    if (e.target.id === "delete_overlay") {
+                        closeDeleteDialog();
+                    }
+                });
+
+                $("#cancel-delete").on("click", function () {
+                    closeDeleteDialog();
+                });
+
+                $("#confirm-delete").on("click", function () {
+                    if (sessionToDelete !== null) {
+                        performDeleteSession(sessionToDelete);
+                        sessionToDelete = null;
+                    }
+                    closeDeleteDialog();
+                });
+
+                $(document).on("click", ".delete_session", function () {
+                    const index = parseInt($(this).data("session-index"));
+                    openDeleteDialog(index);
                 });
 
                 editor.setHighlightGutterLine(false);
@@ -1474,27 +1584,26 @@
 
                 // Help buttons
                 $("#stepback").tooltipster({
-                    content: "Reculer à l'instruction précédente",
-                    position: "right",
+                    content: "Step back to previous instruction",
+                    position: "bottom",
                 });
                 $("#run").tooltipster({
-                    content: "Exécuter",
-                    position: "right",
+                    content: "Run",
+                    position: "bottom",
                 });
                 $("#stepin").tooltipster({
-                    content: "Exécuter l'instruction courante",
-                    position: "right",
+                    content: "Execute current instruction",
+                    position: "bottom",
                 });
                 $("#stepforward").tooltipster({
-                    content: "Exécuter la ligne courante",
-                    position: "right",
+                    content: "Step over current line",
+                    position: "bottom",
                 });
                 $("#stepout").tooltipster({
-                    content: "Terminer la fonction",
-                    position: "right",
+                    content: "Finish current function",
+                    position: "bottom",
                 });
 
-                // Changement de format
                 var previous_format = "hex";
                 $("#valueformat").change(function () {
                     $(".formatted_value").each(function () {
@@ -1539,20 +1648,6 @@
                 });
 
                 disableSim();
-            });
-
-            $("#lightmode").click(function () {
-                $(".ace_content").toggleClass("lightmode");
-                $("#memoryview").toggleClass("lightmode");
-                if ($(".ace_content").hasClass("lightmode")) {
-                    if (typeof Storage !== "undefined") {
-                        localStorage.setItem("lightmode", "1");
-                    }
-                } else {
-                    if (typeof Storage !== "undefined") {
-                        localStorage.setItem("lightmode", "0");
-                    }
-                }
             });
         </script>
         <script

@@ -89,12 +89,6 @@ input[type="submit"] {
 #stepback:disabled img {
     content: url("/static/image/back_disabled.png");
 }
-select:disabled,
-button:disabled,
-input[type="submit"]:disabled {
-    background-color: #383737;
-    border: 1px solid #7e8082;
-}
 #disassembly {
     height: 130px;
     width: 430px;
@@ -336,7 +330,7 @@ input[type="submit"]:disabled {
     padding: 10px;
     height: auto;
 }
-#configurations {
+#settings {
     padding: 10px 20px;
     height: auto;
 }
