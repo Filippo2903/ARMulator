@@ -1,11 +1,13 @@
 # Changes
 
-### 1. **Added documentation whit pdoc**
+### 1. **Merged major design changes**
 
-### 2. **Fixed requirements.txt**
+### 2. **Updated requirements.txt**
 
-### 3. **Added comments for pdoc**
+### 3. **Changed rendering method from PyQt5 to webview**
 
 # Work to do
 
-### 1. GUI
+### 1. Register, flag, memory and current instruction GUI
+### 2. Implement translation
+### 3. Remake documentation for new webview

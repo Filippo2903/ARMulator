@@ -272,7 +272,7 @@ function resetMemoryViewer() {
                 }
                 var addr =
                     parseInt($("td:first", rowref).text(), 16) + (col - 1);
-                sendCmd(["memchange", addr, newValue]);
+                sendData(["memchange", addr, newValue]);
             } else {
                 editableGrid.setValueAt(row, col, "--", true);
             }
@@ -309,13 +309,13 @@ function cellClick(e) {
             $("td:first", $(e.target).closest("tr")).text().slice(0, 9) +
             suffix;
         if (e.shiftKey) {
-            sendCmd(["breakpointsmem", addr, "r"]);
+            sendData(["breakpointsmem", addr, "r"]);
         }
         if (e.ctrlKey || e.metaKey) {
-            sendCmd(["breakpointsmem", addr, "w"]);
+            sendData(["breakpointsmem", addr, "w"]);
         }
         if (e.altKey) {
-            sendCmd(["breakpointsmem", addr, "e"]);
+            sendData(["breakpointsmem", addr, "e"]);
         }
     }
 }
@@ -333,7 +333,7 @@ $(document).ready(function () {
 
             // "first" link
             var link = $("<a>").html(
-                "<img src='static/image/mem_first.png' style='height: 15px; vertical-align: middle;'/>&nbsp;"
+                '<i class="fa-solid fa-backward-step"></i>'
             );
             if (!this.canGoBack())
                 link.css({ opacity: 0.4, filter: "alpha(opacity=40)" });
@@ -346,7 +346,7 @@ $(document).ready(function () {
 
             // "prev" link
             link = $("<a>").html(
-                "<img src='static/image/mem_prev.png' style='height: 15px; vertical-align: middle;'/>&nbsp;"
+                '<i class="fa-solid fa-play" style="transform: rotate(180deg)"></i>'
             );
             if (!this.canGoBack())
                 link.css({ opacity: 0.4, filter: "alpha(opacity=40)" });
@@ -376,9 +376,7 @@ $(document).ready(function () {
             $("#jump_memory_go").click(changeMemoryViewPage);
 
             // "next" link
-            link = $("<a>").html(
-                "<img src='static/image/mem_next.png' style='height: 15px; vertical-align: middle;'/>&nbsp;"
-            );
+            link = $("<a>").html('<i class="fa-solid fa-play"></i>');
             if (!this.canGoForward())
                 link.css({ opacity: 0.4, filter: "alpha(opacity=40)" });
             else
@@ -389,9 +387,7 @@ $(document).ready(function () {
             paginator.append(link);
 
             // "last" link
-            link = $("<a>").html(
-                "<img src='static/image/mem_last.png' style='height: 15px; vertical-align: middle;'/>&nbsp;"
-            );
+            link = $("<a>").html('<i class="fa-solid fa-forward-step"></i>');
             if (!this.canGoForward())
                 link.css({ opacity: 0.4, filter: "alpha(opacity=40)" });
             else

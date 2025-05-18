@@ -67,7 +67,7 @@ ws.onmessage = function (event) {
             $("[name='" + obj[1] + "']").prop("disabled", true);
         } else if (obj[0] == "edit_mode") {
             disableSim();
-            $("#assemble").text("Démarrer").removeClass("assemble_edit");
+            $("#assemble").text("Assemble").removeClass("assemble_edit");
             refreshBreakpoints();
         } else if (obj[0] == "line2addr") {
             line2addr = obj[1];
@@ -94,7 +94,7 @@ ws.onmessage = function (event) {
             );
             next_debugline = obj[1];
         } else if (obj[0] == "debugline") {
-            if ($("#assemble").text() !== "Démarrer") {
+            if ($("#assemble").text() !== "Assemble") {
                 $(".highlightread").removeClass("highlightread");
                 $(".highlightwrite").removeClass("highlightwrite");
 
@@ -146,7 +146,7 @@ ws.onmessage = function (event) {
                 } catch (e) {}
             }
         } else if (obj[0] == "debuginstrmem") {
-            if ($("#assemble").text() !== "Démarrer") {
+            if ($("#assemble").text() !== "Assemble") {
                 mem_breakpoints_instr = obj[1];
                 if ($("#follow_pc").is(":checked")) {
                     var target = obj[1][0];
@@ -175,7 +175,7 @@ ws.onmessage = function (event) {
         } else if (obj[0] == "membp_rw") {
             mem_breakpoints_rw = obj[1];
         } else if (obj[0] == "membp_e") {
-            if ($("#assemble").text() !== "Démarrer") {
+            if ($("#assemble").text() !== "Assemble") {
                 mem_breakpoints_e = obj[1];
             }
         } else if (obj[0] == "banking") {
@@ -210,7 +210,7 @@ function resetView() {
     $("#message_bar").slideUp("normal", "easeInOutBack", function () {});
 
     disableSim();
-    $("#assemble").text("Démarrer");
+    $("#assemble").text("Assemble");
     $(".assemble_edit").removeClass("assemble_edit");
 
     $(".regVal").val("");
@@ -246,7 +246,7 @@ function disableSim() {
     $("#stepout").prop("disabled", true);
     $("#stepforward").prop("disabled", true);
     $("#stepback").prop("disabled", true);
-    $("input[type=text]").prop("disabled", true);
+    $("input[type=text]:not(.session_name)").prop("disabled", true);
     $(".config_input").prop("disabled", false);
 }
 
@@ -261,6 +261,7 @@ function assemble() {
     var simExec = isSimulatorInEditMode();
     editor.session.clearBreakpoints();
     resetView();
+
     if (simExec) {
         $("#run").prop("disabled", false);
         $("#reset").prop("disabled", false);
@@ -268,12 +269,12 @@ function assemble() {
         $("#stepout").prop("disabled", false);
         $("#stepforward").prop("disabled", false);
         $("#stepback").prop("disabled", false);
-        $("#assemble").text("Arrêter").addClass("assemble_edit");
+        $("#assemble").text("Stop").addClass("assemble_edit");
 
-        sendCmd(["assemble", editor.getValue()]);
+        sendData(["assemble", editor.getValue()]);
 
         if ($("#interrupt_active").is(":checked")) {
-            sendCmd([
+            sendData([
                 "interrupt",
                 true,
                 $("#interrupt_type").val(),
@@ -282,35 +283,27 @@ function assemble() {
             ]);
         }
     } else {
-        $("#assemble").text("Démarrer");
-        sendCmd(["stop"]);
+        $("#assemble").text("Assemble");
+        sendData(["stop"]);
         refreshBreakpoints();
     }
 }
 
 function isSimulatorInEditMode() {
-    return $("#assemble").text() == "Démarrer";
+    return $("#assemble").text().trim() == "Assemble";
 }
 
 function reset() {
-    sendCmd(["reset"]);
+    sendData(["reset"]);
 }
 
 function simulate(type) {
     var animate_speed = $("#animate_speed").val();
-    sendCmd([type, animate_speed]);
+    sendData([type, animate_speed]);
 }
 
 function sendBreakpointsInstr() {
-    sendCmd(["breakpointsinstr", asm_breakpoints]);
-}
-
-function sendMsg(msg) {
-    sendData(JSON.stringify([msg]));
-}
-
-function sendCmd(cmd) {
-    sendData(JSON.stringify(cmd));
+    sendData(["breakpointsinstr", asm_breakpoints]);
 }
 
 function getCookie(name) {
@@ -325,7 +318,8 @@ function getCookie(name) {
     return null;
 }
 
-function sendData(data) {
+function sendData(cmd) {
+    const data = JSON.stringify(cmd);
     lang = getCookie("lang");
 
     if (ws.readyState === 0) {
@@ -335,7 +329,7 @@ function sendData(data) {
     } else if (ws.readyState > 1) {
         resetView();
         displayErrorMsg(
-            "Perte de la connexion au simulateur. Veuillez enregistrer votre travail et rafraîchir la page."
+            "Lost connection to the simulator. Please save your work and refresh the page."
         );
         $("input").prop("disabled", true);
     } else {
