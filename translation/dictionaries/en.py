@@ -1,4 +1,9 @@
 # Dictionary for the English language
 dict = {
-    "welcome": "Welcome"
+    "mainweb": [
+        "TEST ENGLISH"
+    ],
+    "assembler": [
+        "TEST ENGLISH"
+    ]
 }

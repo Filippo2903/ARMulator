@@ -17,7 +17,7 @@ var debug_marker = null;
 var next_debug_marker = null;
 
 ws.onerror = function (event) {
-    displayErrorMsg("Erreur de connexion avec le simulateur.");
+    displayErrorMsg(frontEndDictionary.simulatorConnectionError);
 };
 
 function displayErrorMsg(msg) {
@@ -55,10 +55,11 @@ ws.onmessage = function (event) {
             }
 
             if (target_value == "False") {
-                target_value = "Faux";
+                target_value = frontEndDictionary.false;
             }
+
             if (target_value == "True") {
-                target_value = "Vrai";
+                target_value = frontEndDictionary.true;
             }
 
             $(element).val(target_value);
@@ -67,7 +68,9 @@ ws.onmessage = function (event) {
             $("[name='" + obj[1] + "']").prop("disabled", true);
         } else if (obj[0] == "edit_mode") {
             disableSim();
-            $("#assemble").text("Assemble").removeClass("assemble_edit");
+            $("#assemble")
+                .text(frontEndDictionary.assemble)
+                .removeClass("assemble_edit");
             refreshBreakpoints();
         } else if (obj[0] == "line2addr") {
             line2addr = obj[1];
@@ -94,7 +97,7 @@ ws.onmessage = function (event) {
             );
             next_debugline = obj[1];
         } else if (obj[0] == "debugline") {
-            if ($("#assemble").text() !== "Assemble") {
+            if ($("#assemble").text() !== frontEndDictionary.assemble) {
                 $(".highlightread").removeClass("highlightread");
                 $(".highlightwrite").removeClass("highlightwrite");
 
@@ -146,7 +149,7 @@ ws.onmessage = function (event) {
                 } catch (e) {}
             }
         } else if (obj[0] == "debuginstrmem") {
-            if ($("#assemble").text() !== "Assemble") {
+            if ($("#assemble").text() !== frontEndDictionary.assemble) {
                 mem_breakpoints_instr = obj[1];
                 if ($("#follow_pc").is(":checked")) {
                     var target = obj[1][0];
@@ -175,7 +178,7 @@ ws.onmessage = function (event) {
         } else if (obj[0] == "membp_rw") {
             mem_breakpoints_rw = obj[1];
         } else if (obj[0] == "membp_e") {
-            if ($("#assemble").text() !== "Assemble") {
+            if ($("#assemble").text() !== frontEndDictionary.assemble) {
                 mem_breakpoints_e = obj[1];
             }
         } else if (obj[0] == "banking") {
@@ -210,7 +213,7 @@ function resetView() {
     $("#message_bar").slideUp("normal", "easeInOutBack", function () {});
 
     disableSim();
-    $("#assemble").text("Assemble");
+    $("#assemble").text(frontEndDictionary.assemble);
     $(".assemble_edit").removeClass("assemble_edit");
 
     $(".regVal").val("");
@@ -258,7 +261,8 @@ function refreshBreakpoints() {
 }
 
 function assemble() {
-    var simExec = isSimulatorInEditMode();
+    const simExec = isSimulatorInEditMode();
+
     editor.session.clearBreakpoints();
     resetView();
 
@@ -283,14 +287,14 @@ function assemble() {
             ]);
         }
     } else {
-        $("#assemble").text("Assemble");
+        $("#assemble").text(frontEndDictionary.assemble);
         sendData(["stop"]);
         refreshBreakpoints();
     }
 }
 
 function isSimulatorInEditMode() {
-    return $("#assemble").text().trim() == "Assemble";
+    return $("#assemble").text().trim() == frontEndDictionary.assemble;
 }
 
 function reset() {
@@ -320,19 +324,16 @@ function getCookie(name) {
 
 function sendData(cmd) {
     const data = JSON.stringify(cmd);
-    lang = getCookie("lang");
 
     if (ws.readyState === 0) {
         setTimeout(function () {
-            sendData(data + lang);
+            sendData(data);
         }, 500);
     } else if (ws.readyState > 1) {
         resetView();
-        displayErrorMsg(
-            "Lost connection to the simulator. Please save your work and refresh the page."
-        );
+        displayErrorMsg(frontEndDictionary.lostConnection);
         $("input").prop("disabled", true);
     } else {
-        ws.send(data + lang);
+        ws.send(data);
     }
 }

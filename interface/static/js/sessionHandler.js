@@ -58,6 +58,12 @@ function performDeleteSession(sessionId) {
 
 $(document).on("click", "#new_session", createNewSession);
 
+function openMaxSessionDialog() {
+    $("#max_sessions_overlay").fadeIn(150, function () {
+        $("body").css("overflow", "hidden");
+    });
+}
+
 function createNewSession() {
     var savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {
         defaultEditor: editor.getValue(),
@@ -66,7 +72,7 @@ function createNewSession() {
     };
 
     if (savedEditor.data.length >= 10) {
-        alert("Max number of sessions reached");
+        openMaxSessionDialog();
         return;
     }
 
@@ -74,19 +80,17 @@ function createNewSession() {
         saveCurrentEditor();
         savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
 
-        // Aggiunge alla fine
         savedEditor.data.push({
-            name: "New Session",
+            name: frontEndDictionary.newSession,
             code: editor.getValue(),
         });
 
-        // Imposta l'indice corrente sull'ultimo elemento
         savedEditor.current = savedEditor.data.length - 1;
     } else {
         savedEditor.current = 0;
         savedEditor.data = [
             {
-                name: "New Session",
+                name: frontEndDictionary.newSession,
                 code: editor.getValue(),
             },
         ];
@@ -118,7 +122,7 @@ $(document).on("blur", ".session_name", function () {
     if (text === "") {
         var $container = $this.closest(".session_item");
         var index = $container.find(".delete_session").data("session-index");
-        $this.val("Session " + (index + 1));
+        $this.val(frontEndDictionary.session + " " + (index + 1));
     }
 
     saveSessionName($this);
@@ -134,7 +138,7 @@ function saveCurrentEditor(forceNewName = false) {
 
     var name = $("#selected .session_name").val();
     if (!name || forceNewName) {
-        name = "New Session";
+        name = frontEndDictionary.newSession;
     }
 
     var data = {

@@ -36,6 +36,22 @@
             href="static/js/editablegrid/editablegrid.css"
             type="text/css"
             media="screen" />
+        <script src="static/js/frontEndDictionaries.js"></script>
+        <script>
+            const DEFAULT_LANG = "en";
+
+            const lang = (() => {
+                var value = "; " + document.cookie;
+                var parts = value.split("; lang=");
+                if (parts.length === 2) return parts.pop().split(";").shift();
+            })();
+
+            const {
+                lang: currentLang,
+                possibleLanguages: allLanguages,
+                dictionary: frontEndDictionary,
+            } = getFrontEndDictionary(lang || DEFAULT_LANG);
+        </script>
     </head>
 
     <body>
@@ -56,10 +72,10 @@
                     class="dialog-overlay"
                     style="display: none">
                     <div
-                        id="config_diag"
+                        id="config_dialog"
                         class="config-dialog"
                         onclick="event.stopPropagation();">
-                        <h1>Settings</h1>
+                        <h1 id="config_dialog_title">Settings</h1>
 
                         <div class="input-row">
                             <label for="interrupt_active"
@@ -124,11 +140,7 @@
 
                         <div class="input-row">
                             <label for="language">Language</label>
-                            <select id="language" class="config-input">
-                                <option value="it">Italiano</option>
-                                <option value="en">English</option>
-                                <option value="fr">Français</option>
-                            </select>
+                            <select id="language" class="config-input"></select>
                         </div>
 
                         <div class="config-buttons">
@@ -147,16 +159,23 @@
                     class="dialog-overlay"
                     style="display: none">
                     <div
-                        id="delete_diag"
+                        id="delete_dialog"
                         class="delete-dialog"
                         onclick="event.stopPropagation();">
-                        <h1>Delete session?</h1>
-                        <p>
-                            You are about to permanently delete this session.<br />
+                        <h1 id="delete_dialog_title">Delete session?</h1>
+                        <p class="delete-warning">
+                            <span class="delete-warning-text"
+                                >You are about to permanently delete this
+                                session.</span
+                            ><br />
                             <strong>This action cannot be undone.</strong
                             ><br /><br />
-                            Do you want to continue?
+                            <span class="confirm-text"
+                                >Do you want to continue?</span
+                            >
                         </p>
+
+                        <br />
 
                         <div class="delete-modal-buttons">
                             <button id="cancel-delete" class="button primary">
@@ -168,12 +187,42 @@
                         </div>
                     </div>
                 </div>
+
+                <div
+                    id="max_sessions_overlay"
+                    class="dialog-overlay"
+                    style="display: none">
+                    <div
+                        id="max_sessions_dialog"
+                        class="max-sessions-dialog"
+                        onclick="event.stopPropagation();">
+                        <h1 id="max_sessions_dialog_title">
+                            Maximum sessions reached
+                        </h1>
+
+                        <p class="max-sessions-warning">
+                            You cannot create more than 10 sessions at the same
+                            time, please delete an existing session before
+                            creating a new one
+                        </p>
+
+                        <br />
+
+                        <div class="max-sessions-modal-buttons">
+                            <button
+                                id="close-max-sessions"
+                                class="button primary">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div id="simulator-container" class="tab-container">
                 <ul class="etabs-main">
                     <li class="tab-main">
-                        <a href="#tabsmain-simulation">Test</a>
+                        <a href="#tabsmain-simulation">DO NOT DELETE THIS</a>
                     </li>
                 </ul>
 
@@ -199,8 +248,8 @@
                                 <table class="registers">
                                     <thead>
                                         <tr>
-                                            <th class="regh_name">Nom</th>
-                                            <th class="regh_val">Valeur</th>
+                                            <th class="regh_name">Name</th>
+                                            <th class="regh_val">Value</th>
                                         </tr>
                                     </thead>
                                     <tr id="user_r0" class="register_row">
@@ -384,8 +433,8 @@
                                 <table class="registers">
                                     <thead>
                                         <tr>
-                                            <th class="regh_name">Nom</th>
-                                            <th class="regh_val">Valeur</th>
+                                            <th class="regh_name">Name</th>
+                                            <th class="regh_val">Value</th>
                                         </tr>
                                     </thead>
                                     <tr id="fiq_r0" class="register_row">
@@ -589,8 +638,8 @@
                                 <table class="registers">
                                     <thead>
                                         <tr>
-                                            <th class="regh_name">Nom</th>
-                                            <th class="regh_val">Valeur</th>
+                                            <th class="regh_name">Name</th>
+                                            <th class="regh_val">Value</th>
                                         </tr>
                                     </thead>
                                     <tr id="irq_r0" class="register_row">
@@ -768,14 +817,12 @@
                                 </table>
                             </div>
                             <div id="tabs1-SVC" class="border_container_reg">
-                                <h4 id="gp-svc">
-                                    Registre G&eacute;n&eacute;raux (SVC)
-                                </h4>
+                                <h4 id="gp-svc">General Registers (SVC)</h4>
                                 <table class="registers">
                                     <thead>
                                         <tr>
-                                            <th class="regh_name">Nom</th>
-                                            <th class="regh_val">Valeur</th>
+                                            <th class="regh_name">Name</th>
+                                            <th class="regh_val">Value</th>
                                         </tr>
                                     </thead>
                                     <tr id="svc_r0" class="register_row">
@@ -954,16 +1001,14 @@
                             </div>
                             <div id="after-reg">
                                 <select id="valueformat">
-                                    <option value="hex">
-                                        Hexad&eacute;cimal
-                                    </option>
+                                    <option value="hex">Hexadecimal</option>
                                     <option value="decsign">
-                                        D&eacute;cimal (sign&eacute;)
+                                        Decimal (signed)
                                     </option>
                                     <option value="dec">
-                                        D&eacute;cimal (non-sign&eacute;)
+                                        Decimal (unsigned)
                                     </option>
-                                    <option value="bin">Binaire</option>
+                                    <option value="bin">Binary</option>
                                 </select>
                             </div>
                         </div>
@@ -979,7 +1024,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>Negatif (N)</td>
+                                        <td id="flag_negative">Negative (N)</td>
                                         <td>
                                             <button class="flag_btn" name="n">
                                                 <input
@@ -1002,7 +1047,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Zero (Z)</td>
+                                        <td id="flag_zero">Zero (Z)</td>
                                         <td>
                                             <button class="flag_btn" name="z">
                                                 <input
@@ -1025,7 +1070,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Retenue (C)</td>
+                                        <td id="flag_carry">Carry (C)</td>
                                         <td>
                                             <button class="flag_btn" name="c">
                                                 <input
@@ -1048,7 +1093,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>D&eacute;passement (V)</td>
+                                        <td id="flag_overflow">Overflow (V)</td>
                                         <td>
                                             <button class="flag_btn" name="v">
                                                 <input
@@ -1071,7 +1116,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Ignore IRQ</td>
+                                        <td id="ignore_irq">Ignore IRQ</td>
                                         <td>
                                             <button class="flag_btn" name="i">
                                                 <input
@@ -1094,7 +1139,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Ignore FIQ</td>
+                                        <td id="ignore_irq">Ignore FIQ</td>
                                         <td>
                                             <button class="flag_btn" name="f">
                                                 <input
@@ -1183,22 +1228,28 @@
 
                     <div id="dashboard">
                         <div class="border_container">
-                            <h4>Current Instruction</h4>
+                            <h4 id="current_instruction">
+                                Current Instruction
+                            </h4>
                             <div id="disassembly"></div>
                         </div>
+
                         <div class="border_container">
-                            <h4>M&eacute;moire</h4>
+                            <h4 id="memory_title">Memory</h4>
                             <div id="memoryview"></div>
                             <div id="paginator"></div>
+
+                            <label for="follow_pc">Follow PC</label>
                             <input
                                 type="checkbox"
                                 id="follow_pc"
-                                checked="checked" />Suivre PC<br />
-                            Cycle courant :
+                                checked="checked" /><br />
+
+                            <span class="cycles-label">Current cycle:</span>
                             <input id="cycles_count" type="text" value="0" />
                         </div>
+
                         <div>
-                            <br />
                             <div style="float: left">
                                 <input
                                     type="file"
@@ -1209,8 +1260,11 @@
                                     >Upload</label
                                 >
                             </div>
+
                             <div style="float: right">
-                                <button onclick="saveTextAsFile()">
+                                <button
+                                    id="download_file"
+                                    onclick="saveTextAsFile()">
                                     Download
                                 </button>
                             </div>
@@ -1253,7 +1307,6 @@
             src="static/js/jquery-1.11.1.min.js"
             type="text/javascript"
             charset="utf-8"></script>
-
         <script
             src="static/js/tooltipster/js/jquery.tooltipster.min.js"
             type="text/javascript"
@@ -1271,6 +1324,11 @@
             type="text/css"
             href="static/js/tooltipster/css/tooltipster.css" />
         <script
+            src="static/js/memory_viewer.js"
+            type="text/javascript"
+            charset="utf-8"></script>
+
+        <script
             src="static/js/comm.js"
             type="text/javascript"
             charset="utf-8"></script>
@@ -1278,381 +1336,8 @@
             src="static/js/helpers.js"
             type="text/javascript"
             charset="utf-8"></script>
+        <script src="static/js/custom-jquery.js"></script>
 
-        <script type="text/javascript">
-            var blockSelect = 0;
-            var selectLine = -1;
-
-            $("#simulator-container").easytabs({
-                animate: false,
-            });
-
-            // Onglets des registres
-            $("#tab-container").easytabs({
-                animate: false,
-            });
-
-            // Barre de messages
-            $("#message_bar").click(function () {
-                $(this).slideToggle("normal", "easeInOutBack", function () {});
-            });
-
-            $("#assemble").click(function () {
-                assemble();
-            });
-
-            $(document).ready(function () {
-                $(".register_row").click(function (e) {
-                    var mode = "";
-                    if (e.ctrlKey || e.metaKey) {
-                        $(this).toggleClass("reg_bkp_w");
-                    }
-                    if (e.shiftKey) {
-                        $(this).toggleClass("reg_bkp_r");
-                    }
-                    if (!(e.ctrlKey || e.metaKey || e.shiftKey)) {
-                        return;
-                    }
-
-                    if ($(this).hasClass("reg_bkp_w")) {
-                        mode = mode + "w";
-                    }
-                    if ($(this).hasClass("reg_bkp_r")) {
-                        mode = mode + "r";
-                    }
-
-                    sendData([
-                        "update",
-                        "bp_" + mode + "_" + $(this).attr("id"),
-                    ]);
-
-                    clearSelection();
-                });
-
-                function openConfigDialog() {
-                    $("#config_overlay").fadeIn(150, function () {
-                        $("#language option").each(function (_, option) {
-                            if (option.value === getLang()) {
-                                option.selected = true;
-                            }
-                        });
-                        $("body").css("overflow", "hidden");
-                    });
-                }
-
-                function closeConfigDialog() {
-                    $("#config_overlay").fadeOut(150, function () {
-                        setLang($("#language").val());
-                        $("body").css("overflow", "");
-                    });
-                }
-
-                $("#config_overlay").on("click", function (e) {
-                    if (e.target.id === "config_overlay") {
-                        closeConfigDialog();
-                    }
-                });
-
-                function saveConfig() {
-                    setLang($("#language").val());
-                    closeConfigDialog();
-                }
-
-                $("#settings").on("click", openConfigDialog);
-                $("#saveConfig").on("click", saveConfig);
-                $("#closeConfig").on("click", closeConfigDialog);
-
-                let sessionToDelete = null;
-
-                function openDeleteDialog(index) {
-                    sessionToDelete = index;
-                    $("#delete_overlay").fadeIn(150, function () {
-                        $("body").css("overflow", "hidden");
-                    });
-                }
-
-                function closeDeleteDialog() {
-                    $("#delete_overlay").fadeOut(150, function () {
-                        $("body").css("overflow", "");
-                    });
-                }
-
-                $("#delete_overlay").on("click", function (e) {
-                    if (e.target.id === "delete_overlay") {
-                        closeDeleteDialog();
-                    }
-                });
-
-                $("#cancel-delete").on("click", function () {
-                    closeDeleteDialog();
-                });
-
-                $("#confirm-delete").on("click", function () {
-                    if (sessionToDelete !== null) {
-                        performDeleteSession(sessionToDelete);
-                        sessionToDelete = null;
-                    }
-                    closeDeleteDialog();
-                });
-
-                $(document).on("click", ".delete_session", function () {
-                    const index = parseInt($(this).data("session-index"));
-                    openDeleteDialog(index);
-                });
-
-                editor.setHighlightGutterLine(false);
-
-                editor.on("guttermousedown", function (e) {
-                    var target = e.domEvent.target;
-                    if (target.className.indexOf("ace_gutter-cell") == -1)
-                        return;
-
-                    var row = e.getDocumentPosition().row;
-                    var index = $.inArray(row, asm_breakpoints);
-                    if (index >= 0) {
-                        asm_breakpoints.splice(index, 1);
-                        editor.session.clearBreakpoint(row);
-                    } else {
-                        asm_breakpoints.push(row);
-                        if ($("#assemble").text() == "Start") {
-                            editor.session.setBreakpoint(row);
-                        }
-                    }
-
-                    if ($("#assemble").text() == "Stop") {
-                        sendBreakpointsInstr();
-                    }
-
-                    blockSelect = blockSelect + 1;
-                    selectLine = row;
-                    setTimeout(function () {
-                        blockSelect = blockSelect - 1;
-                    }, 500);
-                });
-
-                editor.on("changeSelection", function (e) {
-                    var cur_row = editor.getCursorPosition()["row"];
-                    $(".mem_mousehighlight").removeClass("mem_mousehighlight");
-                    if (cur_row in line2addr) {
-                        mouse_highlight_mem = line2addr[cur_row];
-                    }
-                    updateMemoryBreakpointsView();
-
-                    if (blockSelect > 0) {
-                        editor.selection.setSelectionRange({
-                            start: {
-                                row: selectLine,
-                                column: selectLine,
-                            },
-                            end: {
-                                row: selectLine,
-                                column: selectLine,
-                            },
-                        });
-                    }
-                });
-
-                editor.on("change", function (e) {
-                    if (debug_marker !== null) {
-                        editor.session.removeMarker(debug_marker);
-                    }
-                    resetView();
-                    var end_row = e.end.row;
-                    var start_row = e.start.row;
-                    if (end_row != start_row) {
-                        editor.session.clearBreakpoints();
-                        for (var i = asm_breakpoints.length - 1; i >= 0; i--) {
-                            var row = asm_breakpoints[i];
-                            if (e.action == "insert") {
-                                if (
-                                    row > start_row ||
-                                    (row == start_row && e.start.column == 0)
-                                ) {
-                                    asm_breakpoints[i] =
-                                        row + end_row - start_row;
-                                }
-                            } else {
-                                if (
-                                    (row > start_row ||
-                                        (row == start_row &&
-                                            e.start.column == 0)) &&
-                                    (row < end_row ||
-                                        (row == end_row && e.end.column > 0))
-                                ) {
-                                    asm_breakpoints.splice(i, 1);
-                                } else if (row > start_row) {
-                                    asm_breakpoints[i] =
-                                        row + start_row - end_row;
-                                }
-                            }
-                        }
-                        refreshBreakpoints();
-                    }
-                });
-
-                $("#interrupt_type").change(function () {
-                    if (document.getElementById("interrupt_active").checked) {
-                        sendData([
-                            "interrupt",
-                            true,
-                            $("#interrupt_type").val(),
-                            parseInt($("#interrupt_cycles").val()),
-                            parseInt($("#interrupt_cycles_first").val()),
-                        ]);
-                    }
-                });
-
-                $("#interrupt_active").change(function () {
-                    if (this.checked) {
-                        sendData([
-                            "interrupt",
-                            true,
-                            $("#interrupt_type").val(),
-                            parseInt($("#interrupt_cycles").val()),
-                            parseInt($("#interrupt_cycles_first").val()),
-                        ]);
-                    } else {
-                        sendData([
-                            "interrupt",
-                            false,
-                            $("#interrupt_type").val(),
-                            parseInt($("#interrupt_cycles").val()),
-                            parseInt($("#interrupt_cycles_first").val()),
-                        ]);
-                    }
-                });
-
-                $("input[type=text]:not(.session_name)").change(function () {
-                    var objid = $(this).attr("id");
-                    if (objid == "animate_speed") {
-                        return;
-                    }
-
-                    if (
-                        objid == "interrupt_active" ||
-                        objid == "interrupt_cycles" ||
-                        objid == "interrupt_cycles_first"
-                    ) {
-                        if (
-                            document.getElementById("interrupt_active").checked
-                        ) {
-                            sendData([
-                                "interrupt",
-                                true,
-                                $("#interrupt_type").val(),
-                                parseInt($("#interrupt_cycles").val()),
-                                parseInt($("#interrupt_cycles_first").val()),
-                            ]);
-                        }
-                        return;
-                    }
-
-                    target_val = $(this).val();
-
-                    if ($.inArray("formatted_value", this.classList) >= 0) {
-                        // Convert to hex if from another format
-                        format_ = $("#valueformat").val();
-                        if (format_ == "dec") {
-                            target_val = parseInt(target_val).toString(16);
-                        } else if (format_ == "decsign") {
-                            target_val = parseInt(target_val);
-                            if (target_val < 0) {
-                                target_val = target_val + Math.pow(2, 32);
-                            }
-                            target_val = target_val.toString(16);
-                        } else if (format_ == "bin") {
-                            target_val = parseInt(target_val, 2).toString(16);
-                        } else if (format_ == "hex") {
-                            target_val = parseInt(target_val, 16).toString(16);
-                        }
-                    }
-
-                    if ("NaN" === target_val) {
-                        $(this).val("0");
-                        target_val = "0";
-                    }
-
-                    sendData(["update", $(this).attr("id"), target_val]);
-                });
-
-                $(".flag_btn").click(function () {
-                    if (!$("input", this).prop("disabled")) {
-                        sendData(["update", $(this).attr("name")]);
-                    }
-                });
-
-                // Help buttons
-                $("#stepback").tooltipster({
-                    content: "Step back to previous instruction",
-                    position: "bottom",
-                });
-                $("#run").tooltipster({
-                    content: "Run",
-                    position: "bottom",
-                });
-                $("#stepin").tooltipster({
-                    content: "Execute current instruction",
-                    position: "bottom",
-                });
-                $("#stepforward").tooltipster({
-                    content: "Step over current line",
-                    position: "bottom",
-                });
-                $("#stepout").tooltipster({
-                    content: "Finish current function",
-                    position: "bottom",
-                });
-
-                var previous_format = "hex";
-                $("#valueformat").change(function () {
-                    $(".formatted_value").each(function () {
-                        format_ = $("#valueformat").val();
-                        target_val = NaN;
-
-                        if (
-                            previous_format == "dec" ||
-                            previous_format == "decsign"
-                        ) {
-                            target_val = parseInt($(this).val());
-                        } else if (previous_format == "bin") {
-                            target_val = parseInt($(this).val(), 2);
-                        } else if (previous_format == "hex") {
-                            target_val = parseInt($(this).val(), 16);
-                        }
-
-                        if (target_val < 0) {
-                            target_val = target_val + Math.pow(2, 32);
-                        }
-
-                        if (isNaN(target_val)) {
-                            return;
-                        }
-
-                        if (format_ == "dec") {
-                            $(this).val(target_val.toString());
-                        } else if (format_ == "decsign") {
-                            if (target_val > Math.pow(2, 31) - 1) {
-                                target_val = target_val - Math.pow(2, 32);
-                            }
-                            $(this).val(target_val.toString());
-                        } else if (format_ == "bin") {
-                            $(this).val(target_val.toString(2));
-                        } else if (format_ == "hex") {
-                            $(this).val(
-                                formatHexUnsigned32Bits(target_val).slice(2)
-                            );
-                        }
-                    });
-                    previous_format = $("#valueformat").val();
-                });
-
-                disableSim();
-            });
-        </script>
-        <script
-            src="static/js/memory_viewer.js"
-            type="text/javascript"
-            charset="utf-8"></script>
         <script
             src="static/js/sessionHandler.js"
             type="text/javascript"

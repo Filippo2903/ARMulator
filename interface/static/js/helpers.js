@@ -37,7 +37,7 @@ function destroyClickedElement(event) {
     document.body.removeChild(event.target);
 }
 
-// 🔄 VERSIONE AGGIORNATA
+// VERSIONE AGGIORNATA
 function saveTextAsFile() {
     var textToWrite = editor.getValue();
 
@@ -46,9 +46,8 @@ function saveTextAsFile() {
     form.setAttribute("action", "/download/");
     form.setAttribute("target", "_blank");
 
-    // Usa una chiave fissa per inviare nel form POST
     var params = {
-        sim: LOCAL_STORAGE_KEY, // o un altro nome se vuoi cambiarlo nel backend
+        sim: LOCAL_STORAGE_KEY,
         data: textToWrite,
     };
 
@@ -109,8 +108,11 @@ function loadFileAsText() {
 
 function setLang(lang) {
     var previousLang = getLang();
+
     if (previousLang !== lang) {
         document.cookie = "lang=" + lang;
+
+        ws.send(`changeLang:${lang}`);
         location.reload();
     }
 }

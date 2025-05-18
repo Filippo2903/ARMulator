@@ -169,7 +169,7 @@ class Simulator:
 
     def executionStats(self):
         """
-        Return a dictionnary with the number of times each instruction type was executed
+        Return a dictionary with the number of times each instruction type was executed
         in the last execution run.
         The types are:
         - "data" (includes all arithmetic and logic operations except multiply)
@@ -237,7 +237,7 @@ class Simulator:
         represents a bit position. The usual binary ops symbols apply.
 
         Note that NOP was backported from ARMv7, and that ARMv4 coprocessor
-        instructions are not supported. Also, we do not explicitely check for
+        instructions are not supported. Also, we do not explicitly check for
         undefined instructions (in the ARM terminology, they are more
         _unpredictable_ than undefined).
 

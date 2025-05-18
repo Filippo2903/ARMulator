@@ -1,3 +1,7 @@
+import os
+import inspect
+from translation.dictionary import create_main_dict
+
 def singleton(class_):
     instances = {}
     def getinstance(*args, **kwargs):
@@ -12,6 +16,7 @@ class StateManager():
         self.httpPort = httpPort
         self.webPort = webPort
         self.lang = lang
+        self.mainDict = create_main_dict()
         pass
 
     def getHttpPort(self):
@@ -31,3 +36,14 @@ class StateManager():
 
     def setLang(self, lang):
         self.lang = lang
+
+    # Shorthand for "getTranslation"
+    # Usable even with key-values in dictionaries by changing from list to dictionary
+    # as values for each file
+    def getT(self, index):
+        caller_filename = os.path.splitext(os.path.basename(inspect.stack()[1].filename))[0]
+
+        try:
+            return self.mainDict[self.lang][caller_filename][index]
+        except (KeyError, IndexError):
+            return f"[{self.lang}:{caller_filename}:{index}] NOT FOUND"

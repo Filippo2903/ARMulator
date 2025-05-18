@@ -78,7 +78,6 @@ def parse(code, memLayout="simulation"):
     """
     
     appState = StateManager()
-    print("From parser: ", appState.getLang())
 
     
     listErrors = []
