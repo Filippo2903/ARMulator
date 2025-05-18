@@ -421,8 +421,6 @@ a {
 }
 
 .delete_session {
-    all: unset;
-
     background-color: transparent;
     border-radius: 100%;
 
