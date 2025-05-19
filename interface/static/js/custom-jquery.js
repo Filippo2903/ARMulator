@@ -1,15 +1,6 @@
 var blockSelect = 0;
 var selectLine = -1;
 
-$("#simulator-container").easytabs({
-    animate: false,
-});
-
-// Register tabs
-$("#tab-container").easytabs({
-    animate: false,
-});
-
 // Message bar
 $("#message_bar").click(function () {
     $(this).slideToggle("normal", "easeInOutBack", function () {});
@@ -17,6 +8,11 @@ $("#message_bar").click(function () {
 
 $("#assemble").click(function () {
     assemble();
+});
+
+// Change register tabs
+$(".select_registers").click(function (e) {
+    showTab(e.target.value);
 });
 
 $(document).ready(function () {

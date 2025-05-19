@@ -54,16 +54,11 @@ ws.onmessage = function (event) {
                 }
             }
 
-            if (target_value == "False") {
-                target_value = frontEndDictionary.false;
+            if (target_value === "False") {
+                $(element).prop("checked", false);
+            } else if (target_value === "True") {
+                $(element).prop("checked", true);
             }
-
-            if (target_value == "True") {
-                target_value = frontEndDictionary.true;
-            }
-
-            $(element).val(target_value);
-            $(element).prop("disabled", false);
         } else if (obj[0] == "disable") {
             $("[name='" + obj[1] + "']").prop("disabled", true);
         } else if (obj[0] == "edit_mode") {
@@ -182,7 +177,8 @@ ws.onmessage = function (event) {
                 mem_breakpoints_e = obj[1];
             }
         } else if (obj[0] == "banking") {
-            $("#tab-container").easytabs("select", "#tabs1-" + obj[1]);
+            showTab(obj[1]);
+
             if (obj[1] == "User") {
                 $("#spsr_title").text("SPSR");
             } else {
@@ -217,7 +213,8 @@ function resetView() {
     $(".assemble_edit").removeClass("assemble_edit");
 
     $(".regVal").val("");
-    $(".statusVal").val("");
+    $(".statusVal").prop("checked", false);
+
     if (debug_marker !== null) {
         editor.session.removeMarker(debug_marker);
     }

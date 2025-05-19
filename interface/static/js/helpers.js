@@ -122,3 +122,12 @@ function getLang() {
     var parts = value.split("; lang=");
     if (parts.length === 2) return parts.pop().split(";").shift();
 }
+
+function showTab(id) {
+    const targetId = "#tabs1-" + id;
+    $(".reg-container").removeClass("shown");
+    $(targetId).addClass("shown");
+
+    $(".select_registers").removeClass("primary");
+    $(`button[value=${id}]`).addClass("primary");
+}
