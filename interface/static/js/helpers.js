@@ -124,9 +124,13 @@ function getLang() {
 }
 
 function showTab(id) {
-    const targetId = "#tabs1-" + id;
+    const registerTitleId = "#gp-" + id;
+    const registerContainerId = "#tabs1-" + id;
+
     $(".reg-container").removeClass("shown");
-    $(targetId).addClass("shown");
+    $(".reg-container-title").removeClass("shown");
+    $(registerContainerId).addClass("shown");
+    $(registerTitleId).addClass("shown");
 
     $(".select_registers").removeClass("primary");
     $(`button[value=${id}]`).addClass("primary");

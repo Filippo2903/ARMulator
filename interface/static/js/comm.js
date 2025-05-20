@@ -50,7 +50,7 @@ ws.onmessage = function (event) {
                     target_value = parseInt(obj[1], 16).toString(2);
                 }
                 if (isNaN(target_value)) {
-                    var target_value = obj[1];
+                    target_value = obj[1];
                 }
             }
 
@@ -59,6 +59,8 @@ ws.onmessage = function (event) {
             } else if (target_value === "True") {
                 $(element).prop("checked", true);
             }
+
+            $(element).prop("disabled", false);
         } else if (obj[0] == "disable") {
             $("[name='" + obj[1] + "']").prop("disabled", true);
         } else if (obj[0] == "edit_mode") {
@@ -213,8 +215,7 @@ function resetView() {
     $(".assemble_edit").removeClass("assemble_edit");
 
     $(".regVal").val("");
-    $(".statusVal").prop("checked", false);
-
+    $(".statusVal").val("");
     if (debug_marker !== null) {
         editor.session.removeMarker(debug_marker);
     }
@@ -247,7 +248,11 @@ function disableSim() {
     $("#stepforward").prop("disabled", true);
     $("#stepback").prop("disabled", true);
     $("input[type=text]:not(.session_name)").prop("disabled", true);
-    $(".config_input").prop("disabled", false);
+
+    $("input[type=checkbox]").prop("disabled", true);
+    $(".flag_btn input[type=checkbox]").prop("checked", false);
+
+    $("#settings").prop("disabled", false);
 }
 
 function refreshBreakpoints() {
@@ -264,6 +269,7 @@ function assemble() {
     resetView();
 
     if (simExec) {
+        $("#settings").prop("disabled", true);
         $("#run").prop("disabled", false);
         $("#reset").prop("disabled", false);
         $("#stepin").prop("disabled", false);

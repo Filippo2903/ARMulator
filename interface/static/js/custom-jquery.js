@@ -310,8 +310,8 @@ $(document).ready(function () {
         sendData(["update", $(this).attr("id"), target_val]);
     });
 
-    $(".flag_btn").click(function () {
-        if (!$("input", this).prop("disabled")) {
+    $(".flag_btn input").change(function () {
+        if (!$(this).prop("disabled")) {
             sendData(["update", $(this).attr("name")]);
         }
     });

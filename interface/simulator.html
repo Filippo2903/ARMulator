@@ -223,8 +223,10 @@
                 <div id="tabsmain-simulation">
                     <div id="regView">
                         <div id="all-registers">
+                            <div id="gp-User" class="reg-container-title shown">
+                                General Purpose Registers
+                            </div>
                             <div id="tabs1-User" class="reg-container shown">
-                                <h4 id="gp-user">General Purpose Registers</h4>
                                 <div class="registers">
                                     <div
                                         id="user_r0"
@@ -437,8 +439,10 @@
                                 </div>
                             </div>
 
+                            <div id="gp-FIQ" class="reg-container-title">
+                                General Registers (FIQ)
+                            </div>
                             <div id="tabs1-FIQ" class="reg-container">
-                                <h4 id="gp-fiq">General Registers (FIQ)</h4>
                                 <div class="registers">
                                     <div
                                         id="fiq_r0"
@@ -651,8 +655,10 @@
                                 </div>
                             </div>
 
+                            <div id="gp-IRQ" class="reg-container-title">
+                                General Registers (IRQ)
+                            </div>
                             <div id="tabs1-IRQ" class="reg-container">
-                                <h4 id="gp-irq">General Registers (IRQ)</h4>
                                 <div class="registers">
                                     <div
                                         id="irq_r0"
@@ -865,8 +871,10 @@
                                 </div>
                             </div>
 
+                            <div id="gp-SVC" class="reg-container-title">
+                                General Registers (SVC)
+                            </div>
                             <div id="tabs1-SVC" class="reg-container">
-                                <h4 id="gp-svc">General Registers (SVC)</h4>
                                 <div class="registers">
                                     <div
                                         id="svc_r0"
@@ -1122,129 +1130,135 @@
                         </div>
 
                         <div id="current_state">
-                            <div id="current_state_title">Current state</div>
-                            <div>CPSR</div>
-                            <div id="spsr_title">SPSR</div>
+                            <div id="current_state_title_wrapper">
+                                <div id="current_state_title">
+                                    Current state
+                                </div>
+                                <div>CPSR</div>
+                                <div id="spsr_title">SPSR</div>
+                            </div>
 
-                            <div id="flag_negative">Negative (N)</div>
+                            <div id="current_state_table">
+                                <div id="flag_negative">Negative (N)</div>
+                                <label class="ui-switch flag_btn" name="n">
+                                    <input
+                                        type="checkbox"
+                                        id="n"
+                                        name="n"
+                                        value="n"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="ui-switch flag_btn" name="sn">
+                                    <input
+                                        type="checkbox"
+                                        id="sn"
+                                        name="sn"
+                                        value="sn"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
 
-                            <label class="ui-switch flag_btn" name="n">
-                                <input
-                                    type="checkbox"
-                                    id="n"
-                                    name="n"
-                                    value="n" />
-                                <span class="slider"></span>
-                            </label>
+                                <div id="flag_zero">Zero (Z)</div>
+                                <label class="ui-switch flag_btn" name="z">
+                                    <input
+                                        type="checkbox"
+                                        id="z"
+                                        name="z"
+                                        value="z"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="ui-switch flag_btn" name="sz">
+                                    <input
+                                        type="checkbox"
+                                        id="sz"
+                                        name="sz"
+                                        value="sz"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
 
-                            <label class="ui-switch flag_btn" name="sn">
-                                <input
-                                    type="checkbox"
-                                    id="sn"
-                                    name="sn"
-                                    value="sn" />
-                                <span class="slider"></span>
-                            </label>
+                                <div id="flag_carry">Carry (C)</div>
+                                <label class="ui-switch flag_btn" name="c">
+                                    <input
+                                        type="checkbox"
+                                        id="c"
+                                        name="c"
+                                        value="c"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="ui-switch flag_btn" name="sc">
+                                    <input
+                                        type="checkbox"
+                                        id="sc"
+                                        name="sc"
+                                        value="sc"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
 
-                            <div id="flag_zero">Zero (Z)</div>
+                                <div id="flag_overflow">Overflow (V)</div>
+                                <label class="ui-switch flag_btn" name="v">
+                                    <input
+                                        type="checkbox"
+                                        id="v"
+                                        name="v"
+                                        value="v"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="ui-switch flag_btn" name="sv">
+                                    <input
+                                        type="checkbox"
+                                        id="sv"
+                                        name="sv"
+                                        value="sv"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
 
-                            <label class="ui-switch flag_btn" name="z">
-                                <input
-                                    type="checkbox"
-                                    id="z"
-                                    name="z"
-                                    value="z" />
-                                <span class="slider"></span>
-                            </label>
+                                <div id="ignore_irq">Ignore IRQ</div>
+                                <label class="ui-switch flag_btn" name="i">
+                                    <input
+                                        type="checkbox"
+                                        id="i"
+                                        name="i"
+                                        value="i"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="ui-switch flag_btn" name="si">
+                                    <input
+                                        type="checkbox"
+                                        id="si"
+                                        name="si"
+                                        value="si"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
 
-                            <label class="ui-switch flag_btn" name="sz">
-                                <input
-                                    type="checkbox"
-                                    id="sz"
-                                    name="sz"
-                                    value="sz" />
-                                <span class="slider"></span>
-                            </label>
-
-                            <div id="flag_carry">Carry (C)</div>
-
-                            <label class="ui-switch flag_btn" name="c">
-                                <input
-                                    type="checkbox"
-                                    id="c"
-                                    name="c"
-                                    value="c" />
-                                <span class="slider"></span>
-                            </label>
-
-                            <label class="ui-switch flag_btn" name="sc">
-                                <input
-                                    type="checkbox"
-                                    id="sc"
-                                    name="sc"
-                                    value="sc" />
-                                <span class="slider"></span>
-                            </label>
-
-                            <div id="flag_overflow">Overflow (V)</div>
-
-                            <label class="ui-switch flag_btn" name="v">
-                                <input
-                                    type="checkbox"
-                                    id="v"
-                                    name="v"
-                                    value="v" />
-                                <span class="slider"></span>
-                            </label>
-
-                            <label class="ui-switch flag_btn" name="sv">
-                                <input
-                                    type="checkbox"
-                                    id="sv"
-                                    name="sv"
-                                    value="sv" />
-                                <span class="slider"></span>
-                            </label>
-
-                            <div id="ignore_irq">Ignore IRQ</div>
-
-                            <label class="ui-switch flag_btn" name="i">
-                                <input
-                                    type="checkbox"
-                                    id="i"
-                                    name="i"
-                                    value="i" />
-                                <span class="slider"></span>
-                            </label>
-
-                            <label class="ui-switch flag_btn" name="si">
-                                <input
-                                    type="checkbox"
-                                    id="si"
-                                    name="si"
-                                    value="si" />
-                                <span class="slider"></span>
-                            </label>
-
-                            <div id="ignore_fiq">Ignore FIQ</div>
-
-                            <label class="ui-switch flag_btn" name="f">
-                                <input
-                                    type="checkbox"
-                                    id="f"
-                                    name="f"
-                                    value="f" />
-                                <span class="slider"></span>
-                            </label>
-
-                            <label class="ui-switch flag_btn" name="sf">
-                                <input
-                                    type="checkbox"
-                                    id="sf"
-                                    name="sf"
-                                    value="sf" />
-                                <span class="slider"></span>
-                            </label>
+                                <div id="ignore_fiq">Ignore FIQ</div>
+                                <label class="ui-switch flag_btn" name="f">
+                                    <input
+                                        type="checkbox"
+                                        id="f"
+                                        name="f"
+                                        value="f"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
+                                <label class="ui-switch flag_btn" name="sf">
+                                    <input
+                                        type="checkbox"
+                                        id="sf"
+                                        name="sf"
+                                        value="sf"
+                                        disabled />
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -1310,14 +1324,14 @@
 
                     <div id="dashboard">
                         <div class="border_container">
-                            <h4 id="current_instruction">
+                            <div id="current_instruction">
                                 Current Instruction
-                            </h4>
+                            </div>
                             <div id="disassembly"></div>
                         </div>
 
                         <div class="border_container">
-                            <h4 id="memory_title">Memory</h4>
+                            <div id="memory_title">Memory</div>
                             <div id="memoryview"></div>
                             <div id="paginator"></div>
 
