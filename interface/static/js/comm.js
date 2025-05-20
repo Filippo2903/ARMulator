@@ -32,6 +32,7 @@ ws.onmessage = function (event) {
         var obj = obj_list[idx];
 
         var element = document.getElementById(obj[0]);
+
         if (obj[0] == "disassembly") {
             $("#disassembly").html(obj[1]);
         } else if (element != null) {
@@ -39,6 +40,7 @@ ws.onmessage = function (event) {
 
             if ($.inArray("formatted_value", element.classList) >= 0) {
                 format_ = $("#valueformat").val();
+
                 if (format_ == "dec") {
                     target_value = parseInt(obj[1], 16);
                 } else if (format_ == "decsign") {
@@ -49,15 +51,28 @@ ws.onmessage = function (event) {
                 } else if (format_ == "bin") {
                     target_value = parseInt(obj[1], 16).toString(2);
                 }
+
                 if (isNaN(target_value)) {
                     target_value = obj[1];
                 }
             }
 
-            if (target_value === "False") {
-                $(element).prop("checked", false);
-            } else if (target_value === "True") {
-                $(element).prop("checked", true);
+            console.log("\n\n");
+            console.log({ element });
+            console.log({ target_value });
+
+            switch (target_value) {
+                case "False":
+                    $(element).prop("checked", false);
+                    break;
+
+                case "True":
+                    $(element).prop("checked", true);
+                    break;
+
+                default:
+                    $(element).val(target_value);
+                    break;
             }
 
             $(element).prop("disabled", false);
@@ -65,9 +80,11 @@ ws.onmessage = function (event) {
             $("[name='" + obj[1] + "']").prop("disabled", true);
         } else if (obj[0] == "edit_mode") {
             disableSim();
+
             $("#assemble")
                 .text(frontEndDictionary.assemble)
                 .removeClass("assemble_edit");
+
             refreshBreakpoints();
         } else if (obj[0] == "line2addr") {
             line2addr = obj[1];
@@ -249,8 +266,7 @@ function disableSim() {
     $("#stepback").prop("disabled", true);
     $("input[type=text]:not(.session_name)").prop("disabled", true);
 
-    $("input[type=checkbox]").prop("disabled", true);
-    $(".flag_btn input[type=checkbox]").prop("checked", false);
+    $("input[type=checkbox]:not(#interrupt_active)").prop("disabled", true);
 
     $("#settings").prop("disabled", false);
 }
