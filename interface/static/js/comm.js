@@ -57,10 +57,6 @@ ws.onmessage = function (event) {
                 }
             }
 
-            console.log("\n\n");
-            console.log({ element });
-            console.log({ target_value });
-
             switch (target_value) {
                 case "False":
                     $(element).prop("checked", false);
@@ -112,7 +108,7 @@ ws.onmessage = function (event) {
             next_debugline = obj[1];
         } else if (obj[0] == "debugline") {
             if ($("#assemble").text() !== frontEndDictionary.assemble) {
-                $(".highlightread").removeClass("highlightread");
+                $(".highlightRead").removeClass("highlightRead");
                 $(".highlightwrite").removeClass("highlightwrite");
 
                 mem_highlights_r.length = 0;
@@ -242,7 +238,7 @@ function resetView() {
 
     $(".reg_bkp_w").removeClass("reg_bkp_w");
     $(".reg_bkp_r").removeClass("reg_bkp_r");
-    $(".highlightread").removeClass("highlightread");
+    $(".highlightRead").removeClass("highlightRead");
     $(".highlightwrite").removeClass("highlightwrite");
     $("#disassembly").html("");
 
@@ -266,7 +262,9 @@ function disableSim() {
     $("#stepback").prop("disabled", true);
     $("input[type=text]:not(.session_name)").prop("disabled", true);
 
-    $("input[type=checkbox]:not(#interrupt_active)").prop("disabled", true);
+    $("input[type=checkbox]:not(#interrupt_active):not(#follow_pc)")
+        .prop("disabled", true)
+        .prop("checked", false);
 
     $("#settings").prop("disabled", false);
 }
@@ -292,6 +290,11 @@ function assemble() {
         $("#stepout").prop("disabled", false);
         $("#stepforward").prop("disabled", false);
         $("#stepback").prop("disabled", false);
+
+        $("input[type=checkbox]:not(#interrupt_active):not(#follow_pc)")
+            .prop("disabled", false)
+            .prop("checked", false);
+
         $("#assemble").text("Stop").addClass("assemble_edit");
 
         sendData(["assemble", editor.getValue()]);

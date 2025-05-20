@@ -39,6 +39,10 @@
     --debug-line-bg: rgba(97, 175, 239, 0.2);
     --next-line-bg: rgba(255, 255, 255, 0.06);
 
+    --highlight-write: #c678dd; /* viola chiaro */
+    --highlight-read: #56b6c2; /* azzurro chiaro */
+    --highlight-write-read: #7f79a8; /* viola medio */
+
     --font-mono: "Fira Code", monospace;
     --font-size: 14px;
 }
@@ -293,14 +297,20 @@ body {
     flex-direction: column;
 }
 
-a {
-    color: white;
+.wrapper {
+    padding: 32px;
+    flex-grow: 1;
+
+    min-width: fit-content;
 }
 
 #main-container {
+    min-height: 600px;
+    min-width: 1000px;
+
+    max-width: 100%;
     background-color: var(--app-bg);
     height: calc(100vh - 64px);
-    margin: 32px;
 
     display: flex;
     flex-direction: column;
@@ -657,38 +667,37 @@ a {
 }
 
 .reg_bkp_w td {
-    background-color: #9a2d54 !important;
+    background-color: var(--highlight-write) !important;
 }
 .reg_bkp_r td {
-    background-color: #4d878f !important;
+    background-color: var(--highlight-read) !important;
 }
 .reg_bkp_w.reg_bkp_r td {
-    background-color: #6e569b !important;
+    background-color: var(--highlight-write-read) !important;
 }
 
-/* Current operation highlights */
 .registers .highlightRead {
-    border: 2px solid #4d878f !important;
+    border: 1px solid var(--highlight-read) !important;
 }
 
 .registers .highlightwrite {
-    border: 2px solid #9a2d54 !important;
+    border: 1px solid var(--highlight-write) !important;
 }
 
 .registers .highlightRead.highlightwrite {
-    border: 2px solid #6e569b !important;
+    border: 1px solid var(--highlight-write-read) !important;
 }
 
 #memoryview .highlightRead {
-    color: hsl(187, 30%, 65%) !important;
+    color: var(--highlight-read) !important;
 }
 
 #memoryview .highlightwrite {
-    color: hsl(338.5, 54.8%, 65%) !important;
+    color: var(--highlight-write) !important;
 }
 
 #memoryview .highlightRead.highlightwrite {
-    color: hsl(260.9, 28.6%, 65%) !important;
+    color: var(--highlight-write-read) !important;
 }
 
 .register_selector_container {

@@ -6,4 +6,4 @@ appState = StateManager()
 def start_app():
     url = f"http://localhost:{appState.getHttpPort()}"
     webview.create_window("ARMulator", url, maximized=True)
-    webview.start(gui='qt')
+    webview.start()
