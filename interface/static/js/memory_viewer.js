@@ -1,124 +1,32 @@
 var editableGrid = null;
 var mouse_highlight_mem = [];
 
-function updateMemoryBreakpointsView() {
-    for (var i = 0; i < mem_highlights_r.length; i++) {
-        tofind = formatHexUnsigned32Bits(mem_highlights_r[i]).slice(0, 9) + "0";
-        var tableRow = $("td", $("#memoryview"))
-            .filter(function () {
-                return $(this).text() == tofind;
-            })
-            .closest("tr");
-        if (tableRow.length < 1) {
-            continue;
-        }
-        col = parseInt(mem_highlights_r[i]) % 16;
-        $(".editablegrid-c" + col, tableRow).addClass("highlightRead");
-    }
+function highlightMemoryCells(addresses, className, parseAsHex = false) {
+  addresses.forEach(addr => {
+    const tofind = formatHexUnsigned32Bits(addr).slice(0, 9) + "0";
+    const tableRow = $("#memoryview td")
+      .filter((_, td) => $(td).text() === tofind)
+      .closest("tr");
 
-    for (var i = 0; i < mem_highlights_w.length; i++) {
-        tofind = formatHexUnsigned32Bits(mem_highlights_w[i]).slice(0, 9) + "0";
-        var tableRow = $("td", $("#memoryview"))
-            .filter(function () {
-                return $(this).text() == tofind;
-            })
-            .closest("tr");
-        if (tableRow.length < 1) {
-            continue;
-        }
-        col = parseInt(mem_highlights_w[i]) % 16;
-        $(".editablegrid-c" + col, tableRow).addClass("highlightWrite");
-    }
+    if (tableRow.length === 0) return;
 
-    for (var i = 0; i < mem_breakpoints_r.length; i++) {
-        tofind =
-            formatHexUnsigned32Bits(mem_breakpoints_r[i]).slice(0, 9) + "0";
-        var tableRow = $("td", $("#memoryview"))
-            .filter(function () {
-                return $(this).text() == tofind;
-            })
-            .closest("tr");
-        if (tableRow.length < 1) {
-            continue;
-        }
-        col = parseInt(mem_breakpoints_r[i], 16) % 16;
-        $(".editablegrid-c" + col, tableRow).addClass("mem_r");
-    }
-
-    for (var i = 0; i < mem_breakpoints_w.length; i++) {
-        tofind =
-            formatHexUnsigned32Bits(mem_breakpoints_w[i]).slice(0, 9) + "0";
-        var tableRow = $("td", $("#memoryview"))
-            .filter(function () {
-                return $(this).text() == tofind;
-            })
-            .closest("tr");
-        if (tableRow.length < 1) {
-            continue;
-        }
-        col = parseInt(mem_breakpoints_w[i], 16) % 16;
-        $(".editablegrid-c" + col, tableRow).addClass("mem_w");
-    }
-
-    for (var i = 0; i < mem_breakpoints_rw.length; i++) {
-        tofind =
-            formatHexUnsigned32Bits(mem_breakpoints_rw[i]).slice(0, 9) + "0";
-        var tableRow = $("td", $("#memoryview"))
-            .filter(function () {
-                return $(this).text() == tofind;
-            })
-            .closest("tr");
-        if (tableRow.length < 1) {
-            continue;
-        }
-        col = parseInt(mem_breakpoints_rw[i], 16) % 16;
-        $(".editablegrid-c" + col, tableRow).addClass("mem_rw");
-    }
-
-    for (var i = 0; i < mem_breakpoints_e.length; i++) {
-        tofind =
-            formatHexUnsigned32Bits(mem_breakpoints_e[i]).slice(0, 9) + "0";
-        var tableRow = $("td", $("#memoryview"))
-            .filter(function () {
-                return $(this).text() == tofind;
-            })
-            .closest("tr");
-        if (tableRow.length < 1) {
-            continue;
-        }
-        col = parseInt(mem_breakpoints_e[i], 16) % 16;
-        $(".editablegrid-c" + col, tableRow).addClass("mem_e");
-    }
-
-    /* Highlight current instruction */
-    for (var i = 0; i < mem_breakpoints_instr.length; i++) {
-        tofind =
-            formatHexUnsigned32Bits(mem_breakpoints_instr[i]).slice(0, 9) + "0";
-        var tableRow = $("td", $("#memoryview"))
-            .filter(function () {
-                return $(this).text() == tofind;
-            })
-            .closest("tr");
-        if (tableRow.length > 0) {
-            col = mem_breakpoints_instr[i] % 16;
-            $(".editablegrid-c" + col, tableRow).addClass("mem_instr");
-        }
-    }
-
-    for (var i = 0; i < mouse_highlight_mem.length; i++) {
-        tofind =
-            formatHexUnsigned32Bits(mouse_highlight_mem[i]).slice(0, 9) + "0";
-        var tableRow = $("td", $("#memoryview"))
-            .filter(function () {
-                return $(this).text() == tofind;
-            })
-            .closest("tr");
-        if (tableRow.length > 0) {
-            col = mouse_highlight_mem[i] % 16;
-            $(".editablegrid-c" + col, tableRow).addClass("mem_mousehighlight");
-        }
-    }
+    const col = parseAsHex ? parseInt(addr, 16) % 16 : addr % 16;
+    $(".editablegrid-c" + col, tableRow).addClass(className);
+  });
 }
+
+
+function updateMemoryBreakpointsView() {
+  highlightMemoryCells(mem_highlights_r, "highlightRead");
+  highlightMemoryCells(mem_highlights_w, "highlightWrite");
+  highlightMemoryCells(mem_breakpoints_r, "mem_r", true);
+  highlightMemoryCells(mem_breakpoints_w, "mem_w", true);
+  highlightMemoryCells(mem_breakpoints_rw, "mem_rw", true);
+  highlightMemoryCells(mem_breakpoints_e, "mem_e", true);
+  highlightMemoryCells(mem_breakpoints_instr, "mem_instr");
+  highlightMemoryCells(mouse_highlight_mem, "mem_mousehighlight");
+}
+
 
 function changeMemoryViewPage() {
     refresh_mem_paginator = true;
@@ -131,160 +39,46 @@ function changeMemoryViewPage() {
 function resetMemoryViewer() {
     refresh_mem_paginator = true;
 
-    // Memory viewer
-    var metadata = [];
-    metadata.push({
-        name: "ch",
-        label: "addr",
-        datatype: "string",
-        editable: false,
-    });
-    metadata.push({
-        name: "c0",
-        label: "00",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c1",
-        label: "01",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c2",
-        label: "02",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c3",
-        label: "03",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c4",
-        label: "04",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c5",
-        label: "05",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c6",
-        label: "06",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c7",
-        label: "07",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c8",
-        label: "08",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c9",
-        label: "09",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c10",
-        label: "0A",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c11",
-        label: "0B",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c12",
-        label: "0C",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c13",
-        label: "0D",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c14",
-        label: "0E",
-        datatype: "string",
-        editable: true,
-    });
-    metadata.push({
-        name: "c15",
-        label: "0F",
-        datatype: "string",
-        editable: true,
-    });
+    const metadata = [
+        { name: "ch", label: "addr", datatype: "string", editable: false },
+        ...Array.from({ length: 16 }, (_, i) => ({
+            name: "c" + i,
+            label: i.toString(16).toUpperCase().padStart(2, "0"),
+            datatype: "string",
+            editable: true,
+        })),
+    ];
 
-    // Not necessary?
-    var data = [];
-    for (var i = 0; i < 20; i++) {
-        data.push({
-            id: i,
-            values: {
-                c0: "--",
-                c1: "--",
-                c2: "--",
-                c3: "--",
-                c4: "--",
-                c5: "--",
-                c6: "--",
-                c7: "--",
-                c8: "--",
-                c9: "--",
-                c10: "--",
-                c11: "--",
-                c12: "--",
-                c13: "--",
-                c14: "--",
-                c15: "--",
-            },
-        });
-        data[i]["values"]["ch"] = formatHexUnsigned32Bits(i * 16);
-    }
+    const data = Array.from({ length: 20 }, (_, i) => {
+        const values = { ch: formatHexUnsigned32Bits(i * 16) };
+        for (let j = 0; j < 16; j++) values["c" + j] = "--";
+        return { id: i, values };
+    });
 
     editableGrid = new EditableGrid("DemoGridJsData", {
-        modelChanged: function (row, col, oldValue, newValue, rowref) {
-            if (oldValue !== "--") {
-                if (newValue.length > 2) {
-                    newValue = newValue.slice(0, 2);
-                    editableGrid.setValueAt(row, col, newValue, true);
-                }
-                var addr =
-                    parseInt($("td:first", rowref).text(), 16) + (col - 1);
-                sendData(["memchange", addr, newValue]);
-            } else {
+        modelChanged(row, col, oldValue, newValue, rowref) {
+            if (oldValue === "--") {
                 editableGrid.setValueAt(row, col, "--", true);
+                return;
             }
+
+            if (newValue.length > 2) {
+                newValue = newValue.slice(0, 2);
+                editableGrid.setValueAt(row, col, newValue, true);
+            }
+
+            const addr = parseInt($("td:first", rowref).text(), 16) + (col - 1);
+            sendData(["memchange", addr, newValue]);
         },
         enableSort: false,
         pageSize: 20,
-        tableRendered: function () {
+        tableRendered() {
             this.updatePaginator();
             updateMemoryBreakpointsView();
         },
     });
-    editableGrid.load({ metadata: metadata, data: data });
+
+    editableGrid.load({ metadata, data });
     editableGrid.renderGrid("memoryview", "testgrid");
 
     updateMemoryBreakpointsView();
