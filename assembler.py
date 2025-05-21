@@ -14,38 +14,47 @@ from stateManager import StateManager
 """
 memory_configs = {
     "simulation": {"INTVEC": 0x00, "CODE": 0x80, "DATA": 0x1000},
-    "test": {"INTVEC": 0x100000, "CODE": 0x100080, "DATA": 0x101000}
+    "test": {"INTVEC": 0x100000, "CODE": 0x100080, "DATA": 0x101000},
 }
+
 
 class AssemblerError(Exception):
     """
     @private
     """
+
     def __init__(self, msg):
         super().__init__(msg)
+
 
 class ParsingError(AssemblerError):
     """
     @private
     """
+
     def __init__(self, msg):
         super().__init__(msg)
+
 
 class RangeError(AssemblerError):
     """
     @private
     """
+
     def __init__(self, msg):
         super().__init__(msg)
+
 
 class ParseError:
     """
     @private
     """
-    dictErrors = {'SYNTAX': "Erreur de syntaxe",
-                  'RANGE' : "Erreur de range",
-                  'INVINSTR': "Instruction invalide",
-                  }
+
+    dictErrors = {
+        "SYNTAX": "Erreur de syntaxe",
+        "RANGE": "Erreur de range",
+        "INVINSTR": "Instruction invalide",
+    }
 
     def __init__(self, etype, msg, gravity="ERROR"):
         self.t = etype
@@ -54,6 +63,7 @@ class ParseError:
 
     def __str__(self):
         return "{} : {}".format(self.t, self.m)
+
 
 def parse(code, memLayout="simulation"):
     """
@@ -76,15 +86,13 @@ def parse(code, memLayout="simulation"):
          C) if "codeerror", description of the error
 
     """
-    
+
     appState = StateManager()
 
-    
     listErrors = []
     if getSetting("PCbehavior") == "real":
         raise NotImplementedError("Actual PC behavior not implemented yet")
     pcoffset = 8 if getSetting("PCbehavior") == "+8" else 0
-
 
     # First pass : the input code is passed through the lexer and the parser
     # Each line is parsed independently
@@ -93,13 +101,17 @@ def parse(code, memLayout="simulation"):
     currentAddr, currentSection = -1, None
     labelsAddr = {}
     requiredLabelsPtr = []
-    maxAddrBySection = {"INTVEC": memory_configs[memLayout]["INTVEC"],
-                        "CODE": memory_configs[memLayout]["CODE"],
-                        "DATA": memory_configs[memLayout]["DATA"]}
+    maxAddrBySection = {
+        "INTVEC": memory_configs[memLayout]["INTVEC"],
+        "CODE": memory_configs[memLayout]["CODE"],
+        "DATA": memory_configs[memLayout]["DATA"],
+    }
     snippetMode = False
     # We add a special field in the bytecode info to tell the simulator the start address of each section
-    bytecode = {'__MEMINFOSTART': {"SNIPPET_DUMMY_SECTION": 0},
-                '__MEMINFOEND': {"SNIPPET_DUMMY_SECTION": 0}}
+    bytecode = {
+        "__MEMINFOSTART": {"SNIPPET_DUMMY_SECTION": 0},
+        "__MEMINFOEND": {"SNIPPET_DUMMY_SECTION": 0},
+    }
     unresolvedDepencencies = {}
     assertions = defaultdict(list)
     lastLineType = None
@@ -107,11 +119,11 @@ def parse(code, memLayout="simulation"):
     emptyLines = set()
     lineToAddr = {}
     viewedSections = set()
-    for i,line in enumerate(code):
+    for i, line in enumerate(code):
         line = line.strip()
-        if ';' in line:
+        if ";" in line:
             # Remove the comments
-            line = line[:line.find(';')]
+            line = line[: line.find(";")]
         if len(line) == 0:
             # Empty line
             emptyLines.add(i)
@@ -129,7 +141,9 @@ def parse(code, memLayout="simulation"):
             listErrors.append(("codeerror", i, str(e)))
             continue
         except Exception as e:
-            listErrors.append(("codeerror", i, "Impossible d'interpréter l'instruction"))
+            listErrors.append(
+                ("codeerror", i, "Impossible d'interpréter l'instruction")
+            )
             print(str(e))
             continue
         else:
@@ -140,27 +154,45 @@ def parse(code, memLayout="simulation"):
 
         if "SECTION" in parsedLine:
             if snippetMode:
-                listErrors.append(("codeerror", i, "Vous ne pouvez pas écrire d'instruction avant le premier mot clé SECTION; si vous souhaitez tester un extrait de code, ne déclarez aucune section."))
+                listErrors.append(
+                    (
+                        "codeerror",
+                        i,
+                        "Vous ne pouvez pas écrire d'instruction avant le premier mot clé SECTION; si vous souhaitez tester un extrait de code, ne déclarez aucune section.",
+                    )
+                )
                 continue
             lastLineType = "SECTION"
-            if "SNIPPET_DUMMY_SECTION" in bytecode['__MEMINFOSTART']:
-                bytecode['__MEMINFOSTART'] = maxAddrBySection.copy()
-                bytecode['__MEMINFOEND'] = maxAddrBySection.copy()
+            if "SNIPPET_DUMMY_SECTION" in bytecode["__MEMINFOSTART"]:
+                bytecode["__MEMINFOSTART"] = maxAddrBySection.copy()
+                bytecode["__MEMINFOEND"] = maxAddrBySection.copy()
 
             if currentSection is not None:
                 maxAddrBySection[currentSection] = currentAddr
-                bytecode['__MEMINFOEND'][currentSection] = currentAddr
+                bytecode["__MEMINFOEND"][currentSection] = currentAddr
 
             if parsedLine["SECTION"] == "INTVEC":
                 currentSection = "INTVEC"
                 if viewedSections.intersection(("CODE", "DATA")):
-                    listErrors.append(("codeerror", i, "La section INTVEC doit être définie avant les sections CODE et DATA!"))
+                    listErrors.append(
+                        (
+                            "codeerror",
+                            i,
+                            "La section INTVEC doit être définie avant les sections CODE et DATA!",
+                        )
+                    )
                     return None, None, None, None, None, listErrors
                 currentAddr = max(memory_configs[memLayout]["INTVEC"], currentAddr)
             elif parsedLine["SECTION"] == "CODE":
                 currentSection = "CODE"
                 if "DATA" in viewedSections:
-                    listErrors.append(("codeerror", i, "La section CODE doit être définie avant la section DATA!"))
+                    listErrors.append(
+                        (
+                            "codeerror",
+                            i,
+                            "La section CODE doit être définie avant la section DATA!",
+                        )
+                    )
                     return None, None, None, None, None, listErrors
                 currentAddr = max(memory_configs[memLayout]["CODE"], currentAddr)
             elif parsedLine["SECTION"] == "DATA":
@@ -168,7 +200,13 @@ def parse(code, memLayout="simulation"):
                 currentAddr = max(memory_configs[memLayout]["DATA"], currentAddr)
 
             if currentSection in viewedSections:
-                listErrors.append(("codeerror", i, "La section '{}' est définie deux fois!".format(currentSection)))
+                listErrors.append(
+                    (
+                        "codeerror",
+                        i,
+                        "La section '{}' est définie deux fois!".format(currentSection),
+                    )
+                )
                 continue
             else:
                 viewedSections.add(currentSection)
@@ -183,7 +221,9 @@ def parse(code, memLayout="simulation"):
             if lastLineType is None or lastLineType in ("LABEL", "SECTION"):
                 assertions[currentAddr].append(("BEFORE", i, parsedLine["ASSERTION"]))
             elif lastLineType == "BYTECODE":
-                assertions[currentAddr-4].append(("AFTER", i, parsedLine["ASSERTION"]))
+                assertions[currentAddr - 4].append(
+                    ("AFTER", i, parsedLine["ASSERTION"])
+                )
 
         if ("LABEL" in parsedLine or "BYTECODE" in parsedLine) and currentAddr == -1:
             # No section defined, but we have a label or an instruction; we switch to snippet mode
@@ -196,7 +236,15 @@ def parse(code, memLayout="simulation"):
             if parsedLine["LABEL"] in labelsAddr:
                 # This label was already defined
                 firstaddr = addrToLine[labelsAddr[parsedLine["LABEL"]]][0]
-                listErrors.append(("codeerror", i, "L'étiquette '{}' est définie deux fois (première définition à la ligne {})".format(parsedLine["LABEL"], firstaddr+1)))
+                listErrors.append(
+                    (
+                        "codeerror",
+                        i,
+                        "L'étiquette '{}' est définie deux fois (première définition à la ligne {})".format(
+                            parsedLine["LABEL"], firstaddr + 1
+                        ),
+                    )
+                )
             labelsAddr[parsedLine["LABEL"]] = currentAddr
             lastLineType = "LABEL"
             if "BYTECODE" not in parsedLine:
@@ -217,42 +265,98 @@ def parse(code, memLayout="simulation"):
                     requiredLabelsPtr.append((dep[1], i))
             # We add the size of the object to the current address (so this always points to the address of the next element)
             tmpAddr = currentAddr
-            for tmpAddr in range(max(currentAddr, 0), max(currentAddr, 0) + len(parsedLine["BYTECODE"][0]), 4):
+            for tmpAddr in range(
+                max(currentAddr, 0),
+                max(currentAddr, 0) + len(parsedLine["BYTECODE"][0]),
+                4,
+            ):
                 addrToLine[tmpAddr].append(i)
-            lineToAddr[i] = [currentAddr+li for li in range(len(parsedLine["BYTECODE"][0]))]
+            lineToAddr[i] = [
+                currentAddr + li for li in range(len(parsedLine["BYTECODE"][0]))
+            ]
             currentAddr += len(parsedLine["BYTECODE"][0])
             lastLineType = "BYTECODE"
             totalMemAllocated += len(parsedLine["BYTECODE"][0])
-            if currentSection == "INTVEC" and currentAddr > memory_configs[memLayout]["CODE"]:
-                listErrors.append(("codeerror", i,
-                                   "La déclaration située sur cette ligne fait déborder la section INTVEC dans la section CODE. Vérifiez que vous allouez le bon nombre d'octets (128 octets maximum pour la section INTVEC en entier)."))
+            if (
+                currentSection == "INTVEC"
+                and currentAddr > memory_configs[memLayout]["CODE"]
+            ):
+                listErrors.append(
+                    (
+                        "codeerror",
+                        i,
+                        "La déclaration située sur cette ligne fait déborder la section INTVEC dans la section CODE. Vérifiez que vous allouez le bon nombre d'octets (128 octets maximum pour la section INTVEC en entier).",
+                    )
+                )
 
         if totalMemAllocated > getSetting("maxtotalmem"):
-            return None, None, None, None, None, [("error", "Le code demande une allocation totale de plus de {} octets de mémoire, ce qui est invalide.".format(getSetting("maxtotalmem")))]
+            return (
+                None,
+                None,
+                None,
+                None,
+                None,
+                [
+                    (
+                        "error",
+                        "Le code demande une allocation totale de plus de {} octets de mémoire, ce qui est invalide.".format(
+                            getSetting("maxtotalmem")
+                        ),
+                    )
+                ],
+            )
 
     maxAddrBySection[currentSection] = currentAddr
-    bytecode['__MEMINFOEND'][currentSection] = currentAddr
+    bytecode["__MEMINFOEND"][currentSection] = currentAddr
 
     if "SNIPPET_DUMMY_SECTION" not in bytecode:
         if "INTVEC" not in bytecode:
-            listErrors.append(("codeerror", 0, "La section INTVEC n'est déclarée nulle part (utilisez 'SECTION INTVEC' au début du code)!"))
+            listErrors.append(
+                (
+                    "codeerror",
+                    0,
+                    "La section INTVEC n'est déclarée nulle part (utilisez 'SECTION INTVEC' au début du code)!",
+                )
+            )
             return None, None, None, None, None, listErrors
         if "CODE" not in bytecode:
-            listErrors.append(("codeerror", 0, "La section CODE n'est déclarée nulle part (utilisez 'SECTION CODE')!"))
+            listErrors.append(
+                (
+                    "codeerror",
+                    0,
+                    "La section CODE n'est déclarée nulle part (utilisez 'SECTION CODE')!",
+                )
+            )
             return None, None, None, None, None, listErrors
         if "DATA" not in bytecode:
-            listErrors.append(("codeerror", 0, "La section DATA n'est déclarée nulle part (utilisez 'SECTION DATA' à la fin de votre code)!"))
+            listErrors.append(
+                (
+                    "codeerror",
+                    0,
+                    "La section DATA n'est déclarée nulle part (utilisez 'SECTION DATA' à la fin de votre code)!",
+                )
+            )
             return None, None, None, None, None, listErrors
 
     # We resolve the pointer dependencies (that is, the instructions using =label)
     labelsPtrAddr = {}
-    sectionToUse = "CODE" if "CODE" in bytecode['__MEMINFOSTART'] else "SNIPPET_DUMMY_SECTION"
+    sectionToUse = (
+        "CODE" if "CODE" in bytecode["__MEMINFOSTART"] else "SNIPPET_DUMMY_SECTION"
+    )
     # At the end of the CODE section, we write all the label adresses referenced
-    currentAddr = bytecode['__MEMINFOEND'][sectionToUse]
-    for labelPtr,lineNo in requiredLabelsPtr:
+    currentAddr = bytecode["__MEMINFOEND"][sectionToUse]
+    for labelPtr, lineNo in requiredLabelsPtr:
         isConst = isinstance(labelPtr, int)
         if not isConst and labelPtr not in labelsAddr:
-            listErrors.append(("codeerror", lineNo, "Cette ligne demande l'adresse de l'étiquette {}, mais celle-ci n'est déclarée nulle part".format(labelPtr)))
+            listErrors.append(
+                (
+                    "codeerror",
+                    lineNo,
+                    "Cette ligne demande l'adresse de l'étiquette {}, mais celle-ci n'est déclarée nulle part".format(
+                        labelPtr
+                    ),
+                )
+            )
             continue
 
         if labelPtr in labelsPtrAddr:
@@ -262,10 +366,12 @@ def parse(code, memLayout="simulation"):
         if isConst:
             bytecode[sectionToUse].extend(struct.pack("<I", labelPtr & 0xFFFFFFFF))
         else:
-            bytecode[sectionToUse].extend(struct.pack("<I", labelsAddr[labelPtr] & 0xFFFFFFFF))
+            bytecode[sectionToUse].extend(
+                struct.pack("<I", labelsAddr[labelPtr] & 0xFFFFFFFF)
+            )
         labelsPtrAddr[labelPtr] = currentAddr
         currentAddr += 4
-    bytecode['__MEMINFOEND'][sectionToUse] = currentAddr
+    bytecode["__MEMINFOEND"][sectionToUse] = currentAddr
 
     if len(listErrors) > 0:
         # At least one line did not assemble, we cannot continue
@@ -275,22 +381,36 @@ def parse(code, memLayout="simulation"):
     # We fix the bytecode of the affected instructions
     for (sec, addr, line), depInfo in unresolvedDepencencies.items():
         # We retrieve the instruction and fit it into a 32 bit integer
-        reladdr = addr - bytecode['__MEMINFOSTART'][sec]
-        instrInt = struct.unpack("<I", bytecode[sec][reladdr:reladdr+4])[0]
-        if depInfo[0] in ('addr', 'addrptr', 'const'):
+        reladdr = addr - bytecode["__MEMINFOSTART"][sec]
+        instrInt = struct.unpack("<I", bytecode[sec][reladdr : reladdr + 4])[0]
+        if depInfo[0] in ("addr", "addrptr", "const"):
             # A LDR/STR on a label or a label's address
-            dictToLookIn = (labelsAddr if depInfo[0] == 'addr' else labelsPtrAddr)
+            dictToLookIn = labelsAddr if depInfo[0] == "addr" else labelsPtrAddr
             try:
                 addrToReach = dictToLookIn[depInfo[1]]
-            except KeyError:    # The label was never defined
-                listErrors.append(("codeerror", line, "L'étiquette {} n'est déclarée nulle part".format(depInfo[1])))
+            except KeyError:  # The label was never defined
+                listErrors.append(
+                    (
+                        "codeerror",
+                        line,
+                        "L'étiquette {} n'est déclarée nulle part".format(depInfo[1]),
+                    )
+                )
                 continue
 
             diff = addrToReach - (addr + pcoffset)
             maxoffset = depInfo[2]
-            if abs(diff) > maxoffset-1:
+            if abs(diff) > maxoffset - 1:
                 # Offset too big to be encoded as immediate
-                listErrors.append(("codeerror", line, "Accès à l'adresse identifiée par l'étiquette {} trop éloigné ({} octets d'écart) pour pouvoir être encodé".format(depInfo[1], diff)))
+                listErrors.append(
+                    (
+                        "codeerror",
+                        line,
+                        "Accès à l'adresse identifiée par l'étiquette {} trop éloigné ({} octets d'écart) pour pouvoir être encodé".format(
+                            depInfo[1], diff
+                        ),
+                    )
+                )
                 continue
             if diff >= 0:
                 instrInt |= 1 << 23
@@ -303,18 +423,32 @@ def parse(code, memLayout="simulation"):
                 instrInt |= diff & 0xF
                 instrInt |= ((diff >> 4) & 0xF) << 8
 
-        elif depInfo[0] == 'addrbranch':
+        elif depInfo[0] == "addrbranch":
             # A branch on a given label
             # This is different than the previous case, since the offset is divided by 4
             # (when taking the branch, the offset is "shifted left two bits, sign extended to 32 bits"
             try:
                 addrToReach = labelsAddr[depInfo[1]]
-            except KeyError:    # The label was never defined
-                listErrors.append(("codeerror", line, "L'étiquette {} n'est déclarée nulle part".format(depInfo[1])))
+            except KeyError:  # The label was never defined
+                listErrors.append(
+                    (
+                        "codeerror",
+                        line,
+                        "L'étiquette {} n'est déclarée nulle part".format(depInfo[1]),
+                    )
+                )
                 continue
             diff = addrToReach - (addr + pcoffset)
             if diff % 4 != 0:
-                listErrors.append(("codeerror", line, "L'étiquette {} correspond à un décalage de {} octets, qui n'est pas un multiple de 4, ce qui est requis par ARM".format(depInfo[1], diff)))
+                listErrors.append(
+                    (
+                        "codeerror",
+                        line,
+                        "L'étiquette {} correspond à un décalage de {} octets, qui n'est pas un multiple de 4, ce qui est requis par ARM".format(
+                            depInfo[1], diff
+                        ),
+                    )
+                )
 
             instrInt |= (diff // 4) & 0xFFFFFF
         else:
@@ -322,7 +456,7 @@ def parse(code, memLayout="simulation"):
 
         # We put back the modified instruction in the bytecode
         b = struct.pack("<I", instrInt)
-        bytecode[sec][reladdr:reladdr+4] = b
+        bytecode[sec][reladdr : reladdr + 4] = b
 
     if len(listErrors) > 0:
         # At least one line did not assemble, we cannot continue
@@ -330,4 +464,3 @@ def parse(code, memLayout="simulation"):
 
     # No errors
     return bytecode, addrToLine, lineToAddr, assertions, snippetMode, []
-

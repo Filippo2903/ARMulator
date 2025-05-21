@@ -6,6 +6,7 @@ from simulatorOps.abstractOp import ExecutionException
 
 from settings import getSetting
 
+
 class Breakpoint(Exception):
     """
     Indicates that a breakpoint occurred while executing
@@ -116,10 +117,16 @@ class Registers(Component):
     possible values are invalid. However, in some cases like restoring the
     context by copying SPSR into CPSR, this is the way to go.
     """
-    flag2index = {'N': 31, 'Z': 30, 'C': 29, 'V': 28, 'I': 7, 'F': 6}
-    index2flag = {v:k for k,v in flag2index.items()}
-    mode2bits = {'User': 16, 'FIQ': 17, 'IRQ': 18, 'SVC': 19}       # Other modes are not supported
-    bits2mode = {v:k for k,v in mode2bits.items()}
+
+    flag2index = {"N": 31, "Z": 30, "C": 29, "V": 28, "I": 7, "F": 6}
+    index2flag = {v: k for k, v in flag2index.items()}
+    mode2bits = {
+        "User": 16,
+        "FIQ": 17,
+        "IRQ": 18,
+        "SVC": 19,
+    }  # Other modes are not supported
+    bits2mode = {v: k for k, v in mode2bits.items()}
 
     def __init__(self, history):
         super().__init__(history)
@@ -137,27 +144,27 @@ class Registers(Component):
         regs[13].altname = "SP"
         regs[14].altname = "LR"
         regs[15].altname = "PC"
-        self.banks['User'] = regs
+        self.banks["User"] = regs
 
         # Create FIQ registers
-        regsFIQ = regs[:8]          # R0-R7 are shared
-        regsFIQ.extend(_Register(i) for i in range(8, 15))        # R8-R14 are exclusive
+        regsFIQ = regs[:8]  # R0-R7 are shared
+        regsFIQ.extend(_Register(i) for i in range(8, 15))  # R8-R14 are exclusive
         regsFIQ[13].altname = "SP"
         regsFIQ[14].altname = "LR"
-        regsFIQ.append(regs[15])    # PC is shared
+        regsFIQ.append(regs[15])  # PC is shared
         regsFIQ.append(_Register(16))
         regsFIQ[16].altname = "SPSR"
-        self.banks['FIQ'] = regsFIQ
+        self.banks["FIQ"] = regsFIQ
 
         # Create IRQ registers
-        regsIRQ = regs[:13]         # R0-R12 are shared
-        regsIRQ.extend(_Register(i) for i in range(13, 15))        # R13-R14 are exclusive
+        regsIRQ = regs[:13]  # R0-R12 are shared
+        regsIRQ.extend(_Register(i) for i in range(13, 15))  # R13-R14 are exclusive
         regsIRQ[13].altname = "SP"
         regsIRQ[14].altname = "LR"
-        regsIRQ.append(regs[15])    # PC is shared
+        regsIRQ.append(regs[15])  # PC is shared
         regsIRQ.append(_Register(16))
         regsIRQ[16].altname = "SPSR"
-        self.banks['IRQ'] = regsIRQ
+        self.banks["IRQ"] = regsIRQ
 
         # Create SVC registers (used with software interrupts)
         regsSVC = regs[:13]  # R0-R12 are shared
@@ -167,18 +174,18 @@ class Registers(Component):
         regsSVC.append(regs[15])  # PC is shared
         regsSVC.append(_Register(16))
         regsSVC[16].altname = "SPSR"
-        self.banks['SVC'] = regsSVC
+        self.banks["SVC"] = regsSVC
 
         # CPSR is always used, so we keep it apart
         # By default, we start in user mode, with no flags
-        self.regCPSR = self.mode2bits['User']
+        self.regCPSR = self.mode2bits["User"]
         self.currentMode = "User"
 
         # Keep the breakpoints on the flags
-        self.bkptFlags = {k:0 for k in self.flag2index.keys()}
+        self.bkptFlags = {k: 0 for k in self.flag2index.keys()}
 
     def getContext(self):
-        c = {'CPSR': self.regCPSR}
+        c = {"CPSR": self.regCPSR}
         c.update(self.banks)
         return c
 
@@ -190,7 +197,7 @@ class Registers(Component):
     def mode(self, val):
         if val not in self.mode2bits:
             raise ValueError("Invalid mode '{}'".format(val))
-        valCPSR = self.regCPSR & (0xFFFFFFFF - 0x1F)    # Clear mode
+        valCPSR = self.regCPSR & (0xFFFFFFFF - 0x1F)  # Clear mode
         valCPSR = self.regCPSR | self.mode2bits[val]
         self.history.signalChange(self, {(val, "CPSR"): (self.regCPSR, valCPSR)})
         self.regCPSR = valCPSR
@@ -211,14 +218,18 @@ class Registers(Component):
     def SPSR(self):
         currentBank = self.currentMode
         if currentBank == "User":
-            raise ComponentException("register", "Le registre SPSR n'existe pas en mode 'User'!")
+            raise ComponentException(
+                "register", "Le registre SPSR n'existe pas en mode 'User'!"
+            )
         return self.banks[currentBank][16].val
 
     @SPSR.setter
     def SPSR(self, val):
         currentBank = self.currentMode
         if currentBank == "User":
-            raise ComponentException("register", "Le registre SPSR n'existe pas en mode 'User'!")
+            raise ComponentException(
+                "register", "Le registre SPSR n'existe pas en mode 'User'!"
+            )
         self.history.signalChange(self, {(self.mode, "SPSR"): (self[16], val)})
         self.banks[currentBank][16].val = val
 
@@ -234,7 +245,9 @@ class Registers(Component):
             self.regCPSR |= 1 << 7
         else:
             self.regCPSR &= 0xFFFFFFFF - (1 << 7)
-        self.history.signalChange(self, {(currentBank, "CPSR"): (oldCPSR, self.regCPSR)})
+        self.history.signalChange(
+            self, {(currentBank, "CPSR"): (oldCPSR, self.regCPSR)}
+        )
 
     @property
     def FIQ(self):
@@ -248,7 +261,9 @@ class Registers(Component):
             self.regCPSR |= 1 << 6
         else:
             self.regCPSR &= 0xFFFFFFFF - (1 << 6)
-        self.history.signalChange(self, {(currentBank, "CPSR"): (oldCPSR, self.regCPSR)})
+        self.history.signalChange(
+            self, {(currentBank, "CPSR"): (oldCPSR, self.regCPSR)}
+        )
 
     @property
     def N(self):
@@ -297,7 +312,10 @@ class Registers(Component):
     def getAllRegisters(self):
         # Helper function to get all registers from all banks at once
         # The result is returned as a dictionary of dictionary
-        return {bname: {reg.id: reg.val for reg in bank if reg.id < 16} for bname, bank in self.banks.items()}
+        return {
+            bname: {reg.id: reg.val for reg in bank if reg.id < 16}
+            for bname, bank in self.banks.items()
+        }
 
     def getRegister(self, bank, reg):
         # Get a register with a specific bank
@@ -328,7 +346,9 @@ class Registers(Component):
                 dchanges = {(bank, reg): (oldValue, newValue)}
             else:
                 # Aliased with everyone but FIQ
-                dchanges = {(b, reg): (oldValue, newValue) for b in self.banks if b != "FIQ"}
+                dchanges = {
+                    (b, reg): (oldValue, newValue) for b in self.banks if b != "FIQ"
+                }
 
             self.history.signalChange(self, dchanges)
 
@@ -346,13 +366,15 @@ class Registers(Component):
             raise Breakpoint("flags", 2, flag)
 
         oldCPSR = self.regCPSR
-        if value:   # We set the flag
+        if value:  # We set the flag
             self.regCPSR |= 1 << self.flag2index[flag]
-        else:       # We clear the flag
+        else:  # We clear the flag
             self.regCPSR &= 0xFFFFFFFF - (1 << self.flag2index[flag])
 
         if logToHistory:
-            self.history.signalChange(self, {(currentBank, "CPSR"): (oldCPSR, self.regCPSR)})
+            self.history.signalChange(
+                self, {(currentBank, "CPSR"): (oldCPSR, self.regCPSR)}
+            )
 
     def setAllFlags(self, flagsDict, mayTriggerBkpt=True):
         oldCPSR = self.regCPSR
@@ -361,11 +383,13 @@ class Registers(Component):
             if self.bkptActive and mayTriggerBkpt and self.bkptFlags[flag] & 2:
                 raise Breakpoint("flags", 2, flag)
 
-            if value:   # We set the flag
+            if value:  # We set the flag
                 self.regCPSR |= 1 << self.flag2index[flag]
-            else:       # We clear the flag
+            else:  # We clear the flag
                 self.regCPSR &= 0xFFFFFFFF - (1 << self.flag2index[flag])
-        self.history.signalChange(self, {(self.currentMode, "CPSR"): (oldCPSR, self.regCPSR)})
+        self.history.signalChange(
+            self, {(self.currentMode, "CPSR"): (oldCPSR, self.regCPSR)}
+        )
 
     def deactivateBreakpoints(self):
         # Without removing them, do not trig on breakpoint until `reactivateBreakpoints`
@@ -414,12 +438,12 @@ class Memory(Component):
 
         self.size = sum(len(b) for b in memcontent)
         self.initval = initval
-        self.startAddr = memcontent['__MEMINFOSTART']
-        self.endAddr = memcontent['__MEMINFOEND']
+        self.startAddr = memcontent["__MEMINFOSTART"]
+        self.endAddr = memcontent["__MEMINFOEND"]
         self.maxAddr = max(self.endAddr.values())
         assert len(self.startAddr) == len(self.endAddr)
 
-        self.data = {k:bytearray(memcontent[k]) for k in self.startAddr.keys()}
+        self.data = {k: bytearray(memcontent[k]) for k in self.startAddr.keys()}
         self.initdata = self.data.copy()
         self.bkptActive = True
 
@@ -441,46 +465,60 @@ class Memory(Component):
         :return: None if the address is invalid. Else, a tuple of two elements, the first being the
         section used and the second the offset relative from the start of this section.
         """
-        if addr < 0 or addr > self.maxAddr - (size-1):
-            #print("sono dentro la memoria nn inizializzata sopra")
+        if addr < 0 or addr > self.maxAddr - (size - 1):
             return None
-        
-        #print(self.startAddr.keys())
-        #print("addr: ",addr)
-        for sec in self.startAddr.keys():       # TODO : optimize this loop out
-            #print(self.startAddr[sec]," ",self.endAddr[sec])
-            
-            
-            if self.startAddr[sec] <= addr < self.endAddr[sec]:# - (size-1):
+
+        # print(self.startAddr.keys())
+        # print("addr: ",addr)
+        for sec in self.startAddr.keys():  # TODO : optimize this loop out
+            # print(self.startAddr[sec]," ",self.endAddr[sec])
+
+            if self.startAddr[sec] <= addr < self.endAddr[sec]:  # - (size-1):
                 return sec, addr - self.startAddr[sec]
-        #print("sono dentro la memoria nn inizializzata sotto")
         return None
 
     def get(self, addr, size=4, execMode=False, mayTriggerBkpt=True):
         resolvedAddr = self._getRelativeAddr(addr, size)
         if resolvedAddr is None:
             if execMode:
-                desc = "Tentative de lecture d'une instruction a une adresse non initialisée : {}".format(hex(addr))
+                desc = "Tentative de lecture d'une instruction a une adresse non initialisée : {}".format(
+                    hex(addr)
+                )
             else:
-                desc = "Accès mémoire en lecture fautif a l'adresse {}".format(hex(addr))
+                desc = "Accès mémoire en lecture fautif a l'adresse {}".format(
+                    hex(addr)
+                )
             raise ComponentException("memory", desc)
 
         for offset in range(size):
-            if self.bkptActive and execMode and self.breakpoints[addr+offset] & 1:
+            if self.bkptActive and execMode and self.breakpoints[addr + offset] & 1:
                 raise Breakpoint("memory", 1, addr + offset)
-            if self.bkptActive and mayTriggerBkpt and self.breakpoints[addr+offset] & 4:
+            if (
+                self.bkptActive
+                and mayTriggerBkpt
+                and self.breakpoints[addr + offset] & 4
+            ):
                 raise Breakpoint("memory", 4, addr + offset)
 
         sec, offset = resolvedAddr
-        return self.data[sec][offset:offset+size]
+        return self.data[sec][offset : offset + size]
 
     def set(self, addr, val, size=4, mayTriggerBkpt=True):
         resolvedAddr = self._getRelativeAddr(addr, size)
         if resolvedAddr is None:
-            raise ComponentException("memory", "Accès invalide pour une écriture de taille {} à l'adresse {}".format(size, hex(addr)))
+            raise ComponentException(
+                "memory",
+                "Accès invalide pour une écriture de taille {} à l'adresse {}".format(
+                    size, hex(addr)
+                ),
+            )
 
         for offset in range(size):
-            if self.bkptActive and mayTriggerBkpt and self.breakpoints[addr+offset] & 2:
+            if (
+                self.bkptActive
+                and mayTriggerBkpt
+                and self.breakpoints[addr + offset] & 2
+            ):
                 raise Breakpoint("memory", 2, addr + offset)
 
         sec, offset = resolvedAddr
@@ -489,10 +527,13 @@ class Memory(Component):
 
         dictChanges = {}
         for of in range(size):
-            dictChanges[(sec, offset+of)] = (self.data[sec][offset+of], valBytes[of])
+            dictChanges[(sec, offset + of)] = (
+                self.data[sec][offset + of],
+                valBytes[of],
+            )
         self.history.signalChange(self, dictChanges)
 
-        self.data[sec][offset:offset+size] = valBytes
+        self.data[sec][offset : offset + size] = valBytes
 
     def setBreakpoint(self, addr, modeOctal):
         self.breakpoints[addr] = modeOctal
@@ -519,12 +560,12 @@ class Memory(Component):
 
     def removeExecuteBreakpoints(self, removeList=()):
         # Remove all execution breakpoints that are in removeList
-        for addr in [a for a,b in self.breakpoints.items() if b & 1 == 1 and a in removeList]:
+        for addr in [
+            a for a, b in self.breakpoints.items() if b & 1 == 1 and a in removeList
+        ]:
             self.removeBreakpoint(addr)
 
     def stepBack(self, state):
         for k, val in state.items():
             sec, offset = k
             self.data[sec][offset] = val[0]
-
-

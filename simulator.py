@@ -12,12 +12,14 @@ from simulatorOps.utils import checkMask
 from simulatorOps import *
 from simulatorOps.abstractOp import ExecutionException
 
+
 class MultipleErrors(Exception):
     """
     This exception class is used to store multiple execution errors. It is useful if there
     are multiple errors in one instruction. Also, this class can be iterated to treat each error individually.
     """
-    def __init__(self, error = None, info = None, line = None):
+
+    def __init__(self, error=None, info=None, line=None):
         """
         Initialize a empty class if error and info are None.
         Otherwise, initialize the class with the corresponding parameters.
@@ -47,7 +49,7 @@ class MultipleErrors(Exception):
         self.idx += 1
         return retval
 
-    def append(self, error, info, line = None):
+    def append(self, error, info, line=None):
         self.content.append((error, info, line))
 
     def clear(self):
@@ -58,10 +60,11 @@ class MultipleErrors(Exception):
 class Simulator:
     """
     Main simulator class.
-    None of its method should be called directly by the UI, 
+    None of its method should be called directly by the UI,
     everything should pass through bytecodeinterpreter class.
     """
-    PC = 15     # Helpful shorthand to get a reference on PC
+
+    PC = 15  # Helpful shorthand to get a reference on PC
 
     def __init__(self, memorycontent, assertionTriggers, addr2line, pcInitValue=0):
         # Parameters
@@ -81,12 +84,19 @@ class Simulator:
         self.pcInitVal = pcInitValue
 
         # Initialize decoders
-        self.decoders = {'BranchOp': BranchOp(), 'DataOp': DataOp(), 
-                            'MemOp': MemOp(), 'MultipleMemOp': MultipleMemOp(),
-                            'HalfSignedMemOp': HalfSignedMemOp(), 'SwapOp': SwapOp(),
-                            'PSROp': PSROp(),
-                            'MulOp': MulOp(), 'MulLongOp': MulLongOp(), 
-                            'SoftInterruptOp': SoftInterruptOp(), 'NopOp': NopOp()}
+        self.decoders = {
+            "BranchOp": BranchOp(),
+            "DataOp": DataOp(),
+            "MemOp": MemOp(),
+            "MultipleMemOp": MultipleMemOp(),
+            "HalfSignedMemOp": HalfSignedMemOp(),
+            "SwapOp": SwapOp(),
+            "PSROp": PSROp(),
+            "MulOp": MulOp(),
+            "MulLongOp": MulLongOp(),
+            "SoftInterruptOp": SoftInterruptOp(),
+            "NopOp": NopOp(),
+        }
         self.decoderCache = {}
 
         # Initialize assertion structures
@@ -102,7 +112,7 @@ class Simulator:
         # Initialize interrupt structures
         self.interruptActive = False
         # Interrupt trigged at each a*(t-t0) + b cycles
-        self.interruptParams = {'b': 0, 'a': 0, 't0': 0, 'type': "FIQ"}       
+        self.interruptParams = {"b": 0, "a": 0, "t0": 0, "type": "FIQ"}
         self.lastInterruptCycle = -1
 
         self.stepMode = None
@@ -113,13 +123,12 @@ class Simulator:
 
     def reset(self):
         self.history.clear()
-        self.regs.banks['User'][15].val = self.pcInitVal + self.pcoffset
+        self.regs.banks["User"][15].val = self.pcInitVal + self.pcoffset
         self.fetchAndDecode()
         self.explainInstruction()
 
     def getContext(self):
-        context = {"regs": self.regs.getContext(),
-                    "mem": self.mem.getContext()}
+        context = {"regs": self.regs.getContext(), "mem": self.mem.getContext()}
         return context
 
     def setStepCondition(self, stepMode):
@@ -156,10 +165,10 @@ class Simulator:
         self.history.setCheckpoint()
         for decoder in self.decoders.values():
             decoder.resetExecCounters()
-        self.nextInstr()                # We always execute at least one instruction
-        while not self.isStepDone():    # We repeat until the stopping criterion is met
+        self.nextInstr()  # We always execute at least one instruction
+        while not self.isStepDone():  # We repeat until the stopping criterion is met
             self.nextInstr()
-        self.explainInstruction()       # We only have to explain the last instruction executed before we stop
+        self.explainInstruction()  # We only have to explain the last instruction executed before we stop
 
     def stepBack(self, count=1):
         for c in range(count):
@@ -185,34 +194,51 @@ class Simulator:
         this kind of instruction was executed, the second the number of times if _would_ have been
         executed except for the condition field (e.g. the condition was not met).
         """
-        memExec = self.decoders['MemOp'].execCounters
-        halfMemExec = self.decoders['HalfSignedMemOp'].execCounters
-        swapExec = self.decoders['SwapOp'].execCounters
-        multiplyExec = self.decoders['MulOp'].execCounters
-        multiplyLongExec = self.decoders['MulLongOp'].execCounters
+        memExec = self.decoders["MemOp"].execCounters
+        halfMemExec = self.decoders["HalfSignedMemOp"].execCounters
+        swapExec = self.decoders["SwapOp"].execCounters
+        multiplyExec = self.decoders["MulOp"].execCounters
+        multiplyLongExec = self.decoders["MulLongOp"].execCounters
 
-        return {"data": self.decoders['DataOp'].execCounters,
-                "mem": (memExec[0] + halfMemExec[0] + swapExec[0], memExec[1] + halfMemExec[1] + swapExec[1]),
-                "multiplemem": self.decoders['MultipleMemOp'].execCounters,
-                "branch": self.decoders['BranchOp'].execCounters,
-                "multiply": (multiplyExec[0] + multiplyLongExec[0], multiplyExec[1] + multiplyLongExec[1]),
-                "softinterrupt": self.decoders['SoftInterruptOp'].execCounters,
-                "psr": self.decoders['PSROp'].execCounters,
-                "nop": self.decoders['NopOp'].execCounters}
+        return {
+            "data": self.decoders["DataOp"].execCounters,
+            "mem": (
+                memExec[0] + halfMemExec[0] + swapExec[0],
+                memExec[1] + halfMemExec[1] + swapExec[1],
+            ),
+            "multiplemem": self.decoders["MultipleMemOp"].execCounters,
+            "branch": self.decoders["BranchOp"].execCounters,
+            "multiply": (
+                multiplyExec[0] + multiplyLongExec[0],
+                multiplyExec[1] + multiplyLongExec[1],
+            ),
+            "softinterrupt": self.decoders["SoftInterruptOp"].execCounters,
+            "psr": self.decoders["PSROp"].execCounters,
+            "nop": self.decoders["NopOp"].execCounters,
+        }
 
     def fetchAndDecode(self, forceExplain=False):
         # Check if PC is valid (multiple of 4)
         if (self.regs[15] - self.pcoffset) % 4 != 0:
             self.fetchedInstr = None
-            self.errorsPending.append('register', "Erreur : la valeur de PC ({}) est invalide (ce doit être un multiple de 4)!".format(hex(self.regs[15])))
+            self.errorsPending.append(
+                "register",
+                "Erreur : la valeur de PC ({}) est invalide (ce doit être un multiple de 4)!".format(
+                    hex(self.regs[15])
+                ),
+            )
         else:
             try:
                 # Retrieve instruction from memory
-                self.fetchedInstr = bytes(self.mem.get(self.regs[15] - self.pcoffset, execMode=True))
+                self.fetchedInstr = bytes(
+                    self.mem.get(self.regs[15] - self.pcoffset, execMode=True)
+                )
             except Breakpoint as bp:
                 # We hit a breakpoint
                 # Get memory instruction again, without trigger breakpoint
-                self.fetchedInstr = bytes(self.mem.get(self.regs[15] - self.pcoffset, mayTriggerBkpt=False))
+                self.fetchedInstr = bytes(
+                    self.mem.get(self.regs[15] - self.pcoffset, mayTriggerBkpt=False)
+                )
                 self.bkptLastFetch = bp
             except ComponentException as err:
                 # Execution error
@@ -224,72 +250,71 @@ class Simulator:
         if forceExplain or self.isStepDone():
             self.explainInstruction()
 
-
     def bytecodeToInstr(self):
         """
-        Decode an instruction from its bytecode representation.
+          Decode an instruction from its bytecode representation.
 
-        See ARM Instruction set documentation for more information (Fig 4.1,
-        and also Sec. A5.1 of ARM-v7 Architecture Reference Manual).
-        We use the following decoding scheme, designed to ensure that avoid any
-        instruction representation clash and also to reduce the number of
-        conditions having to be checked in total. Each number inside [ ]
-        represents a bit position. The usual binary ops symbols apply.
+          See ARM Instruction set documentation for more information (Fig 4.1,
+          and also Sec. A5.1 of ARM-v7 Architecture Reference Manual).
+          We use the following decoding scheme, designed to ensure that avoid any
+          instruction representation clash and also to reduce the number of
+          conditions having to be checked in total. Each number inside [ ]
+          represents a bit position. The usual binary ops symbols apply.
 
-        Note that NOP was backported from ARMv7, and that ARMv4 coprocessor
-        instructions are not supported. Also, we do not explicitly check for
-        undefined instructions (in the ARM terminology, they are more
-        _unpredictable_ than undefined).
+          Note that NOP was backported from ARMv7, and that ARMv4 coprocessor
+          instructions are not supported. Also, we do not explicitly check for
+          undefined instructions (in the ARM terminology, they are more
+          _unpredictable_ than undefined).
 
-        Decoded instructions are also cached to improve performance.
+          Decoded instructions are also cached to improve performance.
 
-       Bytecode input 
-         (4 bytes)
-             |
-             |
-             v
-        [~26 & ~27]---------------------------------------------------------v
-             |                                                              |
-             | FALSE                                                        | TRUE
-             |                                                              |
-             v                                                              v
-           [26 ]--------------------------------v                           |
-             |                                  |                           |
-             | FALSE                            | TRUE                      |
-             |                                  |                           |
-             v                                  v                           v 
-           [25 ]----------------v             [27 ]-------------v           |
-             |                  |               |               |           |
-             | FALSE            | TRUE          | FALSE         | TRUE      |
-             |                  |               |               |           |
-             v                  v               v               v           v
-         LDM / STM          Branch (B)      LDR / STR       SWI / SVC       |
-                                         (also undefined                    |
-                                             if [4])                        |
-             v--------------------------------------------------------------<
-             |
-             v
-       [4 & 7 & ~25]--------------------------------------------v
-             |                                                  |
-             | FALSE                                            | TRUE
-             |                                                  |
-             v                                                  v
-      [~20 & ~23 & 24]----------v                            [5 | 6]--------v
-             |                  |                               |           | TRUE 
-             | FALSE            | TRUE                          | FALSE     v 
-             |                  |                               |       LDRH/SH/SB
-             v                  v                               v           
-          DATA OP           [18 & 21]-----------v             [24 ]---------v
-      (MOV, ADD, etc.)          |               |               |           | TRUE
-                                | FALSE         | TRUE          | FALSE     v
-                                |               |               |          SWP
-                                v               v               v
-             v----------------[19 ]            BX             [23 ]---------v
-             |                  |                               |           | TRUE
-             | TRUE             | FALSE                         | FALSE     v
-             |                  |                               |        Multiply
-             v                  v                               v          long
-         MSR / MRS             NOP                           Multiply
+         Bytecode input
+           (4 bytes)
+               |
+               |
+               v
+          [~26 & ~27]---------------------------------------------------------v
+               |                                                              |
+               | FALSE                                                        | TRUE
+               |                                                              |
+               v                                                              v
+             [26 ]--------------------------------v                           |
+               |                                  |                           |
+               | FALSE                            | TRUE                      |
+               |                                  |                           |
+               v                                  v                           v
+             [25 ]----------------v             [27 ]-------------v           |
+               |                  |               |               |           |
+               | FALSE            | TRUE          | FALSE         | TRUE      |
+               |                  |               |               |           |
+               v                  v               v               v           v
+           LDM / STM          Branch (B)      LDR / STR       SWI / SVC       |
+                                           (also undefined                    |
+                                               if [4])                        |
+               v--------------------------------------------------------------<
+               |
+               v
+         [4 & 7 & ~25]--------------------------------------------v
+               |                                                  |
+               | FALSE                                            | TRUE
+               |                                                  |
+               v                                                  v
+        [~20 & ~23 & 24]----------v                            [5 | 6]--------v
+               |                  |                               |           | TRUE
+               | FALSE            | TRUE                          | FALSE     v
+               |                  |                               |       LDRH/SH/SB
+               v                  v                               v
+            DATA OP           [18 & 21]-----------v             [24 ]---------v
+        (MOV, ADD, etc.)          |               |               |           | TRUE
+                                  | FALSE         | TRUE          | FALSE     v
+                                  |               |               |          SWP
+                                  v               v               v
+               v----------------[19 ]            BX             [23 ]---------v
+               |                  |                               |           | TRUE
+               | TRUE             | FALSE                         | FALSE     v
+               |                  |                               |        Multiply
+               v                  v                               v          long
+           MSR / MRS             NOP                           Multiply
         """
         if not self.fetchedInstr:
             # Undefined instruction
@@ -307,38 +332,41 @@ class Simulator:
         if not (instrInt >> 26 & 3):
             if instrInt >> 4 & 9 == 9 and not (instrInt >> 25 & 1):
                 if instrInt >> 5 & 3:
-                    self.currentInstr = self.decoders['HalfSignedMemOp']
+                    self.currentInstr = self.decoders["HalfSignedMemOp"]
                 elif instrInt >> 24 & 1:
-                    self.currentInstr = self.decoders['SwapOp']
+                    self.currentInstr = self.decoders["SwapOp"]
                 elif instrInt >> 23 & 1:
-                    self.currentInstr = self.decoders['MulLongOp']
+                    self.currentInstr = self.decoders["MulLongOp"]
                 else:
-                    self.currentInstr = self.decoders['MulOp']
+                    self.currentInstr = self.decoders["MulOp"]
             elif instrInt >> 24 & 1 and not (instrInt >> 20 & 9):
                 if instrInt >> 18 & 9 == 9:
-                    self.currentInstr = self.decoders['BranchOp']
+                    self.currentInstr = self.decoders["BranchOp"]
                 elif instrInt >> 19 & 1:
-                    self.currentInstr = self.decoders['PSROp']
+                    self.currentInstr = self.decoders["PSROp"]
                 else:
-                    self.currentInstr = self.decoders['NopOp']
+                    self.currentInstr = self.decoders["NopOp"]
             else:
-                self.currentInstr = self.decoders['DataOp']
+                self.currentInstr = self.decoders["DataOp"]
         elif instrInt >> 26 & 1:
             if instrInt >> 27 & 1:
-                self.currentInstr = self.decoders['SoftInterruptOp']
-            else:   # Could also check for [4], which is an undefined space in the instruction set
-                self.currentInstr = self.decoders['MemOp']
+                self.currentInstr = self.decoders["SoftInterruptOp"]
+            else:  # Could also check for [4], which is an undefined space in the instruction set
+                self.currentInstr = self.decoders["MemOp"]
         elif instrInt >> 25 & 1:
-            self.currentInstr = self.decoders['BranchOp']
+            self.currentInstr = self.decoders["BranchOp"]
         else:
-            self.currentInstr = self.decoders['MultipleMemOp']
+            self.currentInstr = self.decoders["MultipleMemOp"]
 
         if self.currentInstr is not None:
             self.currentInstr.setBytecode(instrInt)
             try:
                 self.currentInstr.decode()
                 # Once decoded, we add the instruction to the cache
-                self.decoderCache[instrInt] = (self.currentInstr, self.currentInstr.saveState())
+                self.decoderCache[instrInt] = (
+                    self.currentInstr,
+                    self.currentInstr.saveState(),
+                )
                 if len(self.decoderCache) > 2000:
                     # Fail-safe, we should never get there with programs < 2000 lines, but just in case,
                     # we do not want to bust the RAM with our cache
@@ -346,29 +374,61 @@ class Simulator:
             except ExecutionException as err:
                 # Invalid instruction
                 self.currentInstr = None
-                self.errorsPending.append('execution', err.text)
+                self.errorsPending.append("execution", err.text)
 
     def explainInstruction(self):
         if not self.currentInstr:
             # Undefined instruction
-            self.disassemblyInfo = (["highlightRead", []],
-                                    ["highlightWrite", []],
-                                    ["nextline", None],
-                                    ["disassembly", "Information indisponible"])
+            self.disassemblyInfo = (
+                ["highlightRead", []],
+                ["highlightWrite", []],
+                ["nextline", None],
+                ["disassembly", "Information indisponible"],
+            )
             return
 
         disassembly, description = self.currentInstr.explain(self)
-        dis = '<div id="disassembly_instruction">{}</div>\n<div id="disassembly_description">{}</div>\n'.format(disassembly, description)
+        dis = '<div id="disassembly_instruction">{}</div>\n<div id="disassembly_description">{}</div>\n'.format(
+            disassembly, description
+        )
 
         if self.currentInstr.nextAddressToExecute != -1:
-            self.disassemblyInfo = (["highlightRead", list(self.currentInstr.affectedRegs[0] | self.currentInstr.affectedMem[0])],
-                                    ["highlightWrite", list(self.currentInstr.affectedRegs[1] | self.currentInstr.affectedMem[1])], 
-                                    ["nextline", self.currentInstr.nextAddressToExecute], 
-                                    ["disassembly", dis])
+            self.disassemblyInfo = (
+                [
+                    "highlightRead",
+                    list(
+                        self.currentInstr.affectedRegs[0]
+                        | self.currentInstr.affectedMem[0]
+                    ),
+                ],
+                [
+                    "highlightWrite",
+                    list(
+                        self.currentInstr.affectedRegs[1]
+                        | self.currentInstr.affectedMem[1]
+                    ),
+                ],
+                ["nextline", self.currentInstr.nextAddressToExecute],
+                ["disassembly", dis],
+            )
         else:
-            self.disassemblyInfo = (["highlightRead", list(self.currentInstr.affectedRegs[0] | self.currentInstr.affectedMem[0])], 
-                                    ["highlightWrite", list(self.currentInstr.affectedRegs[1] | self.currentInstr.affectedMem[1])],
-                                    ["disassembly", dis])
+            self.disassemblyInfo = (
+                [
+                    "highlightRead",
+                    list(
+                        self.currentInstr.affectedRegs[0]
+                        | self.currentInstr.affectedMem[0]
+                    ),
+                ],
+                [
+                    "highlightWrite",
+                    list(
+                        self.currentInstr.affectedRegs[1]
+                        | self.currentInstr.affectedMem[1]
+                    ),
+                ],
+                ["disassembly", dis],
+            )
 
     def execAssert(self, assertionsList, mode):
         for assertionInfo in assertionsList:
@@ -390,10 +450,10 @@ class Simulator:
                     # The rest of the code assume that a register is encoded
                     # as R**, so we convert the alternative names
                     if value.strip() in ("SP", "LR", "PC"):
-                        value = {'SP': 'R13', 'LR': 'R14', 'PC': 'R15'}[value]
+                        value = {"SP": "R13", "LR": "R14", "PC": "R15"}[value]
                     if target.strip() in ("SP", "LR", "PC"):
-                        target = {'SP': 'R13', 'LR': 'R14', 'PC': 'R15'}[target]
-                        
+                        target = {"SP": "R13", "LR": "R14", "PC": "R15"}[target]
+
                     if value.strip()[0] == "R":
                         # The target is another register
                         regtarget = int(value[1:].strip())
@@ -408,7 +468,7 @@ class Simulator:
                         except ValueError:
                             # If this is a decimal with leading zeros, base=0 will crash
                             val = int(value, base=10) & 0xFFFFFFFF
-                            
+
                     if target[0] == "R":
                         # Register
                         reg = int(target[1:])
@@ -418,9 +478,13 @@ class Simulator:
                         self.regs.reactivateBreakpoints()
                         if valreg != val:
                             if regtarget:
-                                strError += "Erreur : {} devrait valoir {} (la valeur du registre R{}), mais il vaut {}\n".format(target, val, regtarget, valreg)
+                                strError += "Erreur : {} devrait valoir {} (la valeur du registre R{}), mais il vaut {}\n".format(
+                                    target, val, regtarget, valreg
+                                )
                             else:
-                                strError += "Erreur : {} devrait valoir {}, mais il vaut {}\n".format(target, val, valreg)
+                                strError += "Erreur : {} devrait valoir {}, mais il vaut {}\n".format(
+                                    target, val, valreg
+                                )
                     elif target[:2] == "0X":
                         # Memory
                         addr = int(target, base=16)
@@ -429,25 +493,34 @@ class Simulator:
                         if not 0 <= int(val) < 255:
                             val &= 0xFFFFFFFF
                             formatStruct = "<I"
-                        valmem = self.mem.get(addr, mayTriggerBkpt=False, size=4 if formatStruct == "<I" else 1)
+                        valmem = self.mem.get(
+                            addr,
+                            mayTriggerBkpt=False,
+                            size=4 if formatStruct == "<I" else 1,
+                        )
                         valmem = struct.unpack(formatStruct, valmem)[0]
                         if valmem != val:
                             if regtarget:
-                                strError += "Erreur : l'adresse mémoire {} devrait contenir {} (la valeur du registre R{}), mais elle contient {}\n"\
-                                    .format(target, val, regtarget, valmem)
+                                strError += "Erreur : l'adresse mémoire {} devrait contenir {} (la valeur du registre R{}), mais elle contient {}\n".format(
+                                    target, val, regtarget, valmem
+                                )
                             else:
-                                strError += "Erreur : l'adresse mémoire {} devrait contenir {}, mais elle contient {}\n"\
-                                    .format(target, val, valmem)
+                                strError += "Erreur : l'adresse mémoire {} devrait contenir {}, mais elle contient {}\n".format(
+                                    target, val, valmem
+                                )
                     elif len(target) == 1 and target in self.regs.flag2index:
                         # Flag
-                        expectedVal = value != '0'
+                        expectedVal = value != "0"
                         actualVal = self.regs.__getattribute__(target)
                         if actualVal != expectedVal:
-                            strError += "Erreur : le drapeau {} devrait signaler {}, mais il signale {}\n"\
-                                .format(target, expectedVal, actualVal)
+                            strError += "Erreur : le drapeau {} devrait signaler {}, mais il signale {}\n".format(
+                                target, expectedVal, actualVal
+                            )
                     else:
                         # Assert type unknown
-                        strError += "Assertion inconnue ou impossible à interpréter : ({}, {})!".format(target, value)
+                        strError += "Assertion inconnue ou impossible à interpréter : ({}, {})!".format(
+                            target, value
+                        )
 
                 if len(strError) > 0:
                     self.errorsPending.append("assert", strError, assertionLine)
@@ -490,7 +563,7 @@ class Simulator:
             except ComponentException as err:
                 self.errorsPending.append(err.cmp, err.text, self.getCurrentLine())
             except ExecutionException as err:
-                self.errorsPending.append('execution', err.text, self.getCurrentLine())
+                self.errorsPending.append("execution", err.text, self.getCurrentLine())
 
         else:
             # In stepIn mode or this is the first step to be execute in this mode.
@@ -501,7 +574,7 @@ class Simulator:
             except ComponentException as err:
                 self.errorsPending.append(err.cmp, err.text, self.getCurrentLine())
             except ExecutionException as err:
-                self.errorsPending.append('execution', err.text, self.getCurrentLine())
+                self.errorsPending.append("execution", err.text, self.getCurrentLine())
             self.reactivateAllBreakpoints()
 
         # After instruction execution, restore all breakpoints
@@ -513,17 +586,20 @@ class Simulator:
             # If PC was modified, we simulate the prefetch by adding 8 immediately to it
             self.regs[15] += self.pcoffset
         else:
-            self.regs[15] += 4       # PC = PC + 4
+            self.regs[15] += 4  # PC = PC + 4
 
         newpc = self.regs[15] - self.pcoffset
         if keeppc in self.assertionCkpts and not self.currentInstr.pcmodified:
             # We check if we've hit an post-assertion checkpoint
-            self.execAssert(self.assertionData[keeppc], 'AFTER')
+            self.execAssert(self.assertionData[keeppc], "AFTER")
         elif currentCallStackLen > len(self.callStack):
             # We have branched out of a function
             # If an assertion was following a BL and we exited a function, we want to execute it now!
-            if len(self.callStack) in self.assertionWhenReturn and (newpc-4) in self.assertionCkpts:
-                self.execAssert(self.assertionData[newpc-4], 'AFTER')
+            if (
+                len(self.callStack) in self.assertionWhenReturn
+                and (newpc - 4) in self.assertionCkpts
+            ):
+                self.execAssert(self.assertionData[newpc - 4], "AFTER")
                 self.assertionWhenReturn.remove(len(self.callStack))
         elif currentCallStackLen < len(self.callStack):
             # We have branched in a function
@@ -533,25 +609,51 @@ class Simulator:
 
         if newpc in self.assertionCkpts:
             # We check if we've hit an pre-assertion checkpoint (for the next instruction)
-            self.execAssert(self.assertionData[newpc], 'BEFORE')
+            self.execAssert(self.assertionData[newpc], "BEFORE")
 
         # We look for interrupts
         # The current instruction is always finished before the interrupt takes on
         # TODO Handle special cases for LDM and STM
-        if self.interruptActive and self.history.cyclesCount >= (self.interruptParams['t0'] + self.interruptParams['b']) \
-            and (self.history.cyclesCount - 1 - self.interruptParams['t0'] - self.interruptParams['b']) % self.interruptParams['a'] == 0:
-            if (self.interruptParams['type'] == "FIQ" and not self.regs.FIQ or
-                    self.interruptParams['type'] == "IRQ" and not self.regs.IRQ and self.regs.mode != 'FIQ'):        # Is the interrupt masked?
+        if (
+            self.interruptActive
+            and self.history.cyclesCount
+            >= (self.interruptParams["t0"] + self.interruptParams["b"])
+            and (
+                self.history.cyclesCount
+                - 1
+                - self.interruptParams["t0"]
+                - self.interruptParams["b"]
+            )
+            % self.interruptParams["a"]
+            == 0
+        ):
+            if (
+                self.interruptParams["type"] == "FIQ"
+                and not self.regs.FIQ
+                or self.interruptParams["type"] == "IRQ"
+                and not self.regs.IRQ
+                and self.regs.mode != "FIQ"
+            ):  # Is the interrupt masked?
                 # Interruption!
                 # We enter it (the entry point is 0x18 for IRQ and 0x1C for FIQ)
-                savedCPSR = self.regs.CPSR                                  # Keep CPSR before changing processor mode
-                self.regs.mode = self.interruptParams['type']               # Set the register bank and processor mode
-                self.regs.SPSR = savedCPSR                                  # Save the CPSR in the current SPSR
-                self.regs.IRQ = True                                        # IRQ are always disabled when we enter an interrupt
-                if self.interruptParams['type'] == "FIQ":                   # If we enter a FIQ interrupt,
-                    self.regs.FIQ = True                                    #   then we disable also FIQ interrupts
-                self.regs[14] = self.regs[15] - 4                           # Save PC in LR (on the FIQ or IRQ bank)
-                self.regs[15] = self.pcoffset + (0x18 if self.interruptParams['type'] == "IRQ" else 0x1C)      # Set PC to enter the interrupt
+                savedCPSR = self.regs.CPSR  # Keep CPSR before changing processor mode
+                self.regs.mode = self.interruptParams[
+                    "type"
+                ]  # Set the register bank and processor mode
+                self.regs.SPSR = savedCPSR  # Save the CPSR in the current SPSR
+                self.regs.IRQ = (
+                    True  # IRQ are always disabled when we enter an interrupt
+                )
+                if (
+                    self.interruptParams["type"] == "FIQ"
+                ):  # If we enter a FIQ interrupt,
+                    self.regs.FIQ = True  #   then we disable also FIQ interrupts
+                self.regs[14] = (
+                    self.regs[15] - 4
+                )  # Save PC in LR (on the FIQ or IRQ bank)
+                self.regs[15] = self.pcoffset + (
+                    0x18 if self.interruptParams["type"] == "IRQ" else 0x1C
+                )  # Set PC to enter the interrupt
 
         # We fetch and decode the next instruction
         self.fetchAndDecode(forceExplain)
@@ -584,6 +686,8 @@ class Simulator:
         if bkptException.cmp == "memory":
             self.mem.toggleBreakpoint(bkptException.info, bkptException.mode)
         elif bkptException.cmp == "register":
-            self.regs.toggleBreakpointOnRegister(bkptException.info[0], bkptException.info[1], bkptException.mode)
+            self.regs.toggleBreakpointOnRegister(
+                bkptException.info[0], bkptException.info[1], bkptException.mode
+            )
         elif bkptException.cmp == "flags":
             self.regs.toggleBreakpointOnFlag(bkptException.info, bkptException.mode)

@@ -9,6 +9,12 @@
       media="screen"
       href="static/css/style.css"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
     <script
       src="https://kit.fontawesome.com/df57a58519.js"
       crossorigin="anonymous"
@@ -21,11 +27,6 @@
     <script type="text/javascript">
       window.define = window.define || ace.define;
     </script>
-    <script
-      src="static/js/ace/theme-cobalt.js"
-      type="text/javascript"
-      charset="utf-8"
-    ></script>
     <script
       src="static/js/ace-custom/mode-assembly_arm.js"
       type="text/javascript"
@@ -1107,16 +1108,6 @@
       editor.getSession().setMode(new assembly_armMode());
       editor.$blockScrolling = Infinity;
       editor.setShowPrintMargin(false);
-
-      // Remove shortcuts used by the simulator
-      editor.commands.bindKey("Ctrl-Up", null);
-      editor.commands.bindKey("Cmd-Up", null);
-      editor.commands.bindKey("Ctrl-Left", null);
-      editor.commands.bindKey("Cmd-Left", null);
-      editor.commands.bindKey("Ctrl-Right", null);
-      editor.commands.bindKey("Cmd-Right", null);
-      editor.commands.bindKey("Ctrl-Down", null);
-      editor.commands.bindKey("Cmd-Down", null);
     </script>
 
     <script
