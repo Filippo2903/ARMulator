@@ -1,1526 +1,1167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <title>ARMulator</title>
-        <link
-            rel="stylesheet"
-            type="text/css"
-            media="screen"
-            href="static/css/style.css" />
-        <script
-            src="https://kit.fontawesome.com/df57a58519.js"
-            crossorigin="anonymous"></script>
-        <script
-            src="static/js/ace/ace.js"
-            type="text/javascript"
-            charset="utf-8"></script>
-        <script type="text/javascript">
-            window.define = window.define || ace.define;
-        </script>
-        <script
-            src="static/js/ace-custom/mode-assembly_arm.js"
-            type="text/javascript"
-            charset="utf-8"></script>
-        <script src="static/js/editablegrid/editablegrid.js"></script>
-        <script src="static/js/editablegrid/editablegrid_renderers.js"></script>
-        <script src="static/js/editablegrid/editablegrid_editors.js"></script>
-        <script src="static/js/editablegrid/editablegrid_validators.js"></script>
-        <script src="static/js/editablegrid/editablegrid_utils.js"></script>
-        <link
-            rel="stylesheet"
-            href="static/js/editablegrid/editablegrid.css"
-            type="text/css"
-            media="screen" />
-        <script src="static/js/frontEndDictionaries.js"></script>
-        <script>
-            const DEFAULT_LANG = "en";
+  <head>
+    <meta charset="UTF-8" />
+    <title>ARMulator</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="static/css/style.css"
+    />
+    <script
+      src="https://kit.fontawesome.com/df57a58519.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="static/js/ace/ace.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script type="text/javascript">
+      window.define = window.define || ace.define;
+    </script>
+    <script
+      src="static/js/ace/theme-cobalt.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="static/js/ace-custom/mode-assembly_arm.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script src="static/js/editablegrid/editablegrid.js"></script>
+    <script src="static/js/editablegrid/editablegrid_renderers.js"></script>
+    <script src="static/js/editablegrid/editablegrid_editors.js"></script>
+    <script src="static/js/editablegrid/editablegrid_validators.js"></script>
+    <script src="static/js/editablegrid/editablegrid_utils.js"></script>
+    <link
+      rel="stylesheet"
+      href="static/js/editablegrid/editablegrid.css"
+      type="text/css"
+      media="screen"
+    />
+    <script src="static/js/frontEndDictionaries.js"></script>
+    <script>
+      const DEFAULT_LANG = "en";
 
-            const lang = (() => {
-                var value = "; " + document.cookie;
-                var parts = value.split("; lang=");
-                if (parts.length === 2) return parts.pop().split(";").shift();
-            })();
+      const lang = (() => {
+        var value = "; " + document.cookie;
+        var parts = value.split("; lang=");
+        if (parts.length === 2) return parts.pop().split(";").shift();
+      })();
 
-            const {
-                lang: currentLang,
-                possibleLanguages: allLanguages,
-                dictionary: frontEndDictionary,
-            } = getFrontEndDictionary(lang || DEFAULT_LANG);
-        </script>
-    </head>
+      const {
+        lang: currentLang,
+        possibleLanguages: allLanguages,
+        dictionary: frontEndDictionary,
+      } = getFrontEndDictionary(lang || DEFAULT_LANG);
+    </script>
+  </head>
 
-    <body>
-        <div class="wrapper">
-            <div id="main-container">
-                <div id="message_bar"></div>
-                <div id="session-bar">
-                    <div id="sessions">
-                        <div id="new_session">
-                            <i class="fa-solid fa-plus fa-sm"></i>
-                        </div>
-                    </div>
-                    <button id="settings" class="button">Settings</button>
-                    <div
-                        id="config_overlay"
-                        class="dialog-overlay"
-                        style="display: none">
-                        <div
-                            id="config_dialog"
-                            class="config-dialog"
-                            onclick="event.stopPropagation();">
-                            <div id="config_dialog_title">Settings</div>
-                            <div class="input-row">
-                                <label for="interrupt_active"
-                                    >Enable interrupts:</label
-                                >
-                                <label class="ui-switch">
-                                    <input
-                                        type="checkbox"
-                                        id="interrupt_active"
-                                        name="interrupt_active"
-                                        value="activate" />
-                                    <span class="slider"></span>
-                                </label>
-                            </div>
-                            <div class="input-row">
-                                <label for="interrupt_type"
-                                    >Interrupt type:</label
-                                >
-                                <select
-                                    id="interrupt_type"
-                                    class="config-input">
-                                    <option value="FIQ">FIQ</option>
-                                    <option value="IRQ">IRQ</option>
-                                </select>
-                            </div>
-                            <div class="input-row">
-                                <label for="interrupt_cycles_first"
-                                    >First interrupt after:</label
-                                >
-                                <div class="input-with-unit">
-                                    <input
-                                        id="interrupt_cycles_first"
-                                        class="config-input"
-                                        type="number"
-                                        value="50"
-                                        placeholder="e.g. 50" />
-                                    <span class="unit">cycles</span>
-                                </div>
-                            </div>
-                            <div class="input-row">
-                                <label for="interrupt_cycles"
-                                    >Then every:</label
-                                >
-                                <div class="input-with-unit">
-                                    <input
-                                        id="interrupt_cycles"
-                                        class="config-input"
-                                        type="number"
-                                        value="50"
-                                        placeholder="e.g. 50" />
-                                    <span class="unit">cycles</span>
-                                </div>
-                            </div>
-                            <div class="input-row">
-                                <label for="animate_speed"
-                                    >Execution speed (ms)</label
-                                >
-                                <input
-                                    id="animate_speed"
-                                    class="config-input"
-                                    type="text"
-                                    value="0" />
-                            </div>
-                            <div class="input-row">
-                                <label for="language">Language</label>
-                                <select
-                                    id="language"
-                                    class="config-input"></select>
-                            </div>
-                            <div class="config-buttons">
-                                <button id="closeConfig" class="button">
-                                    Close
-                                </button>
-                                <button id="saveConfig" class="button primary">
-                                    Save
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        id="delete_overlay"
-                        class="dialog-overlay"
-                        style="display: none">
-                        <div
-                            id="delete_dialog"
-                            class="delete-dialog"
-                            onclick="event.stopPropagation();">
-                            <div id="delete_dialog_title">Delete session?</div>
-                            <p class="delete-warning">
-                                <span class="delete-warning-text"
-                                    >You are about to permanently delete this
-                                    session.</span
-                                ><br />
-                                <strong>This action cannot be undone.</strong
-                                ><br /><br />
-                                <span class="confirm-text"
-                                    >Do you want to continue?</span
-                                >
-                            </p>
-                            <br />
-                            <div class="delete-modal-buttons">
-                                <button
-                                    id="cancel-delete"
-                                    class="button primary">
-                                    Cancel
-                                </button>
-                                <button id="confirm-delete" class="button">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        id="max_sessions_overlay"
-                        class="dialog-overlay"
-                        style="display: none">
-                        <div
-                            id="max_sessions_dialog"
-                            class="max-sessions-dialog"
-                            onclick="event.stopPropagation();">
-                            <div id="max_sessions_dialog_title">
-                                Maximum sessions reached
-                            </div>
-                            <p class="max-sessions-warning">
-                                You cannot create more than 10 sessions at the
-                                same time, please delete an existing session
-                                before creating a new one
-                            </p>
-                            <br />
-                            <div class="max-sessions-modal-buttons">
-                                <button
-                                    id="close-max-sessions"
-                                    class="button primary">
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="simulator-container">
-                    <div id="tabsmain-simulation">
-                        <div id="regView">
-                            <div id="all-registers">
-                                <div
-                                    id="gp-User"
-                                    class="reg-container-title shown">
-                                    General Purpose Registers
-                                </div>
-                                <div
-                                    id="tabs1-User"
-                                    class="reg-container shown">
-                                    <div class="registers">
-                                        <div
-                                            id="user_r0"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r0"
-                                                class="register-name"
-                                                >R0</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r0"
-                                                type="text"
-                                                name="r0" />
-                                        </div>
-                                        <div
-                                            id="user_r1"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r1"
-                                                class="register-name"
-                                                >R1</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r1"
-                                                type="text"
-                                                name="r1" />
-                                        </div>
-                                        <div
-                                            id="user_r2"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r2"
-                                                class="register-name"
-                                                >R2</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r2"
-                                                type="text"
-                                                name="r2" />
-                                        </div>
-                                        <div
-                                            id="user_r3"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r3"
-                                                class="register-name"
-                                                >R3</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r3"
-                                                type="text"
-                                                name="r3" />
-                                        </div>
-                                        <div
-                                            id="user_r4"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r4"
-                                                class="register-name"
-                                                >R4</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r4"
-                                                type="text"
-                                                name="r4" />
-                                        </div>
-                                        <div
-                                            id="user_r5"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r5"
-                                                class="register-name"
-                                                >R5</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r5"
-                                                type="text"
-                                                name="r5" />
-                                        </div>
-                                        <div
-                                            id="user_r6"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r6"
-                                                class="register-name"
-                                                >R6</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r6"
-                                                type="text"
-                                                name="r6" />
-                                        </div>
-                                        <div
-                                            id="user_r7"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r7"
-                                                class="register-name"
-                                                >R7</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r7"
-                                                type="text"
-                                                name="r7" />
-                                        </div>
-                                        <div
-                                            id="user_r8"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r8"
-                                                class="register-name"
-                                                >R8</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r8"
-                                                type="text"
-                                                name="r8" />
-                                        </div>
-                                        <div
-                                            id="user_r9"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r9"
-                                                class="register-name"
-                                                >R9</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r9"
-                                                type="text"
-                                                name="r9" />
-                                        </div>
-                                        <div
-                                            id="user_r10"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r10"
-                                                class="register-name"
-                                                >R10</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r10"
-                                                type="text"
-                                                name="r10" />
-                                        </div>
-                                        <div
-                                            id="user_r11"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r11"
-                                                class="register-name"
-                                                >R11</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r11"
-                                                type="text"
-                                                name="r11" />
-                                        </div>
-                                        <div
-                                            id="user_r12"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r12"
-                                                class="register-name"
-                                                >R12</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r12"
-                                                type="text"
-                                                name="r12" />
-                                        </div>
-                                        <div
-                                            id="user_r13"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r13"
-                                                class="register-name">
-                                                R13 (sp)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r13"
-                                                type="text"
-                                                name="r13" />
-                                        </div>
-                                        <div
-                                            id="user_r14"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r14"
-                                                class="register-name">
-                                                R14 (lr)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r14"
-                                                type="text"
-                                                name="r14" />
-                                        </div>
-                                        <div
-                                            id="user_r15"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r15"
-                                                class="register-name">
-                                                R15 (pc)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="r15"
-                                                type="text"
-                                                name="r15" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="gp-FIQ" class="reg-container-title">
-                                    General Registers (FIQ)
-                                </div>
-                                <div id="tabs1-FIQ" class="reg-container">
-                                    <div class="registers">
-                                        <div
-                                            id="fiq_r0"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r0"
-                                                class="register-name"
-                                                >R0</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r0"
-                                                type="text"
-                                                name="r0" />
-                                        </div>
-                                        <div
-                                            id="fiq_r1"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r1"
-                                                class="register-name"
-                                                >R1</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r1"
-                                                type="text"
-                                                name="r1" />
-                                        </div>
-                                        <div
-                                            id="fiq_r2"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r2"
-                                                class="register-name"
-                                                >R2</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r2"
-                                                type="text"
-                                                name="r2" />
-                                        </div>
-                                        <div
-                                            id="fiq_r3"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r3"
-                                                class="register-name"
-                                                >R3</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r3"
-                                                type="text"
-                                                name="r3" />
-                                        </div>
-                                        <div
-                                            id="fiq_r4"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r4"
-                                                class="register-name"
-                                                >R4</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r4"
-                                                type="text"
-                                                name="r4" />
-                                        </div>
-                                        <div
-                                            id="fiq_r5"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r5"
-                                                class="register-name"
-                                                >R5</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r5"
-                                                type="text"
-                                                name="r5" />
-                                        </div>
-                                        <div
-                                            id="fiq_r6"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r6"
-                                                class="register-name"
-                                                >R6</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r6"
-                                                type="text"
-                                                name="r6" />
-                                        </div>
-                                        <div
-                                            id="fiq_r7"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r7"
-                                                class="register-name"
-                                                >R7</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r7"
-                                                type="text"
-                                                name="r7" />
-                                        </div>
-                                        <div
-                                            id="fiq_r8"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r8"
-                                                class="register-name"
-                                                >R8 FIQ</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r8"
-                                                type="text"
-                                                name="r8" />
-                                        </div>
-                                        <div
-                                            id="fiq_r9"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r9"
-                                                class="register-name"
-                                                >R9 FIQ</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r9"
-                                                type="text"
-                                                name="r9" />
-                                        </div>
-                                        <div
-                                            id="fiq_r10"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r10"
-                                                class="register-name"
-                                                >R10 FIQ</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r10"
-                                                type="text"
-                                                name="r10" />
-                                        </div>
-                                        <div
-                                            id="fiq_r11"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r11"
-                                                class="register-name"
-                                                >R11 FIQ</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r11"
-                                                type="text"
-                                                name="r11" />
-                                        </div>
-                                        <div
-                                            id="fiq_r12"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r12"
-                                                class="register-name"
-                                                >R12 FIQ</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r12"
-                                                type="text"
-                                                name="r12" />
-                                        </div>
-                                        <div
-                                            id="fiq_r13"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r13"
-                                                class="register-name">
-                                                R13 FIQ (sp)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r13"
-                                                type="text"
-                                                name="r13" />
-                                        </div>
-                                        <div
-                                            id="fiq_r14"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r14"
-                                                class="register-name">
-                                                R14 FIQ (lr)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r14"
-                                                type="text"
-                                                name="r14" />
-                                        </div>
-                                        <div
-                                            id="fiq_r15"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r15"
-                                                class="register-name">
-                                                R15 (pc)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="FIQ_r15"
-                                                type="text"
-                                                name="r15" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="gp-IRQ" class="reg-container-title">
-                                    General Registers (IRQ)
-                                </div>
-                                <div id="tabs1-IRQ" class="reg-container">
-                                    <div class="registers">
-                                        <div
-                                            id="irq_r0"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r0"
-                                                class="register-name"
-                                                >R0</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r0"
-                                                type="text"
-                                                name="r0" />
-                                        </div>
-                                        <div
-                                            id="irq_r1"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r1"
-                                                class="register-name"
-                                                >R1</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r1"
-                                                type="text"
-                                                name="r1" />
-                                        </div>
-                                        <div
-                                            id="irq_r2"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r2"
-                                                class="register-name"
-                                                >R2</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r2"
-                                                type="text"
-                                                name="r2" />
-                                        </div>
-                                        <div
-                                            id="irq_r3"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r3"
-                                                class="register-name"
-                                                >R3</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r3"
-                                                type="text"
-                                                name="r3" />
-                                        </div>
-                                        <div
-                                            id="irq_r4"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r4"
-                                                class="register-name"
-                                                >R4</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r4"
-                                                type="text"
-                                                name="r4" />
-                                        </div>
-                                        <div
-                                            id="irq_r5"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r5"
-                                                class="register-name"
-                                                >R5</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r5"
-                                                type="text"
-                                                name="r5" />
-                                        </div>
-                                        <div
-                                            id="irq_r6"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r6"
-                                                class="register-name"
-                                                >R6</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r6"
-                                                type="text"
-                                                name="r6" />
-                                        </div>
-                                        <div
-                                            id="irq_r7"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r7"
-                                                class="register-name"
-                                                >R7</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r7"
-                                                type="text"
-                                                name="r7" />
-                                        </div>
-                                        <div
-                                            id="irq_r8"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r8"
-                                                class="register-name"
-                                                >R8</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r8"
-                                                type="text"
-                                                name="r8" />
-                                        </div>
-                                        <div
-                                            id="irq_r9"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r9"
-                                                class="register-name"
-                                                >R9</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r9"
-                                                type="text"
-                                                name="r9" />
-                                        </div>
-                                        <div
-                                            id="irq_r10"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r10"
-                                                class="register-name"
-                                                >R10</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r10"
-                                                type="text"
-                                                name="r10" />
-                                        </div>
-                                        <div
-                                            id="irq_r11"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r11"
-                                                class="register-name"
-                                                >R11</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r11"
-                                                type="text"
-                                                name="r11" />
-                                        </div>
-                                        <div
-                                            id="irq_r12"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r12"
-                                                class="register-name"
-                                                >R12</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r12"
-                                                type="text"
-                                                name="r12" />
-                                        </div>
-                                        <div
-                                            id="irq_r13"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r13"
-                                                class="register-name">
-                                                R13 IRQ (sp)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r13"
-                                                type="text"
-                                                name="r13" />
-                                        </div>
-                                        <div
-                                            id="irq_r14"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r14"
-                                                class="register-name">
-                                                R14 IRQ (lr)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r14"
-                                                type="text"
-                                                name="r14" />
-                                        </div>
-                                        <div
-                                            id="irq_r15"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r15"
-                                                class="register-name">
-                                                R15 (pc)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="IRQ_r15"
-                                                type="text"
-                                                name="r15" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="gp-SVC" class="reg-container-title">
-                                    General Registers (SVC)
-                                </div>
-                                <div id="tabs1-SVC" class="reg-container">
-                                    <div class="registers">
-                                        <div
-                                            id="svc_r0"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r0"
-                                                class="register-name"
-                                                >R0</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r0"
-                                                type="text"
-                                                name="r0" />
-                                        </div>
-                                        <div
-                                            id="svc_r1"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r1"
-                                                class="register-name"
-                                                >R1</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r1"
-                                                type="text"
-                                                name="r1" />
-                                        </div>
-                                        <div
-                                            id="svc_r2"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r2"
-                                                class="register-name"
-                                                >R2</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r2"
-                                                type="text"
-                                                name="r2" />
-                                        </div>
-                                        <div
-                                            id="svc_r3"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r3"
-                                                class="register-name"
-                                                >R3</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r3"
-                                                type="text"
-                                                name="r3" />
-                                        </div>
-                                        <div
-                                            id="svc_r4"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r4"
-                                                class="register-name"
-                                                >R4</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r4"
-                                                type="text"
-                                                name="r4" />
-                                        </div>
-                                        <div
-                                            id="svc_r5"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r5"
-                                                class="register-name"
-                                                >R5</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r5"
-                                                type="text"
-                                                name="r5" />
-                                        </div>
-                                        <div
-                                            id="svc_r6"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r6"
-                                                class="register-name"
-                                                >R6</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r6"
-                                                type="text"
-                                                name="r6" />
-                                        </div>
-                                        <div
-                                            id="svc_r7"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r7"
-                                                class="register-name"
-                                                >R7</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r7"
-                                                type="text"
-                                                name="r7" />
-                                        </div>
-                                        <div
-                                            id="svc_r8"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r8"
-                                                class="register-name"
-                                                >R8</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r8"
-                                                type="text"
-                                                name="r8" />
-                                        </div>
-                                        <div
-                                            id="svc_r9"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r9"
-                                                class="register-name"
-                                                >R9</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r9"
-                                                type="text"
-                                                name="r9" />
-                                        </div>
-                                        <div
-                                            id="svc_r10"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r10"
-                                                class="register-name"
-                                                >R10</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r10"
-                                                type="text"
-                                                name="r10" />
-                                        </div>
-                                        <div
-                                            id="svc_r11"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r11"
-                                                class="register-name"
-                                                >R11</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r11"
-                                                type="text"
-                                                name="r11" />
-                                        </div>
-                                        <div
-                                            id="svc_r12"
-                                            class="input-row register-row">
-                                            <label
-                                                for="r12"
-                                                class="register-name"
-                                                >R12</label
-                                            >
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r12"
-                                                type="text"
-                                                name="r12" />
-                                        </div>
-                                        <div
-                                            id="svc_r13"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r13"
-                                                class="register-name">
-                                                R13 SVC (sp)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r13"
-                                                type="text"
-                                                name="r13" />
-                                        </div>
-                                        <div
-                                            id="svc_r14"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r14"
-                                                class="register-name">
-                                                R14 SVC (lr)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r14"
-                                                type="text"
-                                                name="r14" />
-                                        </div>
-                                        <div
-                                            id="svc_r15"
-                                            class="input-row register-row">
-                                            <label
-                                                for="=r15"
-                                                class="register-name">
-                                                R15 (pc)
-                                            </label>
-                                            <input
-                                                class="regVal formatted_value"
-                                                id="SVC_r15"
-                                                type="text"
-                                                name="r15" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="register_selector_container">
-                                    <button
-                                        class="button primary select_registers"
-                                        value="User">
-                                        User
-                                    </button>
-                                    <button
-                                        class="button select_registers"
-                                        value="FIQ">
-                                        FIQ
-                                    </button>
-                                    <button
-                                        class="button select_registers"
-                                        value="IRQ">
-                                        IRQ
-                                    </button>
-                                    <button
-                                        class="button select_registers"
-                                        value="SVC">
-                                        SVC
-                                    </button>
-                                </div>
-                                <div id="change-format" class="input-row">
-                                    <label for="valueformat">Base</label>
-                                    <select id="valueformat">
-                                        <option value="hex">Hexadecimal</option>
-                                        <option value="decsign">
-                                            Decimal (signed)
-                                        </option>
-                                        <option value="dec">
-                                            Decimal (unsigned)
-                                        </option>
-                                        <option value="bin">Binary</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div id="current_state">
-                                <div id="current_state_title_wrapper">
-                                    <div id="current_state_title">
-                                        Current state
-                                    </div>
-                                    <div>CPSR</div>
-                                    <div id="spsr_title">SPSR</div>
-                                </div>
-                                <div id="current_state_table">
-                                    <div id="flag_negative">Negative (N)</div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="n">
-                                            <input
-                                                type="checkbox"
-                                                id="n"
-                                                name="n"
-                                                value="n"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="sn">
-                                            <input
-                                                type="checkbox"
-                                                id="sn"
-                                                name="sn"
-                                                value="sn"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div id="flag_zero">Zero (Z)</div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="z">
-                                            <input
-                                                type="checkbox"
-                                                id="z"
-                                                name="z"
-                                                value="z"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="sz">
-                                            <input
-                                                type="checkbox"
-                                                id="sz"
-                                                name="sz"
-                                                value="sz"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div id="flag_carry">Carry (C)</div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="c">
-                                            <input
-                                                type="checkbox"
-                                                id="c"
-                                                name="c"
-                                                value="c"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="sc">
-                                            <input
-                                                type="checkbox"
-                                                id="sc"
-                                                name="sc"
-                                                value="sc"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div id="flag_overflow">Overflow (V)</div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="v">
-                                            <input
-                                                type="checkbox"
-                                                id="v"
-                                                name="v"
-                                                value="v"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="sv">
-                                            <input
-                                                type="checkbox"
-                                                id="sv"
-                                                name="sv"
-                                                value="sv"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div id="ignore_irq">Ignore IRQ</div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="i">
-                                            <input
-                                                type="checkbox"
-                                                id="i"
-                                                name="i"
-                                                value="i"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="si">
-                                            <input
-                                                type="checkbox"
-                                                id="si"
-                                                name="si"
-                                                value="si"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div id="ignore_fiq">Ignore FIQ</div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="f">
-                                            <input
-                                                type="checkbox"
-                                                id="f"
-                                                name="f"
-                                                value="f"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                    <div class="flag_btn_wrapper">
-                                        <label
-                                            class="ui-switch flag_btn"
-                                            name="sf">
-                                            <input
-                                                type="checkbox"
-                                                id="sf"
-                                                name="sf"
-                                                value="sf"
-                                                disabled />
-                                            <span class="slider"></span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="editorPanel">
-                            <div id="editorTopBar">
-                                <div id="simulationTitle">Simulation</div>
-                                <div id="debugger_buttons">
-                                    <button
-                                        id="assemble"
-                                        class="button primary">
-                                        Assemble
-                                    </button>
-                                    <button
-                                        onclick="reset()"
-                                        id="reset"
-                                        class="button"
-                                        disable="disabled">
-                                        Reset
-                                    </button>
-                                    <button
-                                        id="run"
-                                        onclick="simulate('run')"
-                                        disable="disabled"
-                                        class="button">
-                                        <i class="fa-solid fa-eject"></i>
-                                    </button>
-                                    <button
-                                        id="stepback"
-                                        onclick="simulate('stepback')"
-                                        disable="disabled"
-                                        class="button">
-                                        <i class="fa-solid fa-chevron-left"></i>
-                                    </button>
-                                    <button
-                                        id="stepforward"
-                                        onclick="simulate('stepforward')"
-                                        disable="disabled"
-                                        class="button">
-                                        <i
-                                            class="fa-solid fa-chevron-right"></i>
-                                    </button>
-                                    <button
-                                        id="stepout"
-                                        onclick="simulate('stepout')"
-                                        disable="disabled"
-                                        class="button">
-                                        <i
-                                            class="fa-solid fa-arrow-turn-up"></i>
-                                    </button>
-                                    <button
-                                        id="stepin"
-                                        onclick="simulate('stepinto')"
-                                        disable="disabled"
-                                        class="button">
-                                        <i
-                                            class="fa-solid fa-arrow-turn-up"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="editor">{{ code }}</div>
-                        </div>
-                        <div id="dashboard">
-                            <div class="border_container">
-                                <div id="current_instruction">
-                                    Current Instruction
-                                </div>
-                                <div id="disassembly"></div>
-                            </div>
-                            <div class="border_container">
-                                <div id="memory_title">Memory</div>
-                                <div id="memoryview"></div>
-                                <div id="paginator"></div>
-                                <label for="follow_pc">Follow PC</label>
-                                <input
-                                    type="checkbox"
-                                    id="follow_pc"
-                                    checked="checked" /><br />
-                                <span class="cycles-label">Current cycle:</span>
-                                <input
-                                    id="cycles_count"
-                                    type="text"
-                                    value="0" />
-                            </div>
-                            <div>
-                                <div style="float: left">
-                                    <input
-                                        type="file"
-                                        onchange="loadFileAsText()"
-                                        id="fileToLoad"
-                                        style="display: none" />
-                                    <label for="fileToLoad" class="flat_button"
-                                        >Upload</label
-                                    >
-                                </div>
-                                <div style="float: right">
-                                    <button
-                                        id="download_file"
-                                        onclick="saveTextAsFile()">
-                                        Download
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <body>
+    <div class="wrapper">
+      <div id="main-container">
+        <div id="message_bar"></div>
+        <div id="session-bar">
+          <div id="sessions">
+            <div id="new_session">
+              <i class="fa-solid fa-plus fa-sm"></i>
             </div>
+          </div>
+          <button id="settings" class="button">Settings</button>
+          <div id="config_overlay" class="dialog-overlay" style="display: none">
+            <div
+              id="config_dialog"
+              class="config-dialog"
+              onclick="event.stopPropagation();"
+            >
+              <div id="config_dialog_title">Settings</div>
+              <div class="input-row">
+                <label for="interrupt_active">Enable interrupts:</label>
+                <label class="ui-switch">
+                  <input
+                    type="checkbox"
+                    id="interrupt_active"
+                    name="interrupt_active"
+                    value="activate"
+                  />
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="input-row">
+                <label for="interrupt_type">Interrupt type:</label>
+                <select id="interrupt_type" class="config-input">
+                  <option value="FIQ">FIQ</option>
+                  <option value="IRQ">IRQ</option>
+                </select>
+              </div>
+              <div class="input-row">
+                <label for="interrupt_cycles_first"
+                  >First interrupt after:</label
+                >
+                <div class="input-with-unit">
+                  <input
+                    id="interrupt_cycles_first"
+                    class="config-input"
+                    type="number"
+                    value="50"
+                    placeholder="e.g. 50"
+                  />
+                  <span class="unit">cycles</span>
+                </div>
+              </div>
+              <div class="input-row">
+                <label for="interrupt_cycles">Then every:</label>
+                <div class="input-with-unit">
+                  <input
+                    id="interrupt_cycles"
+                    class="config-input"
+                    type="number"
+                    value="50"
+                    placeholder="e.g. 50"
+                  />
+                  <span class="unit">cycles</span>
+                </div>
+              </div>
+              <div class="input-row">
+                <label for="animate_speed">Execution speed (ms)</label>
+                <input
+                  id="animate_speed"
+                  class="config-input"
+                  type="text"
+                  value="0"
+                />
+              </div>
+              <div class="input-row">
+                <label for="language">Language</label>
+                <select id="language" class="config-input"></select>
+              </div>
+              <div class="config-buttons">
+                <button id="closeConfig" class="button">Close</button>
+                <button id="saveConfig" class="button primary">Save</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="delete_overlay" class="dialog-overlay" style="display: none">
+            <div
+              id="delete_dialog"
+              class="delete-dialog"
+              onclick="event.stopPropagation();"
+            >
+              <div id="delete_dialog_title">Delete session?</div>
+              <p class="delete-warning">
+                <span class="delete-warning-text"
+                  >You are about to permanently delete this session.</span
+                ><br />
+                <strong>This action cannot be undone.</strong><br /><br />
+                <span class="confirm-text">Do you want to continue?</span>
+              </p>
+              <br />
+              <div class="delete-modal-buttons">
+                <button id="cancel-delete" class="button primary">
+                  Cancel
+                </button>
+                <button id="confirm-delete" class="button">Delete</button>
+              </div>
+            </div>
+          </div>
+
+          <div
+            id="max_sessions_overlay"
+            class="dialog-overlay"
+            style="display: none"
+          >
+            <div
+              id="max_sessions_dialog"
+              class="max-sessions-dialog"
+              onclick="event.stopPropagation();"
+            >
+              <div id="max_sessions_dialog_title">Maximum sessions reached</div>
+              <p class="max-sessions-warning">
+                You cannot create more than 10 sessions at the same time, please
+                delete an existing session before creating a new one
+              </p>
+              <br />
+              <div class="max-sessions-modal-buttons">
+                <button id="close-max-sessions" class="button primary">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
+        <div id="simulator-container">
+          <div id="tabsmain-simulation">
+            <div id="regView">
+              <div id="all-registers">
+                <div id="gp-User" class="reg-container-title shown">
+                  General Purpose Registers
+                </div>
+                <div id="tabs1-User" class="reg-container shown">
+                  <div class="registers">
+                    <div id="user_r0" class="input-row register-row">
+                      <label for="r0" class="register-name">R0</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r0"
+                        type="text"
+                        name="r0"
+                      />
+                    </div>
+                    <div id="user_r1" class="input-row register-row">
+                      <label for="r1" class="register-name">R1</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r1"
+                        type="text"
+                        name="r1"
+                      />
+                    </div>
+                    <div id="user_r2" class="input-row register-row">
+                      <label for="r2" class="register-name">R2</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r2"
+                        type="text"
+                        name="r2"
+                      />
+                    </div>
+                    <div id="user_r3" class="input-row register-row">
+                      <label for="r3" class="register-name">R3</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r3"
+                        type="text"
+                        name="r3"
+                      />
+                    </div>
+                    <div id="user_r4" class="input-row register-row">
+                      <label for="r4" class="register-name">R4</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r4"
+                        type="text"
+                        name="r4"
+                      />
+                    </div>
+                    <div id="user_r5" class="input-row register-row">
+                      <label for="r5" class="register-name">R5</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r5"
+                        type="text"
+                        name="r5"
+                      />
+                    </div>
+                    <div id="user_r6" class="input-row register-row">
+                      <label for="r6" class="register-name">R6</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r6"
+                        type="text"
+                        name="r6"
+                      />
+                    </div>
+                    <div id="user_r7" class="input-row register-row">
+                      <label for="r7" class="register-name">R7</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r7"
+                        type="text"
+                        name="r7"
+                      />
+                    </div>
+                    <div id="user_r8" class="input-row register-row">
+                      <label for="r8" class="register-name">R8</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r8"
+                        type="text"
+                        name="r8"
+                      />
+                    </div>
+                    <div id="user_r9" class="input-row register-row">
+                      <label for="r9" class="register-name">R9</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r9"
+                        type="text"
+                        name="r9"
+                      />
+                    </div>
+                    <div id="user_r10" class="input-row register-row">
+                      <label for="r10" class="register-name">R10</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r10"
+                        type="text"
+                        name="r10"
+                      />
+                    </div>
+                    <div id="user_r11" class="input-row register-row">
+                      <label for="r11" class="register-name">R11</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r11"
+                        type="text"
+                        name="r11"
+                      />
+                    </div>
+                    <div id="user_r12" class="input-row register-row">
+                      <label for="r12" class="register-name">R12</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r12"
+                        type="text"
+                        name="r12"
+                      />
+                    </div>
+                    <div id="user_r13" class="input-row register-row">
+                      <label for="=r13" class="register-name"> R13 (sp) </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r13"
+                        type="text"
+                        name="r13"
+                      />
+                    </div>
+                    <div id="user_r14" class="input-row register-row">
+                      <label for="=r14" class="register-name"> R14 (lr) </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r14"
+                        type="text"
+                        name="r14"
+                      />
+                    </div>
+                    <div id="user_r15" class="input-row register-row">
+                      <label for="=r15" class="register-name"> R15 (pc) </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="r15"
+                        type="text"
+                        name="r15"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div id="gp-FIQ" class="reg-container-title">
+                  General Registers (FIQ)
+                </div>
+                <div id="tabs1-FIQ" class="reg-container">
+                  <div class="registers">
+                    <div id="fiq_r0" class="input-row register-row">
+                      <label for="r0" class="register-name">R0</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r0"
+                        type="text"
+                        name="r0"
+                      />
+                    </div>
+                    <div id="fiq_r1" class="input-row register-row">
+                      <label for="r1" class="register-name">R1</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r1"
+                        type="text"
+                        name="r1"
+                      />
+                    </div>
+                    <div id="fiq_r2" class="input-row register-row">
+                      <label for="r2" class="register-name">R2</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r2"
+                        type="text"
+                        name="r2"
+                      />
+                    </div>
+                    <div id="fiq_r3" class="input-row register-row">
+                      <label for="r3" class="register-name">R3</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r3"
+                        type="text"
+                        name="r3"
+                      />
+                    </div>
+                    <div id="fiq_r4" class="input-row register-row">
+                      <label for="r4" class="register-name">R4</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r4"
+                        type="text"
+                        name="r4"
+                      />
+                    </div>
+                    <div id="fiq_r5" class="input-row register-row">
+                      <label for="r5" class="register-name">R5</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r5"
+                        type="text"
+                        name="r5"
+                      />
+                    </div>
+                    <div id="fiq_r6" class="input-row register-row">
+                      <label for="r6" class="register-name">R6</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r6"
+                        type="text"
+                        name="r6"
+                      />
+                    </div>
+                    <div id="fiq_r7" class="input-row register-row">
+                      <label for="r7" class="register-name">R7</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r7"
+                        type="text"
+                        name="r7"
+                      />
+                    </div>
+                    <div id="fiq_r8" class="input-row register-row">
+                      <label for="r8" class="register-name">R8 FIQ</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r8"
+                        type="text"
+                        name="r8"
+                      />
+                    </div>
+                    <div id="fiq_r9" class="input-row register-row">
+                      <label for="r9" class="register-name">R9 FIQ</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r9"
+                        type="text"
+                        name="r9"
+                      />
+                    </div>
+                    <div id="fiq_r10" class="input-row register-row">
+                      <label for="r10" class="register-name">R10 FIQ</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r10"
+                        type="text"
+                        name="r10"
+                      />
+                    </div>
+                    <div id="fiq_r11" class="input-row register-row">
+                      <label for="r11" class="register-name">R11 FIQ</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r11"
+                        type="text"
+                        name="r11"
+                      />
+                    </div>
+                    <div id="fiq_r12" class="input-row register-row">
+                      <label for="r12" class="register-name">R12 FIQ</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r12"
+                        type="text"
+                        name="r12"
+                      />
+                    </div>
+                    <div id="fiq_r13" class="input-row register-row">
+                      <label for="=r13" class="register-name">
+                        R13 FIQ (sp)
+                      </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r13"
+                        type="text"
+                        name="r13"
+                      />
+                    </div>
+                    <div id="fiq_r14" class="input-row register-row">
+                      <label for="=r14" class="register-name">
+                        R14 FIQ (lr)
+                      </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r14"
+                        type="text"
+                        name="r14"
+                      />
+                    </div>
+                    <div id="fiq_r15" class="input-row register-row">
+                      <label for="=r15" class="register-name"> R15 (pc) </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="FIQ_r15"
+                        type="text"
+                        name="r15"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div id="gp-IRQ" class="reg-container-title">
+                  General Registers (IRQ)
+                </div>
+                <div id="tabs1-IRQ" class="reg-container">
+                  <div class="registers">
+                    <div id="irq_r0" class="input-row register-row">
+                      <label for="r0" class="register-name">R0</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r0"
+                        type="text"
+                        name="r0"
+                      />
+                    </div>
+                    <div id="irq_r1" class="input-row register-row">
+                      <label for="r1" class="register-name">R1</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r1"
+                        type="text"
+                        name="r1"
+                      />
+                    </div>
+                    <div id="irq_r2" class="input-row register-row">
+                      <label for="r2" class="register-name">R2</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r2"
+                        type="text"
+                        name="r2"
+                      />
+                    </div>
+                    <div id="irq_r3" class="input-row register-row">
+                      <label for="r3" class="register-name">R3</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r3"
+                        type="text"
+                        name="r3"
+                      />
+                    </div>
+                    <div id="irq_r4" class="input-row register-row">
+                      <label for="r4" class="register-name">R4</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r4"
+                        type="text"
+                        name="r4"
+                      />
+                    </div>
+                    <div id="irq_r5" class="input-row register-row">
+                      <label for="r5" class="register-name">R5</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r5"
+                        type="text"
+                        name="r5"
+                      />
+                    </div>
+                    <div id="irq_r6" class="input-row register-row">
+                      <label for="r6" class="register-name">R6</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r6"
+                        type="text"
+                        name="r6"
+                      />
+                    </div>
+                    <div id="irq_r7" class="input-row register-row">
+                      <label for="r7" class="register-name">R7</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r7"
+                        type="text"
+                        name="r7"
+                      />
+                    </div>
+                    <div id="irq_r8" class="input-row register-row">
+                      <label for="r8" class="register-name">R8</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r8"
+                        type="text"
+                        name="r8"
+                      />
+                    </div>
+                    <div id="irq_r9" class="input-row register-row">
+                      <label for="r9" class="register-name">R9</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r9"
+                        type="text"
+                        name="r9"
+                      />
+                    </div>
+                    <div id="irq_r10" class="input-row register-row">
+                      <label for="r10" class="register-name">R10</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r10"
+                        type="text"
+                        name="r10"
+                      />
+                    </div>
+                    <div id="irq_r11" class="input-row register-row">
+                      <label for="r11" class="register-name">R11</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r11"
+                        type="text"
+                        name="r11"
+                      />
+                    </div>
+                    <div id="irq_r12" class="input-row register-row">
+                      <label for="r12" class="register-name">R12</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r12"
+                        type="text"
+                        name="r12"
+                      />
+                    </div>
+                    <div id="irq_r13" class="input-row register-row">
+                      <label for="=r13" class="register-name">
+                        R13 IRQ (sp)
+                      </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r13"
+                        type="text"
+                        name="r13"
+                      />
+                    </div>
+                    <div id="irq_r14" class="input-row register-row">
+                      <label for="=r14" class="register-name">
+                        R14 IRQ (lr)
+                      </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r14"
+                        type="text"
+                        name="r14"
+                      />
+                    </div>
+                    <div id="irq_r15" class="input-row register-row">
+                      <label for="=r15" class="register-name"> R15 (pc) </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="IRQ_r15"
+                        type="text"
+                        name="r15"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div id="gp-SVC" class="reg-container-title">
+                  General Registers (SVC)
+                </div>
+                <div id="tabs1-SVC" class="reg-container">
+                  <div class="registers">
+                    <div id="svc_r0" class="input-row register-row">
+                      <label for="r0" class="register-name">R0</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r0"
+                        type="text"
+                        name="r0"
+                      />
+                    </div>
+                    <div id="svc_r1" class="input-row register-row">
+                      <label for="r1" class="register-name">R1</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r1"
+                        type="text"
+                        name="r1"
+                      />
+                    </div>
+                    <div id="svc_r2" class="input-row register-row">
+                      <label for="r2" class="register-name">R2</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r2"
+                        type="text"
+                        name="r2"
+                      />
+                    </div>
+                    <div id="svc_r3" class="input-row register-row">
+                      <label for="r3" class="register-name">R3</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r3"
+                        type="text"
+                        name="r3"
+                      />
+                    </div>
+                    <div id="svc_r4" class="input-row register-row">
+                      <label for="r4" class="register-name">R4</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r4"
+                        type="text"
+                        name="r4"
+                      />
+                    </div>
+                    <div id="svc_r5" class="input-row register-row">
+                      <label for="r5" class="register-name">R5</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r5"
+                        type="text"
+                        name="r5"
+                      />
+                    </div>
+                    <div id="svc_r6" class="input-row register-row">
+                      <label for="r6" class="register-name">R6</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r6"
+                        type="text"
+                        name="r6"
+                      />
+                    </div>
+                    <div id="svc_r7" class="input-row register-row">
+                      <label for="r7" class="register-name">R7</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r7"
+                        type="text"
+                        name="r7"
+                      />
+                    </div>
+                    <div id="svc_r8" class="input-row register-row">
+                      <label for="r8" class="register-name">R8</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r8"
+                        type="text"
+                        name="r8"
+                      />
+                    </div>
+                    <div id="svc_r9" class="input-row register-row">
+                      <label for="r9" class="register-name">R9</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r9"
+                        type="text"
+                        name="r9"
+                      />
+                    </div>
+                    <div id="svc_r10" class="input-row register-row">
+                      <label for="r10" class="register-name">R10</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r10"
+                        type="text"
+                        name="r10"
+                      />
+                    </div>
+                    <div id="svc_r11" class="input-row register-row">
+                      <label for="r11" class="register-name">R11</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r11"
+                        type="text"
+                        name="r11"
+                      />
+                    </div>
+                    <div id="svc_r12" class="input-row register-row">
+                      <label for="r12" class="register-name">R12</label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r12"
+                        type="text"
+                        name="r12"
+                      />
+                    </div>
+                    <div id="svc_r13" class="input-row register-row">
+                      <label for="=r13" class="register-name">
+                        R13 SVC (sp)
+                      </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r13"
+                        type="text"
+                        name="r13"
+                      />
+                    </div>
+                    <div id="svc_r14" class="input-row register-row">
+                      <label for="=r14" class="register-name">
+                        R14 SVC (lr)
+                      </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r14"
+                        type="text"
+                        name="r14"
+                      />
+                    </div>
+                    <div id="svc_r15" class="input-row register-row">
+                      <label for="=r15" class="register-name"> R15 (pc) </label>
+                      <input
+                        class="regVal formatted_value"
+                        id="SVC_r15"
+                        type="text"
+                        name="r15"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="register_selector_container">
+                  <button class="button primary select_registers" value="User">
+                    User
+                  </button>
+                  <button class="button select_registers" value="FIQ">
+                    FIQ
+                  </button>
+                  <button class="button select_registers" value="IRQ">
+                    IRQ
+                  </button>
+                  <button class="button select_registers" value="SVC">
+                    SVC
+                  </button>
+                </div>
+                <div id="change-format" class="input-row">
+                  <label for="valueformat">Base</label>
+                  <select id="valueformat">
+                    <option value="hex">Hexadecimal</option>
+                    <option value="decsign">Decimal (signed)</option>
+                    <option value="dec">Decimal (unsigned)</option>
+                    <option value="bin">Binary</option>
+                  </select>
+                </div>
+              </div>
+              <div id="current_state">
+                <div id="current_state_title_wrapper">
+                  <div id="current_state_title">Current state</div>
+                  <div>CPSR</div>
+                  <div id="spsr_title">SPSR</div>
+                </div>
+                <div id="current_state_table">
+                  <div id="flag_negative">Negative (N)</div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="n">
+                      <input
+                        type="checkbox"
+                        id="n"
+                        name="n"
+                        value="n"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="sn">
+                      <input
+                        type="checkbox"
+                        id="sn"
+                        name="sn"
+                        value="sn"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div id="flag_zero">Zero (Z)</div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="z">
+                      <input
+                        type="checkbox"
+                        id="z"
+                        name="z"
+                        value="z"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="sz">
+                      <input
+                        type="checkbox"
+                        id="sz"
+                        name="sz"
+                        value="sz"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div id="flag_carry">Carry (C)</div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="c">
+                      <input
+                        type="checkbox"
+                        id="c"
+                        name="c"
+                        value="c"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="sc">
+                      <input
+                        type="checkbox"
+                        id="sc"
+                        name="sc"
+                        value="sc"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div id="flag_overflow">Overflow (V)</div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="v">
+                      <input
+                        type="checkbox"
+                        id="v"
+                        name="v"
+                        value="v"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="sv">
+                      <input
+                        type="checkbox"
+                        id="sv"
+                        name="sv"
+                        value="sv"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div id="ignore_irq">Ignore IRQ</div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="i">
+                      <input
+                        type="checkbox"
+                        id="i"
+                        name="i"
+                        value="i"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="si">
+                      <input
+                        type="checkbox"
+                        id="si"
+                        name="si"
+                        value="si"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div id="ignore_fiq">Ignore FIQ</div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="f">
+                      <input
+                        type="checkbox"
+                        id="f"
+                        name="f"
+                        value="f"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                  <div class="flag_btn_wrapper">
+                    <label class="ui-switch flag_btn" name="sf">
+                      <input
+                        type="checkbox"
+                        id="sf"
+                        name="sf"
+                        value="sf"
+                        disabled
+                      />
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="editorPanel">
+              <div id="editorTopBar">
+                <div id="simulationTitle">Simulation</div>
+                <div id="debugger_buttons">
+                  <button id="assemble" class="button primary">Assemble</button>
+                  <button
+                    onclick="reset()"
+                    id="reset"
+                    class="button"
+                    disable="disabled"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    id="run"
+                    onclick="simulate('run')"
+                    disable="disabled"
+                    class="button"
+                  >
+                    <i class="fa-solid fa-eject"></i>
+                  </button>
+                  <button
+                    id="stepback"
+                    onclick="simulate('stepback')"
+                    disable="disabled"
+                    class="button"
+                  >
+                    <i class="fa-solid fa-chevron-left"></i>
+                  </button>
+                  <button
+                    id="stepforward"
+                    onclick="simulate('stepforward')"
+                    disable="disabled"
+                    class="button"
+                  >
+                    <i class="fa-solid fa-chevron-right"></i>
+                  </button>
+                  <button
+                    id="stepout"
+                    onclick="simulate('stepout')"
+                    disable="disabled"
+                    class="button"
+                  >
+                    <i class="fa-solid fa-arrow-turn-up"></i>
+                  </button>
+                  <button
+                    id="stepin"
+                    onclick="simulate('stepinto')"
+                    disable="disabled"
+                    class="button"
+                  >
+                    <i class="fa-solid fa-arrow-turn-up"></i>
+                  </button>
+                </div>
+              </div>
+              <div id="editor">{{ code }}</div>
+            </div>
+            <div id="dashboard">
+              <div class="border_container">
+                <div id="current_instruction">Current Instruction</div>
+                <div id="disassembly"></div>
+              </div>
+              <div class="border_container">
+                <div id="memory_title">Memory</div>
+                <div id="memoryview"></div>
+                <div id="paginator"></div>
+                <label for="follow_pc">Follow PC</label>
+                <input type="checkbox" id="follow_pc" checked="checked" /><br />
+                <span class="cycles-label">Current cycle:</span>
+                <input id="cycles_count" type="text" value="0" />
+              </div>
+              <div>
+                <div style="float: left">
+                  <input
+                    type="file"
+                    onchange="loadFileAsText()"
+                    id="fileToLoad"
+                    style="display: none"
+                  />
+                  <label for="fileToLoad" class="flat_button">Upload</label>
+                </div>
+                <div style="float: right">
+                  <button id="download_file" onclick="saveTextAsFile()">
+                    Download
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <script type="text/javascript">
-            window.addEventListener("DOMContentLoaded", () => {
-                if (
-                    !document.cookie
-                        .split(";")
-                        .some((item) => item.trim().startsWith("lang="))
-                ) {
-                    document.cookie = "lang=en; path=/; SameSite=Lax";
-                }
-            });
+    <script type="text/javascript">
+      window.addEventListener("DOMContentLoaded", () => {
+        if (
+          !document.cookie
+            .split(";")
+            .some((item) => item.trim().startsWith("lang="))
+        ) {
+          document.cookie = "lang=en; path=/; SameSite=Lax";
+        }
+      });
 
-            var editor = ace.edit("editor");
-            var assembly_armMode = ace.require("ace/mode/assembly_arm").Mode;
+      var editor = ace.edit("editor");
+      var assembly_armMode = ace.require("ace/mode/assembly_arm").Mode;
 
-            editor.getSession().setMode(new assembly_armMode());
-            editor.$blockScrolling = Infinity;
-            editor.setShowPrintMargin(false);
+      editor.getSession().setMode(new assembly_armMode());
+      editor.$blockScrolling = Infinity;
+      editor.setShowPrintMargin(false);
 
-            // Remove shortcuts used by the simulator
-            editor.commands.bindKey("Ctrl-Up", null);
-            editor.commands.bindKey("Cmd-Up", null);
-            editor.commands.bindKey("Ctrl-Left", null);
-            editor.commands.bindKey("Cmd-Left", null);
-            editor.commands.bindKey("Ctrl-Right", null);
-            editor.commands.bindKey("Cmd-Right", null);
-            editor.commands.bindKey("Ctrl-Down", null);
-            editor.commands.bindKey("Cmd-Down", null);
-        </script>
+      // Remove shortcuts used by the simulator
+      editor.commands.bindKey("Ctrl-Up", null);
+      editor.commands.bindKey("Cmd-Up", null);
+      editor.commands.bindKey("Ctrl-Left", null);
+      editor.commands.bindKey("Cmd-Left", null);
+      editor.commands.bindKey("Ctrl-Right", null);
+      editor.commands.bindKey("Cmd-Right", null);
+      editor.commands.bindKey("Ctrl-Down", null);
+      editor.commands.bindKey("Cmd-Down", null);
+    </script>
 
-        <script
-            src="static/js/jquery-1.11.1.min.js"
-            type="text/javascript"
-            charset="utf-8"></script>
-        <script
-            src="static/js/tooltipster/js/jquery.tooltipster.min.js"
-            type="text/javascript"
-            charset="utf-8"></script>
-        <script
-            src="static/js/jquery.easing.min.js"
-            type="text/javascript"
-            charset="utf-8"></script>
-        <link
-            rel="stylesheet"
-            type="text/css"
-            href="static/js/tooltipster/css/tooltipster.css" />
-        <script
-            src="static/js/memory_viewer.js"
-            type="text/javascript"
-            charset="utf-8"></script>
+    <script
+      src="static/js/jquery-1.11.1.min.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="static/js/tooltipster/js/jquery.tooltipster.min.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="static/js/jquery.easing.min.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="static/js/tooltipster/css/tooltipster.css"
+    />
+    <script
+      src="static/js/memory_viewer.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
 
-        <script
-            src="static/js/comm.js"
-            type="text/javascript"
-            charset="utf-8"></script>
-        <script
-            src="static/js/helpers.js"
-            type="text/javascript"
-            charset="utf-8"></script>
+    <script
+      src="static/js/comm.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="static/js/helpers.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
 
-        <script src="static/js/custom-jquery.js"></script>
+    <script src="static/js/custom-jquery.js"></script>
 
-        <script
-            src="static/js/sessionHandler.js"
-            type="text/javascript"
-            charset="utf-8"></script>
-    </body>
+    <script
+      src="static/js/sessionHandler.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+  </body>
 </html>
