@@ -155,9 +155,7 @@ $(document).ready(function () {
             editor.session.clearBreakpoint(row);
         } else {
             asm_breakpoints.push(row);
-            if ($("#assemble").text() == frontEndDictionary.start) {
-                editor.session.setBreakpoint(row);
-            }
+            editor.session.setBreakpoint(row);
         }
 
         if ($("#assemble").text() == frontEndDictionary.stop) {

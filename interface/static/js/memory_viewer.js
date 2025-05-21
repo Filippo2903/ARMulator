@@ -27,7 +27,7 @@ function updateMemoryBreakpointsView() {
             continue;
         }
         col = parseInt(mem_highlights_w[i]) % 16;
-        $(".editablegrid-c" + col, tableRow).addClass("highlightwrite");
+        $(".editablegrid-c" + col, tableRow).addClass("highlightWrite");
     }
 
     for (var i = 0; i < mem_breakpoints_r.length; i++) {

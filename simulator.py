@@ -352,7 +352,7 @@ class Simulator:
         if not self.currentInstr:
             # Undefined instruction
             self.disassemblyInfo = (["highlightRead", []],
-                                    ["highlightwrite", []],
+                                    ["highlightWrite", []],
                                     ["nextline", None],
                                     ["disassembly", "Information indisponible"])
             return
@@ -362,12 +362,12 @@ class Simulator:
 
         if self.currentInstr.nextAddressToExecute != -1:
             self.disassemblyInfo = (["highlightRead", list(self.currentInstr.affectedRegs[0] | self.currentInstr.affectedMem[0])],
-                                    ["highlightwrite", list(self.currentInstr.affectedRegs[1] | self.currentInstr.affectedMem[1])], 
+                                    ["highlightWrite", list(self.currentInstr.affectedRegs[1] | self.currentInstr.affectedMem[1])], 
                                     ["nextline", self.currentInstr.nextAddressToExecute], 
                                     ["disassembly", dis])
         else:
             self.disassemblyInfo = (["highlightRead", list(self.currentInstr.affectedRegs[0] | self.currentInstr.affectedMem[0])], 
-                                    ["highlightwrite", list(self.currentInstr.affectedRegs[1] | self.currentInstr.affectedMem[1])],
+                                    ["highlightWrite", list(self.currentInstr.affectedRegs[1] | self.currentInstr.affectedMem[1])],
                                     ["disassembly", dis])
 
     def execAssert(self, assertionsList, mode):

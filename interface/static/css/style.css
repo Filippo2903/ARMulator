@@ -206,8 +206,16 @@ input.config-checkbox[type="checkbox"] {
 .input-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
+}
+
+/* Simulating gap */
+.input-row > * {
+    margin-right: 12px;
+}
+
+.input-row > *:last-child {
+    margin-right: 0;
 }
 
 .input-row label {
@@ -288,7 +296,8 @@ html {
 
 body {
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
+    min-height: 650px;
     background-color: var(--page-bg);
     color: #fff;
     font-family: sans-serif;
@@ -298,30 +307,29 @@ body {
 }
 
 .wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     padding: 32px;
-    flex-grow: 1;
-
-    min-width: fit-content;
+    height: 100%;
 }
 
 #main-container {
-    min-height: 600px;
-    min-width: 1000px;
-
-    max-width: 100%;
-    background-color: var(--app-bg);
-    height: calc(100vh - 64px);
-
+    flex: 1;
     display: flex;
     flex-direction: column;
-
+    min-width: 1000px;
+    background-color: var(--app-bg);
     border: var(--border);
     border-radius: 8px;
     overflow: hidden;
 }
 
 #simulator-container {
-    height: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 }
 
 #content-main {
@@ -337,12 +345,21 @@ body {
 
 #tabsmain-simulation {
     width: 100%;
-    height: calc(100vh - 114px);
+    height: 100%;
 
+    flex: 1;
     display: flex;
-    gap: 16px;
 
     padding: 16px;
+}
+
+/* Simulating gap */
+#tabsmain-simulation > * {
+    margin-right: 16px;
+}
+
+#tabsmain-simulation > *:last-child {
+    margin-right: 0;
 }
 
 /* ================
@@ -364,10 +381,17 @@ body {
 #sessions {
     display: flex;
     flex: 1;
-    gap: 4px;
 
     margin-right: 16px;
     flex-wrap: nowrap;
+}
+
+#sessions .session_item {
+    margin-right: 4px;
+}
+
+#sessions .session_item:last-child {
+    margin-right: 0;
 }
 
 .session_item {
@@ -384,9 +408,17 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
 
     transition: var(--transition);
+}
+
+/* Simulating gap */
+.session_item > * {
+    margin-right: 8px;
+}
+
+.session_item > *:last-child {
+    margin-right: 0;
 }
 
 .session_item:not(#selected) {
@@ -531,13 +563,19 @@ body {
 ============== */
 
 #regView {
-    height: 100%;
-
     flex: 0.7;
 
     display: flex;
     flex-direction: column;
-    gap: 8px;
+}
+
+/* Simulating gap */
+#regView > * {
+    margin-bottom: 8px;
+}
+
+#regView > *:last-child {
+    margin-bottom: 0;
 }
 
 #all-registers {
@@ -586,17 +624,27 @@ body {
     font-size: large;
     font-weight: bold;
 
-    padding: 8px;
+    padding: 8px 10px 8px 8px;
+    margin-right: 8px;
 
     display: flex;
     align-items: center;
+
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent);
+    mask-image: linear-gradient(to right, black 85%, transparent);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
 }
 
 .registers {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2px;
 
     padding: 0px 8px;
     margin: 8px 0px;
@@ -605,6 +653,16 @@ body {
     overflow-x: hidden;
     min-height: 0;
 }
+
+/* Simulating gap */
+.registers > * {
+    margin-bottom: 2px !important;
+}
+
+.registers > *:last-child {
+    margin-bottom: 0 !important;
+}
+
 .input-row.register-row {
     flex: 1;
     background-color: var(--app-bg);
@@ -613,7 +671,6 @@ body {
     display: grid;
     grid-template-columns: 1fr 1.5fr;
     align-items: center;
-    gap: 4px;
 
     width: 100%;
     min-width: 0;
@@ -621,6 +678,11 @@ body {
     margin: 0;
     padding: 4px;
     padding-left: 8px;
+}
+
+/* Simulating gap */
+.input-row.register-row > *:first-child {
+    margin-right: 4px;
 }
 
 .register-row input {
@@ -647,7 +709,6 @@ body {
     mask-repeat: no-repeat;
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
-    transition: var(--transition);
 }
 
 .regVal {
@@ -680,11 +741,11 @@ body {
     border: 1px solid var(--highlight-read) !important;
 }
 
-.registers .highlightwrite {
+.registers .highlightWrite {
     border: 1px solid var(--highlight-write) !important;
 }
 
-.registers .highlightRead.highlightwrite {
+.registers .highlightRead.highlightWrite {
     border: 1px solid var(--highlight-write-read) !important;
 }
 
@@ -692,11 +753,11 @@ body {
     color: var(--highlight-read) !important;
 }
 
-#memoryview .highlightwrite {
+#memoryview .highlightWrite {
     color: var(--highlight-write) !important;
 }
 
-#memoryview .highlightRead.highlightwrite {
+#memoryview .highlightRead.highlightWrite {
     color: var(--highlight-write-read) !important;
 }
 
@@ -770,12 +831,34 @@ body {
 #current_state_title_wrapper,
 #current_state_table {
     display: grid;
-    column-gap: 8px;
-    row-gap: 6px;
     grid-template-rows: repeat(6, 1fr);
     grid-template-columns: 1fr 0.5fr 0.5fr;
 
     padding: 8px;
+}
+
+#current_state_table {
+    padding-bottom: 4px;
+}
+
+/* Simulating gap */
+#current_state_table > *:nth-child(3n + 1) {
+    margin-right: 8px;
+    margin-bottom: 6px;
+
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent);
+    mask-image: linear-gradient(to right, black 85%, transparent);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
+
+.flag_btn_wrapper {
+    text-align: center;
 }
 
 #current_state_title_wrapper {
@@ -790,6 +873,17 @@ body {
 
 #current_state_title {
     font-weight: bold;
+    margin-right: 8px;
+
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent);
+    mask-image: linear-gradient(to right, black 85%, transparent);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
 }
 
 #current_state_table div {
@@ -923,10 +1017,15 @@ body {
     background-color: var(--active-line-bg) !important;
 }
 
+.ace_gutter-cell:hover {
+    cursor: pointer;
+    background-color: var(--active-line-bg);
+}
+
 /* Breakpoint indicator */
 .ace_gutter-cell.ace_breakpoint {
     border-radius: 4px;
-    box-shadow: 0 0 0 2px var(--color-label) inset;
+    box-shadow: 0 0 0 1px var(--color-label) inset;
 }
 
 /* Text base */
@@ -1137,8 +1236,9 @@ SECTION
 }
 
 /* === Headings === */
-.config-dialog h1 {
+#config_dialog_title {
     font-size: 1.6rem;
+    font-weight: bold;
     margin-bottom: 16px;
     color: var(--accent-color);
 }
@@ -1147,14 +1247,30 @@ SECTION
 .config-group-inline {
     display: flex;
     align-items: center;
-    gap: 8px;
     margin: 12px 0;
+}
+
+/* Simulating gap */
+.config-group-inline > * {
+    margin-bottom: 8px;
+}
+
+.config-group-inline > *:last-child {
+    margin-bottom: 0;
 }
 
 .config-buttons {
     display: flex;
     justify-content: end;
-    gap: 4px;
+}
+
+/* Simulating gap */
+.config-buttons > * {
+    margin-right: 4px;
+}
+
+.config-buttons > *:last-child {
+    margin-right: 0;
 }
 
 .config-buttons .button {
@@ -1189,8 +1305,9 @@ SECTION
 }
 
 /* === Headings === */
-.delete-dialog h1 {
+#delete_dialog_title {
     font-size: 1.6rem;
+    font-weight: bold;
     margin-bottom: 16px;
     color: var(--accent-color);
 }
@@ -1198,7 +1315,14 @@ SECTION
 .delete-modal-buttons {
     display: flex;
     justify-content: end;
-    gap: 4px;
+}
+
+.delete-modal-buttons > * {
+    margin-right: 4px;
+}
+
+.delete-modal-buttons > *:last-child {
+    margin-right: 0;
 }
 
 .delete-modal-buttons .button {
@@ -1234,8 +1358,9 @@ SECTION
 }
 
 /* === Headings === */
-.max-sessions-dialog h1 {
+#max_sessions_dialog_title {
     font-size: 1.6rem;
+    font-weight: bold;
     margin-bottom: 16px;
     color: var(--accent-color);
 }
@@ -1243,7 +1368,6 @@ SECTION
 .max-sessions-modal-buttons {
     display: flex;
     justify-content: end;
-    gap: 4px;
 }
 
 .max-sessions-modal-buttons .button {

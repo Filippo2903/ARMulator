@@ -109,7 +109,7 @@ ws.onmessage = function (event) {
         } else if (obj[0] == "debugline") {
             if ($("#assemble").text() !== frontEndDictionary.assemble) {
                 $(".highlightRead").removeClass("highlightRead");
-                $(".highlightwrite").removeClass("highlightwrite");
+                $(".highlightWrite").removeClass("highlightWrite");
 
                 mem_highlights_r.length = 0;
                 mem_highlights_w.length = 0;
@@ -239,7 +239,7 @@ function resetView() {
     $(".reg_bkp_w").removeClass("reg_bkp_w");
     $(".reg_bkp_r").removeClass("reg_bkp_r");
     $(".highlightRead").removeClass("highlightRead");
-    $(".highlightwrite").removeClass("highlightwrite");
+    $(".highlightWrite").removeClass("highlightWrite");
     $("#disassembly").html("");
 
     mem_highlights_r.length = 0;
