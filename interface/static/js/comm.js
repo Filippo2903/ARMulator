@@ -27,7 +27,7 @@ function displayErrorMsg(msg) {
 
 ws.onmessage = function (event) {
     obj_list = JSON.parse(event.data);
-    console.log(obj_list);
+
     for (var idx in obj_list) {
         var obj = obj_list[idx];
 
@@ -213,6 +213,8 @@ function removeCodeErrors() {
 }
 
 function resetView() {
+    console.log("Calling resetView!");
+
     codeerrors.length = 0;
     removeCodeErrors();
 
@@ -226,7 +228,9 @@ function resetView() {
     $(".assemble_edit").removeClass("assemble_edit");
 
     $(".regVal, .statusVal").val("");
-    $(".reg_bkp_w, .reg_bkp_r, .highlightRead, .highlightWrite").removeClass();
+    $(".reg_bkp_w, .reg_bkp_r, .highlightRead, .highlightWrite").removeClass(
+        "reg_bkp_w reg_bkp_r highlightRead highlightWrite"
+    );
 
     if (debug_marker) editor.session.removeMarker(debug_marker);
     if (next_debug_marker) editor.session.removeMarker(next_debug_marker);

@@ -44,7 +44,7 @@
     --highlight-write-read: #7f79a8; /* viola medio */
 
     --font-mono: "Fira Code", monospace;
-    --font-size: 14px;
+    --font-size: 16px;
 }
 
 /* ==============
@@ -235,7 +235,7 @@ input.config-checkbox[type="checkbox"] {
     border-radius: 6px;
     padding: 6px 10px;
     width: 100%;
-    font-size: 14px;
+    font-size: 0.875rem;
     border: 1px solid var(--light-accent);
 }
 
@@ -281,7 +281,7 @@ select {
     border: 1px solid var(--light-accent);
     border-radius: 6px;
     padding: 6px 10px;
-    font-size: 14px;
+    font-size: 0.875rem;
     width: 100%;
     appearance: none;
     cursor: pointer;
@@ -307,6 +307,8 @@ body {
 
     display: flex;
     flex-direction: column;
+
+    font-size: var(--font-size);
 }
 
 .wrapper {
@@ -624,7 +626,7 @@ body {
 #gp-SVC.shown {
     height: 49px;
     background-color: var(--title-bar);
-    font-size: large;
+
     font-weight: bold;
 
     padding: 8px 10px 8px 8px;
@@ -816,7 +818,7 @@ body {
 
 .ts-error .tooltipster-content {
     font-family: Arial, sans-serif;
-    font-size: 14px;
+    font-size: 0.875rem;
     line-height: 16px;
     padding: 8px 10px;
 }
@@ -931,7 +933,7 @@ body {
 }
 
 #simulationTitle {
-    font-size: large;
+    font-size: 1.125rem;
     font-weight: bold;
 }
 
@@ -1105,20 +1107,19 @@ SECTION
 ==*/
 
 #memoryview {
-    font-size: 10pt;
+    font-size: 0.875rem;
     width: 100%;
     height: 390px;
 }
 
 #memoryview th {
     width: 17px;
-    font-size: 14px;
+    font-size: 0.875rem;
     padding: 0;
 }
 
 #memoryview td {
     text-align: center;
-    font-size: 0.9em;
     font-family: monospace;
 }
 

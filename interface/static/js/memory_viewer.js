@@ -1,32 +1,71 @@
 var editableGrid = null;
 var mouse_highlight_mem = [];
 
+const metadata = [
+    { name: "ch", label: "addr", datatype: "string", editable: false },
+    ...Array.from({ length: 16 }, (_, i) => ({
+        name: "c" + i,
+        label: i.toString(16).toUpperCase().padStart(2, "0"),
+        datatype: "string",
+        editable: true,
+    })),
+];
+
+const data = Array.from({ length: 20 }, (_, i) => {
+    const values = { ch: formatHexUnsigned32Bits(i * 16) };
+    for (let j = 0; j < 16; j++) values["c" + j] = "--";
+    return { id: i, values };
+});
+
+const emptyEditableGrid = new EditableGrid("DemoGridJsData", {
+    modelChanged(row, col, oldValue, newValue, rowref) {
+        if (oldValue === "--") {
+            editableGrid.setValueAt(row, col, "--", true);
+            return;
+        }
+
+        if (newValue.length > 2) {
+            newValue = newValue.slice(0, 2);
+            editableGrid.setValueAt(row, col, newValue, true);
+        }
+
+        const addr = parseInt($("td:first", rowref).text(), 16) + (col - 1);
+        sendData(["memchange", addr, newValue]);
+    },
+    enableSort: false,
+    pageSize: 20,
+    tableRendered() {
+        this.updatePaginator();
+        updateMemoryBreakpointsView();
+    },
+});
+
+console.log({ metadata, data, emptyEditableGrid });
+
 function highlightMemoryCells(addresses, className, parseAsHex = false) {
-  addresses.forEach(addr => {
-    const tofind = formatHexUnsigned32Bits(addr).slice(0, 9) + "0";
-    const tableRow = $("#memoryview td")
-      .filter((_, td) => $(td).text() === tofind)
-      .closest("tr");
+    addresses.forEach((addr) => {
+        const tofind = formatHexUnsigned32Bits(addr).slice(0, 9) + "0";
+        const tableRow = $("#memoryview td")
+            .filter((_, td) => $(td).text() === tofind)
+            .closest("tr");
 
-    if (tableRow.length === 0) return;
+        if (tableRow.length === 0) return;
 
-    const col = parseAsHex ? parseInt(addr, 16) % 16 : addr % 16;
-    $(".editablegrid-c" + col, tableRow).addClass(className);
-  });
+        const col = parseAsHex ? parseInt(addr, 16) % 16 : addr % 16;
+        $(".editablegrid-c" + col, tableRow).addClass(className);
+    });
 }
-
 
 function updateMemoryBreakpointsView() {
-  highlightMemoryCells(mem_highlights_r, "highlightRead");
-  highlightMemoryCells(mem_highlights_w, "highlightWrite");
-  highlightMemoryCells(mem_breakpoints_r, "mem_r", true);
-  highlightMemoryCells(mem_breakpoints_w, "mem_w", true);
-  highlightMemoryCells(mem_breakpoints_rw, "mem_rw", true);
-  highlightMemoryCells(mem_breakpoints_e, "mem_e", true);
-  highlightMemoryCells(mem_breakpoints_instr, "mem_instr");
-  highlightMemoryCells(mouse_highlight_mem, "mem_mousehighlight");
+    highlightMemoryCells(mem_highlights_r, "highlightRead");
+    highlightMemoryCells(mem_highlights_w, "highlightWrite");
+    highlightMemoryCells(mem_breakpoints_r, "mem_r", true);
+    highlightMemoryCells(mem_breakpoints_w, "mem_w", true);
+    highlightMemoryCells(mem_breakpoints_rw, "mem_rw", true);
+    highlightMemoryCells(mem_breakpoints_e, "mem_e", true);
+    highlightMemoryCells(mem_breakpoints_instr, "mem_instr");
+    highlightMemoryCells(mouse_highlight_mem, "mem_mousehighlight");
 }
-
 
 function changeMemoryViewPage() {
     refresh_mem_paginator = true;
@@ -37,46 +76,11 @@ function changeMemoryViewPage() {
 }
 
 function resetMemoryViewer() {
+    console.log("Calling resetMemoryViewer!");
+
     refresh_mem_paginator = true;
 
-    const metadata = [
-        { name: "ch", label: "addr", datatype: "string", editable: false },
-        ...Array.from({ length: 16 }, (_, i) => ({
-            name: "c" + i,
-            label: i.toString(16).toUpperCase().padStart(2, "0"),
-            datatype: "string",
-            editable: true,
-        })),
-    ];
-
-    const data = Array.from({ length: 20 }, (_, i) => {
-        const values = { ch: formatHexUnsigned32Bits(i * 16) };
-        for (let j = 0; j < 16; j++) values["c" + j] = "--";
-        return { id: i, values };
-    });
-
-    editableGrid = new EditableGrid("DemoGridJsData", {
-        modelChanged(row, col, oldValue, newValue, rowref) {
-            if (oldValue === "--") {
-                editableGrid.setValueAt(row, col, "--", true);
-                return;
-            }
-
-            if (newValue.length > 2) {
-                newValue = newValue.slice(0, 2);
-                editableGrid.setValueAt(row, col, newValue, true);
-            }
-
-            const addr = parseInt($("td:first", rowref).text(), 16) + (col - 1);
-            sendData(["memchange", addr, newValue]);
-        },
-        enableSort: false,
-        pageSize: 20,
-        tableRendered() {
-            this.updatePaginator();
-            updateMemoryBreakpointsView();
-        },
-    });
+    editableGrid = emptyEditableGrid;
 
     editableGrid.load({ metadata, data });
     editableGrid.renderGrid("memoryview", "testgrid");
@@ -123,7 +127,6 @@ $(document).ready(function () {
             refresh_mem_paginator = false;
 
             var paginator = $("#paginator").empty();
-            var nbPages = this.getPageCount();
 
             // "first" link
             var link = $("<a>").html(
