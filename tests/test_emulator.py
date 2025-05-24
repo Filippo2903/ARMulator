@@ -82,15 +82,15 @@ class Context:
             s += "|{:^96}|".format("QEMU REFERENCE EMULATOR") + "\n"
         else:
             s += "|{:^96}|".format("EPATER EMULATOR") + "\n"
-        s += "|" + "-"*96 + "|" + "\n"
+        s += "|" + "--"*96 + "|" + "\n"
         s += "| " + " |".join(["{:^10}".format("R"+str(i)) for i in range(8)]) + " |" + "\n"
         s += "| " + " |".join(["{:>10}".format(self.regs[i]) for i in range(8)]) + " |" + "\n"
         s += "| " + " |".join(["{:>10}".format(hex(self.regs[i])) for i in range(8)]) + " |" + "\n"
-        s += "|" + "-"*96 + "|" + "\n"
+        s += "|" + "--"*96 + "|" + "\n"
         s += "| " + " |".join(["{:^10}".format("R"+str(i)) for i in range(8, 16)]) + " |" + "\n"
         s += "| " + " |".join(["{:>10}".format(self.regs[i]) for i in range(8,16)]) + " |" + "\n"
         s += "| " + " |".join(["{:>10}".format(hex(self.regs[i])) for i in range(8,16)]) + " |" + "\n"
-        s += "|" + "-"*96 + "|" + "\n"
+        s += "|" + "--"*96 + "|" + "\n"
         cpsr = "| CPSR : {} (N={}, Z={}, C={}, V={}) / Mode = {}".format(hex(self.cpsr),
                                                                         int(self.cpsr>>31),
                                                                         int(self.cpsr>>30&0x1),
@@ -98,7 +98,7 @@ class Context:
                                                                         int(self.cpsr>>28&0x1),
                                                                         self.bits2mode[self.cpsr & 0x1F])
         s += "{:<97}".format(cpsr) + "|\n"
-        s += "|" + "-"*96 + "|" + "\n"
+        s += "|" + "--"*96 + "|" + "\n"
         return s
 
 

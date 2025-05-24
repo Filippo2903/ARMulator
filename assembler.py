@@ -8,6 +8,7 @@ import yaccparser
 from settings import getSetting
 
 from stateManager import StateManager
+appState = StateManager()
 
 """
     @private
@@ -86,8 +87,6 @@ def parse(code, memLayout="simulation"):
          C) if "codeerror", description of the error
 
     """
-
-    appState = StateManager()
 
     listErrors = []
     if getSetting("PCbehavior") == "real":

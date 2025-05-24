@@ -34,7 +34,7 @@ ws.onmessage = function (event) {
         var element = document.getElementById(obj[0]);
 
         if (obj[0] == "disassembly") {
-            $("#disassembly").html(obj[1]);
+            $("#current_instruction").html(obj[1]);
         } else if (element != null) {
             var target_value = obj[1];
 
@@ -213,8 +213,6 @@ function removeCodeErrors() {
 }
 
 function resetView() {
-    console.log("Calling resetView!");
-
     codeerrors.length = 0;
     removeCodeErrors();
 
@@ -223,7 +221,7 @@ function resetView() {
 
     $("#cycles_count").val("");
     $("#message_bar").slideUp("normal", "easeInOutBack");
-    disableSim();
+
     $("#assemble").text(frontEndDictionary.assemble);
     $(".assemble_edit").removeClass("assemble_edit");
 
@@ -235,8 +233,6 @@ function resetView() {
     if (debug_marker) editor.session.removeMarker(debug_marker);
     if (next_debug_marker) editor.session.removeMarker(next_debug_marker);
 
-    $("#disassembly").empty();
-
     mem_highlights_r = [];
     mem_highlights_w = [];
     mem_breakpoints_r = [];
@@ -246,6 +242,7 @@ function resetView() {
     mem_breakpoints_instr = [];
 
     resetMemoryViewer();
+    disableSim();
 }
 
 function disableSim() {
@@ -262,6 +259,9 @@ function disableSim() {
         .prop("checked", false);
 
     $("#settings").prop("disabled", false);
+
+    $("#current_instruction").addClass("disabled");
+    $("#current_instruction").text(frontEndDictionary.currentInstruction);
 }
 
 function refreshBreakpoints() {
@@ -291,6 +291,7 @@ function assemble() {
             .prop("checked", false);
 
         $("#assemble").text("Stop").addClass("assemble_edit");
+        $("#current_instruction").removeClass("disabled");
 
         sendData(["assemble", editor.getValue()]);
 

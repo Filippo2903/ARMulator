@@ -13,7 +13,7 @@ html {
     text-align: center !important;
 }
 #after-reg,
-#memoryview td,
+#memoryView td,
 #paginator {
     text-align: center;
 }
@@ -456,13 +456,13 @@ a {
 #stepin > svg {
     transform: scaleY(-1);
 }
-#disassembly {
+#current_instruction {
     height: 130px;
     width: 430px;
     overflow-y: auto;
     padding: 10px;
 }
-#disassembly ol {
+#current_instruction ol {
     font-size: 0.9em;
     margin-bottom: 0;
 }
@@ -499,13 +499,13 @@ a {
 .registers .highlightRead.highlightWrite {
     border: 2px solid #6e569b !important;
 }
-#memoryview .highlightRead {
+#memoryView .highlightRead {
     color: #8abac0 !important;
 }
-#memoryview .highlightWrite {
+#memoryView .highlightWrite {
     color: hsl(338.5, 54.8%, 65%) !important;
 }
-#memoryview .highlightRead.highlightWrite {
+#memoryView .highlightRead.highlightWrite {
     color: hsl(260.9, 28.6%, 65%) !important;
 }
 .smaller_font {
@@ -545,7 +545,7 @@ a {
     font-family: var(--font-mono) !important;
     font-size: var(--font-size) !important;
 }
-#memoryview td,
+#memoryView td,
 .pre {
     font-family: monospace;
 }
@@ -605,23 +605,23 @@ a {
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQI12MwNjb+z5SWlsYAAA5sAs38puDrAAAAAElFTkSuQmCC)
         right repeat-y !important;
 }
-#memoryview {
+#memoryView {
     font-size: 10pt;
     width: 100%;
     height: 390px;
 }
-#memoryview th {
+#memoryView th {
     width: 17px;
     font-size: 14px;
     padding: 0;
 }
-#memoryview td {
+#memoryView td {
     font-size: 0.9em;
 }
-.testgrid {
+.memoryGrid {
     width: 450px;
 }
-.testgrid td {
+.memoryGrid td {
     border: 1px solid transparent;
 }
 .mem_mousehighlight,

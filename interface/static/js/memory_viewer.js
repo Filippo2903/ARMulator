@@ -2,7 +2,7 @@ var editableGrid = null;
 var mouse_highlight_mem = [];
 
 const metadata = [
-    { name: "ch", label: "addr", datatype: "string", editable: false },
+    { name: "ch", label: "ADDR", datatype: "string", editable: false },
     ...Array.from({ length: 16 }, (_, i) => ({
         name: "c" + i,
         label: i.toString(16).toUpperCase().padStart(2, "0"),
@@ -40,12 +40,10 @@ const emptyEditableGrid = new EditableGrid("DemoGridJsData", {
     },
 });
 
-console.log({ metadata, data, emptyEditableGrid });
-
 function highlightMemoryCells(addresses, className, parseAsHex = false) {
     addresses.forEach((addr) => {
         const tofind = formatHexUnsigned32Bits(addr).slice(0, 9) + "0";
-        const tableRow = $("#memoryview td")
+        const tableRow = $("#memoryView td")
             .filter((_, td) => $(td).text() === tofind)
             .closest("tr");
 
@@ -76,14 +74,12 @@ function changeMemoryViewPage() {
 }
 
 function resetMemoryViewer() {
-    console.log("Calling resetMemoryViewer!");
-
     refresh_mem_paginator = true;
 
     editableGrid = emptyEditableGrid;
 
     editableGrid.load({ metadata, data });
-    editableGrid.renderGrid("memoryview", "testgrid");
+    editableGrid.renderGrid("memoryView", "memoryGrid");
 
     updateMemoryBreakpointsView();
 }
@@ -129,7 +125,7 @@ $(document).ready(function () {
             var paginator = $("#paginator").empty();
 
             // "first" link
-            var link = $("<a>").html(
+            var link = $("<a class='button'>").html(
                 '<i class="fa-solid fa-backward-step"></i>'
             );
             if (!this.canGoBack())
@@ -142,7 +138,7 @@ $(document).ready(function () {
             paginator.append(link);
 
             // "prev" link
-            link = $("<a>").html(
+            link = $("<a class='button'>").html(
                 '<i class="fa-solid fa-play" style="transform: rotate(180deg)"></i>'
             );
             if (!this.canGoBack())
@@ -155,13 +151,15 @@ $(document).ready(function () {
             paginator.append(link);
 
             var mem_begin = $(".editablegrid-ch:eq(1)").text();
+
             if (target_memaddr !== null) {
                 mem_begin = target_memaddr;
             }
+
             paginator.append(
-                '<input id="jump_memory" type="text" value="' +
+                '<div class="input-with-unit"><input id="jump_memory" class="" type="text" value="' +
                     mem_begin +
-                    '"/><input id="jump_memory_go" type="submit" value="Go">'
+                    '"/><span id="jump_memory_go" class="unit">Go</span></div>'
             );
             target_memaddr = null;
 
@@ -173,7 +171,9 @@ $(document).ready(function () {
             $("#jump_memory_go").click(changeMemoryViewPage);
 
             // "next" link
-            link = $("<a>").html('<i class="fa-solid fa-play"></i>');
+            link = $("<a class='button'>").html(
+                '<i class="fa-solid fa-play"></i>'
+            );
             if (!this.canGoForward())
                 link.css({ opacity: 0.4, filter: "alpha(opacity=40)" });
             else
@@ -184,7 +184,9 @@ $(document).ready(function () {
             paginator.append(link);
 
             // "last" link
-            link = $("<a>").html('<i class="fa-solid fa-forward-step"></i>');
+            link = $("<a class='button'>").html(
+                '<i class="fa-solid fa-forward-step"></i>'
+            );
             if (!this.canGoForward())
                 link.css({ opacity: 0.4, filter: "alpha(opacity=40)" });
             else
@@ -196,6 +198,6 @@ $(document).ready(function () {
         }
     };
 
-    $("#memoryview").click(cellClick);
+    $("#memoryView").click(cellClick);
     resetMemoryViewer();
 });

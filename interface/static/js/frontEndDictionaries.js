@@ -24,6 +24,8 @@ function getFrontEndDictionary(lang) {
                 stepin: "Esegui l'istruzione attuale",
                 stepforward: "Salta alla riga successiva",
                 stepout: "Termina la funzione corrente",
+                currentInstruction:
+                    "In questo campo verranno visualizzate informazioni sull'istruzione eseguita.",
                 htmlElements: {
                     "#max_sessions_dialog_title":
                         "Numero massimo di sessioni raggiunto",
@@ -70,12 +72,12 @@ function getFrontEndDictionary(lang) {
                     "#simulationTitle": "Simulazione",
                     "#assemble": "Assembla",
                     "#reset": "Reset",
-                    "#current_instruction": "Istruzione corrente",
+                    "#current_instruction_title": "Istruzione corrente",
                     "#memory_title": "Memoria",
                     "label[for='follow_pc']": "Segui PC",
                     ".cycles-label": "Ciclo corrente:",
-                    "label[for='fileToLoad']": "Carica",
-                    "#download_file": "Scarica",
+                    "label[for='fileToLoad']": "Importa codice sorgente",
+                    "#download_file": "Esporta il codice corrente",
                 },
             },
             en: {
@@ -93,6 +95,8 @@ function getFrontEndDictionary(lang) {
                 run: "Run",
                 stepin: "Execute current instruction",
                 stepforward: "Step over current line",
+                currentInstruction:
+                    "This field will display information about the executed instruction.",
                 stepout: "Finish current function",
                 htmlElements: {
                     "#max_sessions_dialog_title": "Maximum sessions reached",
@@ -139,12 +143,12 @@ function getFrontEndDictionary(lang) {
                     "#simulationTitle": "Simulation",
                     "#assemble": "Assemble",
                     "#reset": "Reset",
-                    "#current_instruction": "Current Instruction",
+                    "#current_instruction_title": "Current instruction",
                     "#memory_title": "Memory",
                     "label[for='follow_pc']": "Follow PC",
                     ".cycles-label": "Current cycle:",
-                    "label[for='fileToLoad']": "Upload",
-                    "#download_file": "Download",
+                    "label[for='fileToLoad']": "Import source code",
+                    "#download_file": "Export current code",
                 },
             },
             fr: {
@@ -164,6 +168,8 @@ function getFrontEndDictionary(lang) {
                 stepin: "Exécuter l'instruction actuelle",
                 stepforward: "Passer à la ligne suivante",
                 stepout: "Terminer la fonction en cours",
+                currentInstruction:
+                    "Ce champ affichera des informations sur l’instruction exécutée.",
                 htmlElements: {
                     "#max_sessions_dialog_title":
                         "Nombre maximum de sessions atteint",
@@ -213,12 +219,12 @@ function getFrontEndDictionary(lang) {
                     "#simulationTitle": "Simulation",
                     "#assemble": "Assembler",
                     "#reset": "R&eacute;initialiser",
-                    "#current_instruction": "Instruction en cours",
+                    "#current_instruction_title": "Instruction en cours",
                     "#memory_title": "M&eacute;moire",
                     "label[for='follow_pc']": "Suivre PC",
                     ".cycles-label": "Cycle en cours:",
-                    "label[for='fileToLoad']": "Importer",
-                    "#download_file": "T&eacute;l&eacute;charger",
+                    "label[for='fileToLoad']": "Importer le code source",
+                    "#download_file": "Exporter le code actuel",
                 },
             },
         }[lang],

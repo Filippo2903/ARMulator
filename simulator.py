@@ -12,6 +12,8 @@ from simulatorOps.utils import checkMask
 from simulatorOps import *
 from simulatorOps.abstractOp import ExecutionException
 
+from stateManager import StateManager
+appState = StateManager()
 
 class MultipleErrors(Exception):
     """
@@ -388,8 +390,8 @@ class Simulator:
             return
 
         disassembly, description = self.currentInstr.explain(self)
-        dis = '<div id="disassembly_instruction">{}</div>\n<div id="disassembly_description">{}</div>\n'.format(
-            disassembly, description
+        dis = '<div id="disassembly_instruction">{}: {}</div>\n<div id="disassembly_description">{}</div>\n'.format(
+            appState.getT(0) ,disassembly, description
         )
 
         if self.currentInstr.nextAddressToExecute != -1:

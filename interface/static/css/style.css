@@ -43,8 +43,12 @@
     --highlight-read: #56b6c2; /* azzurro chiaro */
     --highlight-write-read: #7f79a8; /* viola medio */
 
+    --title-height: 49px;
+    --general-gap: 16px;
     --font-mono: "Fira Code", monospace;
     --font-size: 16px;
+    --button-font-size: 14px;
+    --mem-width: 500px;
 }
 
 /* ==============
@@ -77,6 +81,7 @@
 ================== */
 
 .button {
+    font-size: var(--button-font-size);
     background-color: var(--inactive-session-bg);
     color: #fff;
     border: 1px solid var(--light-accent);
@@ -288,6 +293,119 @@ select {
     outline: none;
 }
 
+/* ================================
+=== Dialog basic configurations ===
+================================ */
+
+/* === Base container === */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+/* === Dialog box === */
+.dialog {
+    background-color: var(--app-bg);
+    color: var(--text-color, #fff);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 480px;
+    margin: auto;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
+    line-height: 1.6;
+}
+
+/* === Headings === */
+.dialog_title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+    color: var(--accent-color);
+}
+
+/* ==================
+=== Config dialog ===
+================== */
+
+/* === Classic Checkbox Group === */
+.config-group-inline {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+}
+
+/* Simulating gap */
+.config-group-inline > * {
+    margin-bottom: 8px;
+}
+
+.config-group-inline > *:last-child {
+    margin-bottom: 0;
+}
+
+.config-buttons {
+    padding-top: 8px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Simulating gap */
+.config-buttons > * {
+    margin-right: 4px;
+}
+
+.config-buttons > *:last-child {
+    margin-right: 0;
+}
+
+.config-buttons .button {
+    padding: 8px 12px;
+}
+
+/* ==================
+=== Delete dialog ===
+================== */
+
+.delete-modal-buttons {
+    padding-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.delete-modal-buttons > * {
+    margin-right: 4px;
+}
+
+.delete-modal-buttons > *:last-child {
+    margin-right: 0;
+}
+
+.delete-modal-buttons .button {
+    padding: 8px 12px;
+}
+
+/* ========================
+=== Max sessions dialog ===
+======================== */
+
+.max-sessions-modal-buttons {
+    padding-top: 12px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.max-sessions-modal-buttons .button {
+    padding: 8px 12px;
+}
+
 /* ==============
 === Main page ===
 ============== */
@@ -360,7 +478,7 @@ body {
 
 /* Simulating gap */
 #tabsmain-simulation > * {
-    margin-right: 16px;
+    margin-right: var(--general-gap);
 }
 
 #tabsmain-simulation > *:last-child {
@@ -576,7 +694,7 @@ body {
 
 /* Simulating gap */
 #regView > * {
-    margin-bottom: 8px;
+    margin-bottom: var(--general-gap);
 }
 
 #regView > *:last-child {
@@ -624,7 +742,7 @@ body {
 #gp-FIQ.shown,
 #gp-IRQ.shown,
 #gp-SVC.shown {
-    height: 49px;
+    height: var(--title-height);
     background-color: var(--title-bar);
 
     font-weight: bold;
@@ -755,18 +873,6 @@ body {
     border: 1px solid var(--highlight-write-read) !important;
 }
 
-#memoryview .highlightRead {
-    color: var(--highlight-read) !important;
-}
-
-#memoryview .highlightWrite {
-    color: var(--highlight-write) !important;
-}
-
-#memoryview .highlightRead.highlightWrite {
-    color: var(--highlight-write-read) !important;
-}
-
 .register_selector_container {
     display: flex;
     align-items: center;
@@ -845,6 +951,7 @@ body {
 
 #current_state_table {
     padding-bottom: 4px;
+    padding-right: 0px;
 }
 
 /* Simulating gap */
@@ -870,6 +977,7 @@ body {
 #current_state_title_wrapper {
     background-color: var(--title-bar);
     padding: 12px 8px;
+    padding-right: 0px;
     grid-template-rows: 1fr;
 }
 
@@ -900,16 +1008,6 @@ body {
     margin: auto;
 }
 
-/* ==============
-=== Dashboard ===
-============== */
-
-#dashboard {
-    flex: 1;
-
-    background-color: hsl(60, 100%, 15%);
-}
-
 /* ==================
 === Central panel ===
 ================== */
@@ -921,6 +1019,10 @@ body {
 
     display: flex;
     flex-direction: column;
+}
+
+#editor {
+    flex: 1;
 }
 
 #editorTopBar {
@@ -980,22 +1082,6 @@ body {
     transform: scaleY(-1);
 }
 
-#disassembly {
-    height: 130px;
-    width: 430px;
-    overflow-y: auto;
-    padding: 10px;
-}
-
-#disassembly ol {
-    font-size: 0.9em;
-    margin-bottom: 0;
-}
-
-#editor {
-    flex: 1;
-}
-
 /*=================
 === Code editor ===
 =================*/
@@ -1003,7 +1089,7 @@ body {
 .ace_editor {
     border: none;
     font-family: var(--font-mono) !important;
-    font-size: var(--font-size) !important;
+    font-size: 0.9rem !important;
 }
 
 .ace_cursor {
@@ -1102,115 +1188,267 @@ body {
         right repeat-y !important;
 }
 
-/*==
-SECTION
-==*/
+/* ==============
+=== Dashboard ===
+============== */
 
-#memoryview {
-    font-size: 0.875rem;
+#dashboard {
+    display: flex;
+    flex-direction: column;
+}
+
+#dashboard > * {
+    border: var(--border);
+    border-radius: 8px;
+
+    margin-bottom: var(--general-gap);
+
+    overflow: hidden;
+}
+
+#dashboard > *:nth-last-child(1) {
+    margin-bottom: 0;
+}
+
+/* ========================
+=== Current instruction ===
+======================== */
+
+#current_instruction_wrapper {
+    background-color: var(--section-body);
+    flex: 1;
+}
+
+#memory_title,
+#current_instruction_title {
     width: 100%;
-    height: 390px;
+    height: var(--title-height);
+    background-color: var(--title-bar);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+
+    padding: 8px;
 }
 
-#memoryview th {
-    width: 17px;
+#current_instruction {
+    width: var(--mem-width);
+    overflow-y: auto;
+    padding: 8px;
+}
+
+#current_instruction.disabled {
+    color: var(--text-muted);
+}
+
+#disassembly_description ol {
+    padding-left: 1.5em;
+    list-style: decimal;
+}
+
+#disassembly_description ol li {
+    margin-bottom: 0.5em;
+    padding-left: 0;
+}
+
+#disassembly_description ol li::before {
+    content: none;
+}
+
+/* ==================
+=== Memory viewer ===
+================== */
+
+#memory_wrapper {
+    background-color: var(--section-body);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.memory_wrapper_inner {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#memoryView {
     font-size: 0.875rem;
-    padding: 0;
-}
-
-#memoryview td {
-    text-align: center;
     font-family: monospace;
 }
 
-.testgrid {
-    width: 450px;
+.memoryGrid * {
+    all: unset;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-.testgrid td {
+
+.memoryGrid {
+    width: var(--mem-width);
+    padding: 8px;
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.memoryGrid tbody tr,
+.memoryGrid thead tr {
+    display: grid;
+    grid-template-columns: repeat(1, 3.5fr) repeat(16, 1fr);
+    align-items: stretch;
+}
+
+.memoryGrid tbody {
+    display: flex;
+    flex-direction: column;
+}
+
+.memoryGrid th:not(:first-child),
+.memoryGrid td:not(:first-child) {
+    text-align: center;
+    line-height: 1rem;
     border: 1px solid transparent;
+    margin-right: 1px;
 }
+
+.memoryGrid th:last-child,
+.memoryGrid td:last-child {
+    margin-right: 0;
+}
+
+#memoryView .highlightRead {
+    color: var(--highlight-read) !important;
+}
+
+#memoryView .highlightWrite {
+    color: var(--highlight-write) !important;
+}
+
+#memoryView .highlightRead.highlightWrite {
+    color: var(--highlight-write-read) !important;
+}
+
 .mem_mousehighlight {
     text-decoration: underline;
 }
 .mem_r {
-    background-color: #4d878f;
+    background-color: var(--highlight-write) !important;
 }
 .mem_w {
-    background-color: #9a2d54;
+    background-color: var(--highlight-read) !important;
 }
 .mem_rw {
-    background-color: #6e569b;
+    background-color: var(--highlight-write-read) !important;
 }
-/*.mem_e.help {
-    border: 2px solid red !important;
-}*/
 .mem_e {
     border: 1px solid red !important;
 }
-/*.mem_instr.help {
-    border: 2px solid green !important;
-}*/
 .mem_instr {
-    border: 1px solid green !important;
+    border: 1px solid var(--accent-color) !important;
 }
 
+/* ==============
+=== Paginator ===
+============== */
+
 #paginator {
-    text-align: center;
+    margin: 0 auto;
+    width: 80%;
+    display: flex;
+    margin-bottom: 16px;
+}
+
+#paginator > * {
+    margin-right: 8px;
+}
+
+#paginator > *:last-child {
+    margin-right: 0;
+}
+
+#paginator .button:not(.unit) {
+    width: 30px;
+
+    display: grid;
+    place-items: center;
 }
 
 #jump_memory_go {
-    margin: 0 10px 0 0;
+    cursor: pointer;
+    background-color: var(--accent-color);
+    color: var(--inactive-session-bg);
+    border: 1px solid var(--accent-color);
 }
 
-#jump_memory {
-    margin: 0 0 0 10px;
-    height: calc(1.6em + 4px);
-    border: 1px solid #28648f;
+#jump_memory_go:hover {
+    background-color: #b4d0ff;
 }
 
-#after-reg {
-    text-align: center;
-    padding: 5px 0;
-    border: 1px solid #95989a;
-    border-top: none;
+#jump_memory_go:active {
+    background-color: #7baee8;
 }
 
-/* =======================
-=== Dialog base config ===
-======================= */
+#jump_memory_go:disabled {
+    background-color: #2c2c3a;
+    color: var(--disabled-bg);
+    border-color: #2c2c3a;
+}
 
-/* === Base container === */
-.dialog-overlay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.5);
+/* =====================
+=== Memory utilities ===
+===================== */
+
+#mem_utilities {
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
 }
 
-/* === Dialog box === */
-.dialog {
-    background-color: var(--app-bg);
-    color: var(--text-color, #fff);
-    border-radius: 12px;
-    padding: 24px;
-    max-width: 480px;
-    margin: auto;
-    box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
-    line-height: 1.6;
+#follow_pc_wrapper,
+#current_cycle_wrapper {
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* === Headings === */
-.dialog_title {
-    font-size: 1.6rem;
-    font-weight: bold;
-    margin-bottom: 16px;
-    color: var(--accent-color);
+#follow_pc_wrapper {
+    margin-right: 24px;
+}
+
+#follow_pc_wrapper > *:first-child {
+    margin-right: 8px;
+}
+
+#current_cycle_wrapper {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+/* ==================
+=== Manage files ===
+================== */
+
+#manage_files {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+}
+
+#manage_files .button {
+    padding: 8px;
+    flex: 1;
+    text-align: center;
+}
+
+#manage_files label[for="fileToLoad"] {
+    margin-right: 8px;
 }
 
 /* ================
@@ -1232,99 +1470,7 @@ SECTION
     text-align: center;
 }
 
-.flat_button {
-    text-decoration: none;
-    padding: 2px 6px 2px 6px;
-    background-color: #28648f;
-    border: 1px solid #1476bd;
-    color: #fff;
-    font-size: 1.1em;
-}
-
-#solution pre {
-    color: inherit !important;
-    background: none !important;
-    font-weight: bold;
-}
-
-.pre {
-    white-space: pre;
-    font-family: monospace;
-    margin: 1em 0 1em;
-    color: #bea3f5;
-}
-
-/* ==================
-=== Config dialog ===
-================== */
-
-/* === Classic Checkbox Group === */
-.config-group-inline {
-    display: flex;
-    align-items: center;
-    margin: 12px 0;
-}
-
-/* Simulating gap */
-.config-group-inline > * {
-    margin-bottom: 8px;
-}
-
-.config-group-inline > *:last-child {
-    margin-bottom: 0;
-}
-
-.config-buttons {
-    padding-top: 8px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-/* Simulating gap */
-.config-buttons > * {
-    margin-right: 4px;
-}
-
-.config-buttons > *:last-child {
-    margin-right: 0;
-}
-
-.config-buttons .button {
-    padding: 8px 12px;
-}
-
-/* ==================
-=== Delete dialog ===
-================== */
-
-.delete-modal-buttons {
-    padding-top: 12px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.delete-modal-buttons > * {
-    margin-right: 4px;
-}
-
-.delete-modal-buttons > *:last-child {
-    margin-right: 0;
-}
-
-.delete-modal-buttons .button {
-    padding: 8px 12px;
-}
-
-/* ========================
-=== Max sessions dialog ===
-======================== */
-
-.max-sessions-modal-buttons {
-    padding-top: 12px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.max-sessions-modal-buttons .button {
-    padding: 8px 12px;
+*:focus {
+    outline: none;
+    box-shadow: none;
 }

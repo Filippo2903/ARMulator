@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>ARMulator</title>
+        <link rel="icon" href="./static/favicon.ico" type="image/x-icon" />
         <link
             rel="stylesheet"
             type="text/css"
@@ -219,6 +220,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div id="simulator-container">
                     <div id="tabsmain-simulation">
                         <div id="regView">
@@ -1361,6 +1363,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div id="editorPanel">
                             <div id="editorTopBar">
                                 <div id="simulationTitle">Simulation</div>
@@ -1419,46 +1422,68 @@
                             </div>
                             <div id="editor">{{ code }}</div>
                         </div>
+
                         <div id="dashboard">
-                            <div class="border_container">
-                                <div id="current_instruction">
+                            <div id="current_instruction_wrapper">
+                                <div id="current_instruction_title">
                                     Current Instruction
                                 </div>
-                                <div id="disassembly"></div>
+                                <div id="current_instruction"></div>
                             </div>
-                            <div class="border_container">
+
+                            <div id="memory_wrapper">
                                 <div id="memory_title">Memory</div>
-                                <div id="memoryview"></div>
-                                <div id="paginator"></div>
-                                <label for="follow_pc">Follow PC</label>
-                                <input
-                                    type="checkbox"
-                                    id="follow_pc"
-                                    checked="checked" /><br />
-                                <span class="cycles-label">Current cycle:</span>
-                                <input
-                                    id="cycles_count"
-                                    type="text"
-                                    value="0" />
+
+                                <div class="memory_wrapper_inner">
+                                    <div id="memoryView"></div>
+                                    <div id="paginator"></div>
+
+                                    <div id="mem_utilities">
+                                        <div id="follow_pc_wrapper">
+                                            <label for="follow_pc"
+                                                >Follow PC</label
+                                            >
+                                            <label class="ui-switch">
+                                                <input
+                                                    type="checkbox"
+                                                    id="follow_pc"
+                                                    checked="checked" />
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+
+                                        <div
+                                            id="current_cycle_wrapper"
+                                            class="input-row">
+                                            <label for="cycles_count"
+                                                >Current cycle:</label
+                                            >
+                                            <input
+                                                id="cycles_count"
+                                                name="cycles_count"
+                                                type="text"
+                                                value="0" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <div style="float: left">
-                                    <input
-                                        type="file"
-                                        onchange="loadFileAsText()"
-                                        id="fileToLoad"
-                                        style="display: none" />
-                                    <label for="fileToLoad" class="flat_button"
-                                        >Upload</label
-                                    >
-                                </div>
-                                <div style="float: right">
-                                    <button
-                                        id="download_file"
-                                        onclick="saveTextAsFile()">
-                                        Download
-                                    </button>
-                                </div>
+
+                            <div id="manage_files">
+                                <input
+                                    type="file"
+                                    onchange="loadFileAsText()"
+                                    id="fileToLoad"
+                                    style="display: none" />
+                                <label for="fileToLoad" class="button"
+                                    >Import source code</label
+                                >
+
+                                <button
+                                    id="download_file"
+                                    class="button"
+                                    onclick="saveTextAsFile()">
+                                    Export current code
+                                </button>
                             </div>
                         </div>
                     </div>

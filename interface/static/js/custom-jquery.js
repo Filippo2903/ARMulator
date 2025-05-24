@@ -188,8 +188,6 @@ $(document).ready(function () {
     });
 
     editor.on("change", function (e) {
-        console.log("Calling onChange!");
-
         if (debug_marker) editor.session.removeMarker(debug_marker);
 
         const simExec = isSimulatorInEditMode();
@@ -203,7 +201,6 @@ $(document).ready(function () {
             let row = asm_breakpoints[i];
 
             if (action === "insert") {
-                console.log("First if");
                 if (
                     row > start.row ||
                     (row === start.row && start.column === 0)
@@ -211,7 +208,6 @@ $(document).ready(function () {
                     asm_breakpoints[i] = row + (end.row - start.row);
                 }
             } else {
-                console.log("Second if");
                 // delete
                 if (
                     (row > start.row ||
