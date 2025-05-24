@@ -1,11 +1,12 @@
 import operator
 import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque
 from functools import reduce
 
 import simulatorOps.utils as utils
 from simulatorOps.abstractOp import AbstractOp, ExecutionException
+
+from stateManager import StateManager
+appState = StateManager()
 
 class MultipleMemOp(AbstractOp):
     saveStateKeys = frozenset(("condition", 
@@ -19,7 +20,7 @@ class MultipleMemOp(AbstractOp):
     def decode(self):
         instrInt = self.instrInt
         if not (utils.checkMask(instrInt, (27,), (26, 25))):
-            raise ExecutionException("Le bytecode à cette adresse ne correspond à aucune instruction valide",
+            raise ExecutionException(appState.getT(0),
                                         internalError=False)
 
         # Retrieve the condition field
@@ -71,17 +72,17 @@ class MultipleMemOp(AbstractOp):
         incmode = "incrémente" if self.sign > 0 else "décrémente"
 
         if disassembly[:3] == 'POP':
-            description += "<li>Lit la valeur de SP</li>\n"
-            description += "<li>Pour chaque registre de la liste suivante, stocke la valeur contenue à l'adresse pointée par SP dans le registre, puis incrémente SP de 4.</li>\n"
+            description += appState.getT(1)
+            description += appState.getT(2)
         elif disassembly[:4] == 'PUSH':
-            description += "<li>Lit la valeur de SP</li>\n"
-            description += "<li>Pour chaque registre de la liste suivante, décrémente SP de 4, puis stocke la valeur du registre à l'adresse pointée par SP.</li>\n"
+            description += appState.getT(3)
+            description += appState.getT(4)
         elif self.mode == "LDR":
-            description += "<li>Lit la valeur de {}</li>\n".format(utils.regSuffixWithBank(self.basereg, bank))
-            description += "<li>Pour chaque registre de la liste suivante, stocke la valeur contenue à l'adresse pointée par {reg} dans le registre, puis {incmode} {reg} de 4.</li>\n".format(reg=utils.regSuffixWithBank(self.basereg, bank), incmode=incmode)
+            description += appState.getT(5).format(utils.regSuffixWithBank(self.basereg, bank))
+            description += appState.getT(6).format(reg=utils.regSuffixWithBank(self.basereg, bank), incmode=incmode)
         else:
-            description += "<li>Lit la valeur de {}</li>\n".format(utils.regSuffixWithBank(self.basereg, bank))
-            description += "<li>Pour chaque registre de la liste suivante, {incmode} {reg} de 4, puis stocke la valeur du registre à l'adresse pointée par {reg}.</li>\n".format(reg=utils.regSuffixWithBank(self.basereg, bank), incmode=incmode)
+            description += appState.getT(7).format(utils.regSuffixWithBank(self.basereg, bank))
+            description += appState.getT(8).format(reg=utils.regSuffixWithBank(self.basereg, bank), incmode=incmode)
         
         if disassembly[:3] not in ("PUS", "POP"):
             disassembly += " R{}{},".format(self.basereg, "!" if self.writeback else "")
@@ -118,7 +119,7 @@ class MultipleMemOp(AbstractOp):
         if self.sbit:
             disassembly += "^"
             if self.mode == "LDR" and 15 in self.reglist:
-                description += "<li>Copie du SPSR courant dans le CPSR</li>\n"
+                description += appState.getT(9)
 
         self._readregs |= utils.registerWithCurrentBank(self.basereg, bank)
 

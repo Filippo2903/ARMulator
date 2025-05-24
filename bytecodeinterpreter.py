@@ -6,6 +6,8 @@ from simulator import MultipleErrors
 import operator
 from components import Breakpoint, ComponentException
 
+from stateManager import StateManager
+appState = StateManager()
 
 class BCInterpreter:
     """

@@ -7,6 +7,9 @@ from settings import getSetting
 
 import simulatorOps.utils as instruction
 
+from stateManager import StateManager
+appState = StateManager()
+
 class YaccError(ParserError):
     """
     The exception class used when the lexer encounter an invalid syntax.
@@ -36,7 +39,7 @@ def p_line(p):
 
 def p_line_error(p):
     """line : CONST error ENDLINESPACES"""
-    raise YaccError("Une étiquette doit commencer par une lettre majuscule ou minuscule (et non par un chiffre)")
+    raise YaccError(appState.getT(0))
 
 def p_linelabel(p):
     """linelabel : LABEL
@@ -45,7 +48,7 @@ def p_linelabel(p):
 
 def p_linelabel_error(p):
     """linelabel : LABEL error COMMA"""
-    raise YaccError("Instruction invalide : \"{}\". Veuillez vous référer au manuel du simulateur pour la liste des instructions acceptées. ".format(p[1]))
+    raise YaccError(appState.getT(1).format(p[1]))
 
 
 def p_sectiondeclaration(p):
@@ -161,11 +164,11 @@ def p_datainst2op_error(p):
                    | OPDATA2OP logmnemonic flagscondandspace REG error COMMA op2"""
 
     if len(p) == 8:
-        raise YaccError("Le registre R{}{} n'existe pas".format(p[4], p[5].value))
+        raise YaccError(appState.getT(2).format(p[4], p[5].value))
     elif isinstance(p[4], LexToken):
-        raise YaccError("L'instruction {} requiert un registre comme premier argument".format(p[1]))
+        raise YaccError(appState.getT(3).format(p[1]))
     else:
-        raise YaccError("Les registres et/ou constantes utilisés dans une opération doivent être séparés par une virgule")
+        raise YaccError(appState.getT(4))
 
 def p_datainst3op(p):
     """datainst3op : OPDATA3OP logmnemonic flagscondandspace REG COMMA REG COMMA op2"""
@@ -191,16 +194,16 @@ def p_datainst3op_error(p):
                    | OPDATA3OP logmnemonic flagscondandspace REG error COMMA REG COMMA op2
                    | OPDATA3OP logmnemonic flagscondandspace REG COMMA REG error COMMA op2"""
     if len(p) == 9:
-        raise YaccError("Les registres et/ou constantes utilisés dans une opération doivent être séparés par une virgule")
+        raise YaccError(appState.getT(5))
     elif len(p) == 7:
-        raise YaccError("L'instruction {} requiert 3 arguments".format(p[1]))
+        raise YaccError(appState.getT(6).format(p[1]))
     elif len(p) == 10:
         if isinstance(p[5], LexToken):
-            raise YaccError("Le registre R{}{} n'existe pas".format(p[4], p[5].value))
+            raise YaccError(appState.getT(7).format(p[4], p[5].value))
         else:
-            raise YaccError("Le registre R{}{} n'existe pas".format(p[6], p[7].value))
+            raise YaccError(appState.getT(8).format(p[6], p[7].value))
     elif len(p) == 11:
-        raise YaccError("TEST")
+        raise YaccError(appState.getT(9))
 
 
 def p_datainsttest(p):
@@ -247,11 +250,11 @@ def p_op2(p):
         ret = instruction.immediateToBytecode(plist[2], typeInverse)
         if ret is None:
             # Unable to encode constant
-            raise YaccError("Impossible d'encoder la constante suivante ou son inverse dans une instruction {} : {}".format(currentMnemonic, plist[2]))
+            raise YaccError(appState.getT(10).format(currentMnemonic, plist[2]))
         immval, immrot, inverse = ret
         if inverse and currentMnemonic not in instruction.dataOpcodeInvert.keys():
             # We could fit the constant by inverting it, but we do not have invert operation for this mnemonic
-            raise YaccError("Impossible d'encoder la constante suivante dans une instruction {} : {}".format(currentMnemonic, plist[2]))
+            raise YaccError(appState.getT(11).format(currentMnemonic, plist[2]))
         elif inverse:
             # We switch the mnemonic
             currentMnemonic = instruction.dataOpcodeInvert[currentMnemonic]
@@ -266,9 +269,9 @@ def p_op2(p):
 def p_op2_error(p):
     """op2 : REG shift"""
     if len(p) == 3:
-        raise YaccError("Le registre R{}{} n'existe pas".format(p[1], p[2].value))
+        raise YaccError(appState.getT(12).format(p[1], p[2].value))
     else:
-        raise YaccError("Une virgule est requise avant l'opération de décalage")
+        raise YaccError(appState.getT(13))
 
 
 def p_shift(p):
@@ -287,7 +290,7 @@ def p_shiftbyreg(p):
     if len(plist) == 2:
         # Special case, must be RRX
         if p[1] != "RRX":
-            raise YaccError("Décalage {} invalide sans un paramètre (registre ou constante) indiquant le décalage".format(p[1]))
+            raise YaccError(appState.getT(14).format(p[1]))
     else:
         # Shift by register
         p[0] |= 1 << 4
@@ -310,9 +313,9 @@ def p_shiftbyvalue(p):
     if not (p[1] in ('LSR', 'ASR') and plist[-1] == 32):
         # Shift by a constant if we are not in special modes
         if plist[-1] < 0:
-            raise YaccError("Impossible d'encoder un décalage négatif ({}) dans une instruction (utilisez un autre opérateur de décalage pour arriver au même effet)".format(p[4]))
+            raise YaccError(appState.getT(15).format(p[4]))
         if plist[-1] > 31:
-            raise YaccError("Impossible d'encoder le décalage {} dans une instruction (ce dernier doit être inférieur à 32)".format(p[4]))
+            raise YaccError(appState.getT(16).format(p[4]))
         p[0] |= plist[-1] << 7
 
 
@@ -410,7 +413,7 @@ def p_meminstruction(p):
             # Rm is at the same position than for normal memory operations,
             # but shifting is not allowed
             if (access >> 4) & 0xFF != 0:
-                raise YaccError("Une instruction {} n'accepte pas de décalage sur son registre d'offset".format(currentMnemonic))
+                raise YaccError(appState.getT(17).format(currentMnemonic))
         else:
             # Immediate
             access |= 1 << 22
@@ -418,7 +421,7 @@ def p_meminstruction(p):
             access &= 2**32 - 4095
             if offset > 2**8-1:
                 # Cannot encode the offset
-                raise YaccError("Le décalage de {} demandé dans l'instruction est trop grand pour pouvoir être encodé (il doit être inférieur à 256)".format(offset))
+                raise YaccError(appState.getT(18).format(offset))
             # Offset high and low nibbles are separated in these instructions
             # (see Fig. 4-17)
             access |= offset & 0xF
@@ -433,12 +436,12 @@ def p_meminstruction(p):
 
     # Check if we ask for an address in combination with STR (forbidden)
     if currentMnemonic[:3] == "STR" and memaccessinfo[1] is not None and memaccessinfo[1][0] == "addrptr":
-        raise YaccError("Il est interdit d'utiliser STR avec une adresse d'étiquette pour cible. Par exemple, 'STR R0, a' est valide, mais pas 'STR R0, =a'.")
+        raise YaccError(appState.getT(19))
 
     if bool((p[0] >> 21) & 1) and ((p[0] >> 16) & 0xF) == 15:
-        raise YaccError("Il est interdit d'utiliser PC comme registre de base lorsque le writeback est activé.")
+        raise YaccError(appState.getT(20))
     if ((p[0] >> 16) & 0xF) == ((p[0] >> 12) & 0xF) and (bool((p[0] >> 21) & 1) or not bool((p[0] >> 24) & 1)):
-        raise YaccError("En mode writeback, il est interdit d'utiliser le même registre comme destination et adresse de base.")
+        raise YaccError(appState.getT(21))
 
     # We return the bytecode, with the eventual dependencies
     p[0] = (struct.pack("<I", p[0]), minfo)
@@ -470,7 +473,7 @@ def p_memaccesspre(p):
             offset = abs(plist[5])
             if offset > 2**12-1:
                 # Cannot encode the offset
-                raise YaccError("Le décalage de {} demandé dans l'instruction est trop grand pour pouvoir être encodé (il doit être inférieur à 4096)".format(offset))
+                raise YaccError(appState.getT(22).format(offset))
             p[0] |= offset & 0xFFF
         else:                   # Register offset
             p[0] |= p[4]
@@ -484,7 +487,7 @@ def p_memaccesspre(p):
 
 def p_memaccesspre_error(p):
     """memaccesspre : OPENBRACKET REG COMMA REG error memaccesspreclosing"""
-    raise YaccError("Une opération de décalage doit être précédée par une virgule.")
+    raise YaccError(appState.getT(23))
 
 def p_shiftnoreg(p):
     """shiftnoreg : INNERSHIFT
@@ -508,7 +511,7 @@ def p_signedoffsetreg(p):
         p[0] |= 1 << 23     # Default mode is UP (even when there is no offset)
     reg = p[len(p) - 1]
     if reg == 15:
-        raise YaccError("PC ne peut pas être utilisé comme registre de décalage!")
+        raise YaccError(appState.getT(24))
     p[0] |= reg
 
 def p_memaccesspreclosing(p):
@@ -526,7 +529,7 @@ def p_memaccesspost(p):
     p[0] = plist[2] << 16
 
     if plist[2] == 15:
-        raise YaccError("Il est interdit d'utiliser PC comme registre de base en mode post-incrémentation!")
+        raise YaccError(appState.getT(25))
 
     if plist[5] == "#":     # Constant offset
         if plist[6] > 0:
@@ -534,7 +537,7 @@ def p_memaccesspost(p):
         offset = abs(plist[6])
         if offset > 2**12-1:
             # Cannot encode the offset
-            raise YaccError("Le décalage de {} demandé dans l'instruction est trop grand pour pouvoir être encodé (il doit être inférieur à 4096)".format(offset))
+            raise YaccError(appState.getT(26).format(offset))
         p[0] |= offset & 0xFFF
     else:                   # Register offset
         p[0] |= p[5]
@@ -627,7 +630,7 @@ def p_branchinstruction(p):
 
 def p_branchinstruction_error(p):
     """branchinstruction : OPBRANCH logmnemonic condandspace CONST error"""
-    raise YaccError("La cible d'un branchement doit être une étiquette (ou, pour BX, un registre). Une étiquette ne peut pas commencer par un chiffre.")
+    raise YaccError(appState.getT(27))
 
 
 def p_multiplememinstruction(p):
@@ -649,7 +652,7 @@ def p_listregswithpsr(p):
 
     # At least one register must be specified (e.g. we cannot have an empty list), see 4.11.1
     if sum(plist[2]) == 0:
-        raise YaccError("Une instruction {} doit spécifier au moins un registre dans sa liste.".format(currentMnemonic))
+        raise YaccError(appState.getT(28).format(currentMnemonic))
 
     # Set the registers
     for i in range(len(plist[2])):
@@ -686,7 +689,7 @@ def p_stmldmtargetreg(p):
     """stmldmtargetreg : REG
                        | REG EXCLAMATION"""
     if p[1] == 15:
-        raise YaccError("Il est interdit d'utiliser PC comme registre de base dans une opération mémoire multiple!")
+        raise YaccError(appState.getT(29))
     p[0] = p[1] << 16
     if len(p) == 3:
         # Set writeback
@@ -753,13 +756,11 @@ def p_psrinstruction(p):
         if p[6] == '#':
             # Immediate
             if len(p[4]) == 1 or p[4][1] != "flg":
-                raise YaccError("Impossible d'affecter directement une constante dans un registre de statut.\n"
-                                    "Seuls les drapeaux peuvent être directement modifiés, en ajoutant le suffixe _flg au registre de statut.")
+                raise YaccError(appState.getT(30))
             ret = instruction.immediateToBytecode(p[7], None)
             if ret is None or ret[2]:
                 # Unable to encode constant
-                raise YaccError("Impossible d'encoder la constante suivante dans une instruction {} : {}".format(
-                        currentMnemonic, p[7]))
+                raise YaccError(appState.getT(31).format(currentMnemonic, p[7]))
             immval, immrot, inverse = ret
             b |= immval
             b |= immrot << 8
@@ -801,7 +802,7 @@ def p_multiplyinstruction(p):
                            | OPMUL logmnemonic flagscondandspace REG COMMA REG COMMA SHARP CONST"""
     global currentMnemonic
     if len(p) == 10:
-        raise YaccError("Une instruction {} ne peut recevoir de constante comme dernier argument, seulement un registre.".format(currentMnemonic))
+        raise YaccError(appState.getT(32).format(currentMnemonic))
 
     p[0] = 9 << 4
     if currentMnemonic == 'MLA':
@@ -813,7 +814,7 @@ def p_multiplyinstruction(p):
         p[0] |= p[4] << 16          # Set Rd
     else:
         if len(p) == 11:
-            raise YaccError("Une instruction {} ne peut recevoir plus de 3 registres en argument.".format(currentMnemonic))
+            raise YaccError(appState.getT(33).format(currentMnemonic))
         p[0] |= p[8] << 8           # Set Rs
         p[0] |= p[6]                # Set Rm
         p[0] |= p[4] << 16          # Set Rd
@@ -830,7 +831,7 @@ def p_multiplylonginstruction(p):
                                | OPMULL logmnemonic flagscondandspace REG COMMA REG  COMMA REG COMMA SHARP CONST"""
     global currentMnemonic
     if len(p) == 12:
-        raise YaccError("Une instruction {} ne peut recevoir de constante comme dernier argument, seulement un registre.".format(currentMnemonic))
+        raise YaccError(appState.getT(34).format(currentMnemonic))
 
     p[0] = 9 << 4
     p[0] |= 1 << 23
@@ -838,13 +839,13 @@ def p_multiplylonginstruction(p):
     regs = [p[4], p[6], p[8], p[10]]
     # R15 (PC) must not be used as an operand or as a destination register
     if 15 in regs:
-        raise YaccError("Le registre PC ne peut pas être utilisé.")
+        raise YaccError(appState.getT(35))
     regs.remove(p[10])
 
     # RdHi, RdLo, and Rm must all specify different registers.
     sameRegister = [reg for reg in regs if regs.count(reg) > 1]
     if sameRegister:
-        raise YaccError(f"Le registre R{sameRegister[0]} ne peut être utilisé plus d'une fois.")
+        raise YaccError(appState.getT(36).format(sameRegister[0]))
 
     p[0] |= p[4] << 12          # Set RdLo
     p[0] |= p[6] << 16          # Set RdHi
@@ -879,32 +880,32 @@ def p_nopinstruction(p):
 def p_declarationconst(p):
     """declarationconst : CONSTDEC LISTINIT"""
     if p[1] not in (8, 16, 32):
-        raise YaccError("Une variable peut avoir les tailles suivantes (en bits) : 8, 16 ou 32. {} n'est pas une taille valide".format(p[1]))
+        raise YaccError(appState.getT(37).format(p[1]))
     formatletter = "B" if p[1] == 8 else "H" if p[1] == 16 else "I"  # 32
     bitmask = 2**(p[1]) - 1
     p[0] = (struct.pack("<" + formatletter * len(p[2]), *[v & bitmask for v in p[2]]), None)
 
 def p_declarationconst_error(p):
     """declarationconst : CONSTDECWITHOUTSIZE LISTINIT"""
-    raise YaccError("Une assignation de variable doit être suivie d'une taille en bits (par exemple ASSIGN32 ou ASSIGN8)")
+    raise YaccError(appState.getT(38))
 
 def p_declarationsize(p):
     """declarationsize : VARDEC LISTINIT"""
     if p[1] not in (8, 16, 32):
-        raise YaccError("Une variable peut avoir les tailles suivantes (en bits) : 8, 16 ou 32. {} n'est pas une taille valide".format(p[1]))
+        raise YaccError(appState.getT(39).format(p[1]))
     if len(p[2]) > 1:
-        raise YaccError("Une allocation de variable ne peut qu'être suivie d'un nombre d'éléments. Utilisez ASSIGN si vous voulez assigner des valeurs précises.")
+        raise YaccError(appState.getT(40))
     dimNbr = p[2][0]
     dimBytes = dimNbr * p[1] // 8
     if dimBytes > 8192:
-        raise YaccError("Demande d'allocation mémoire trop grande. Le maximum permis est de 8 Ko (8192 octets), mais la déclaration demande {} octets.".format(dimBytes))
+        raise YaccError(appState.getT(41).format(dimBytes))
     assert dimBytes <= 8192, "Too large memory allocation requested! ({} bytes)".format(dimBytes)
     p[0] = (struct.pack("<" + "B" * dimBytes, *[getSetting("fillValue")] * dimBytes), None)
 
 def p_declarationsize_error(p):
     """declarationsize : VARDECWITHOUTSIZE LISTINIT"""
     # The user did not provide element size for an allocation
-    raise YaccError("Une allocation de variable doit être suivie d'une taille en bits (par exemple ALLOC32 ou ALLOC8)")
+    raise YaccError(appState.getT(42))
 
 
 #def p_error(p):

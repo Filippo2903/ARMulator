@@ -1,14 +1,9 @@
-import operator
-import struct
-import time
 
-from enum import Enum
-from collections import defaultdict, namedtuple, deque
+import struct
 
 from settings import getSetting
 from components import Registers, Memory, Breakpoint, ComponentException
 from history import History
-from simulatorOps.utils import checkMask
 from simulatorOps import *
 from simulatorOps.abstractOp import ExecutionException
 
@@ -225,7 +220,7 @@ class Simulator:
             self.fetchedInstr = None
             self.errorsPending.append(
                 "register",
-                "Erreur : la valeur de PC ({}) est invalide (ce doit être un multiple de 4)!".format(
+                appState.getT(0).format(
                     hex(self.regs[15])
                 ),
             )
@@ -385,13 +380,13 @@ class Simulator:
                 ["highlightRead", []],
                 ["highlightWrite", []],
                 ["nextline", None],
-                ["disassembly", "Information indisponible"],
+                ["disassembly", appState.getT(1)],
             )
             return
 
         disassembly, description = self.currentInstr.explain(self)
         dis = '<div id="disassembly_instruction">{}: {}</div>\n<div id="disassembly_description">{}</div>\n'.format(
-            appState.getT(0) ,disassembly, description
+            appState.getT(2) ,disassembly, description
         )
 
         if self.currentInstr.nextAddressToExecute != -1:
@@ -480,11 +475,11 @@ class Simulator:
                         self.regs.reactivateBreakpoints()
                         if valreg != val:
                             if regtarget:
-                                strError += "Erreur : {} devrait valoir {} (la valeur du registre R{}), mais il vaut {}\n".format(
+                                strError += appState.getT(3).format(
                                     target, val, regtarget, valreg
                                 )
                             else:
-                                strError += "Erreur : {} devrait valoir {}, mais il vaut {}\n".format(
+                                strError += appState.getT(4).format(
                                     target, val, valreg
                                 )
                     elif target[:2] == "0X":
@@ -503,11 +498,11 @@ class Simulator:
                         valmem = struct.unpack(formatStruct, valmem)[0]
                         if valmem != val:
                             if regtarget:
-                                strError += "Erreur : l'adresse mémoire {} devrait contenir {} (la valeur du registre R{}), mais elle contient {}\n".format(
+                                strError += appState.getT(5).format(
                                     target, val, regtarget, valmem
                                 )
                             else:
-                                strError += "Erreur : l'adresse mémoire {} devrait contenir {}, mais elle contient {}\n".format(
+                                strError += appState.getT(6).format(
                                     target, val, valmem
                                 )
                     elif len(target) == 1 and target in self.regs.flag2index:
@@ -515,12 +510,12 @@ class Simulator:
                         expectedVal = value != "0"
                         actualVal = self.regs.__getattribute__(target)
                         if actualVal != expectedVal:
-                            strError += "Erreur : le drapeau {} devrait signaler {}, mais il signale {}\n".format(
+                            strError += appState.getT(7).format(
                                 target, expectedVal, actualVal
                             )
                     else:
                         # Assert type unknown
-                        strError += "Assertion inconnue ou impossible à interpréter : ({}, {})!".format(
+                        strError += appState.getT(8).format(
                             target, value
                         )
 

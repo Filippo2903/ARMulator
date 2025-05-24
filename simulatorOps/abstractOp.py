@@ -1,9 +1,7 @@
-import operator
-import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque 
-
 import simulatorOps.utils as utils
+
+from stateManager import StateManager
+appState = StateManager()
 
 class ExecutionException(Exception):
     def __init__(self, text, internalError=False):
@@ -12,7 +10,7 @@ class ExecutionException(Exception):
     
     def __str__(self):
         if self.internal:
-            return "Erreur interne : " + self.text
+            return appState.getT(0) + self.text
         else:
             return self.text
 
@@ -59,14 +57,14 @@ class AbstractOp:
         # implementation of the condition explanation here
         if self.condition == 'AL':
             return "", ""
-        return self.condition, "<li>Vérifie si la condition {} est remplie</li>\n".format(self.condition)
+        return self.condition, appState.getT(1).format(self.condition)
 
     def _checkCondition(self, flags):
         # Since all instructions can be conditional, we can put a generic
         # implementation of the condition verification (before execution) here
         cond = self.condition
         if not self.conditionValid:
-            raise ExecutionException("L'instruction est invalide (la condition demandée n'existe pas)")
+            raise ExecutionException(appState.getT(2))
         self._readflags = utils.conditionFlagsMapping[cond]
 
         # Fast path for AL condition (execute inconditionally)

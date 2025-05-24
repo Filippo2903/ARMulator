@@ -1,7 +1,5 @@
-import operator
-import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque 
+from stateManager import StateManager
+appState = StateManager()
 
 import simulatorOps.utils as utils
 from simulatorOps.abstractOp import AbstractOp, ExecutionException
@@ -20,7 +18,7 @@ class DataOp(AbstractOp):
     def decode(self):
         instrInt = self.instrInt
         if not utils.checkMask(instrInt, (), (27, 26)):
-            raise ExecutionException("Le bytecode à cette adresse ne correspond à aucune instruction valide (2)", 
+            raise ExecutionException(appState.getT(0), 
                                         internalError=False)
 
         # Retrieve the condition field
@@ -83,7 +81,7 @@ class DataOp(AbstractOp):
         # Get second operand value
         if self.imm:
             op2 = self.shiftedVal
-            op2desc = "La constante {}".format(op2)
+            op2desc = appState.getT(1).format(op2)
             op2dis = "#{}".format(hex(op2))
         else:
             self._readregs |= utils.registerWithCurrentBank(self.op2reg, bank)
@@ -93,7 +91,7 @@ class DataOp(AbstractOp):
 
             shiftDesc = utils.shiftToDescription(self.shift, bank)
             shiftinstr = utils.shiftToInstruction(self.shift)
-            op2desc = "Le registre {} {}".format(utils.regSuffixWithBank(self.op2reg, bank), shiftDesc)
+            op2desc = appState.getT(2).format(utils.regSuffixWithBank(self.op2reg, bank), shiftDesc)
             op2dis = "R{}{}".format(self.op2reg, shiftinstr)
             if not self.shift.immediate:
                 self._readregs |= utils.registerWithCurrentBank(self.shift.value, bank)
@@ -103,59 +101,59 @@ class DataOp(AbstractOp):
             # These instructions do not affect the V flag (ARM Instr. set, 4.5.1)
             # However, C flag "is set to the carry out from the barrel shifter [if the shift is not LSL #0]" (4.5.1)
             # this was already done when we called _shiftVal
-            description += "<li>Effectue une opération ET entre:\n"
+            description += appState.getT(3)
         elif self.opcode in ("EOR", "TEQ"):
             # These instructions do not affect the C and V flags (ARM Instr. set, 4.5.1)
-            description += "<li>Effectue une opération OU EXCLUSIF (XOR) entre:\n"
+            description += appState.getT(4)
         elif self.opcode in ("SUB", "CMP"):
             modifiedFlags.update(('C', 'V'))
-            description += "<li>Effectue une soustraction (A-B) entre:\n"
+            description += appState.getT(5)
             if self.opcode == "SUB" and self.rd == simulatorContext.PC:
                 # We change PC, we show it in the editor
                 self._nextInstrAddr = simulatorContext.regs[self.rn] - op2
         elif self.opcode == "RSB":
             modifiedFlags.update(('C', 'V'))
-            description += "<li>Effectue une soustraction inverse (B-A) entre:\n"
+            description += appState.getT(6)
         elif self.opcode in ("ADD", "CMN"):
             modifiedFlags.update(('C', 'V'))
-            description += "<li>Effectue une addition (A+B) entre:\n"
+            description += appState.getT(7)
             if self.opcode == "ADD" and self.rd == simulatorContext.PC:
                 # We change PC, we show it in the editor
                 self._nextInstrAddr = simulatorContext.regs[self.rn] + op2
         elif self.opcode == "ADC":
             modifiedFlags.update(('C', 'V'))
-            description += "<li>Effectue une addition avec retenue (A+B+carry) entre:\n"
+            description += appState.getT(8)
         elif self.opcode == "SBC":
             modifiedFlags.update(('C', 'V'))
-            description += "<li>Effectue une soustraction avec emprunt (A-B+carry) entre:\n"
+            description += appState.getT(9)
         elif self.opcode == "RSC":
             modifiedFlags.update(('C', 'V'))
-            description += "<li>Effectue une soustraction inverse avec emprunt (B-A+carry) entre:\n"
+            description += appState.getT(10)
         elif self.opcode == "ORR":
-            description += "<li>Effectue une opération OU entre:\n"
+            description += appState.getT(11)
         elif self.opcode == "MOV":
-            description += "<li>Lit la valeur de :\n"
+            description += appState.getT(12)
             if self.rd == simulatorContext.PC:
                 # We change PC, we show it in the editor
                 self._nextInstrAddr = op2
         elif self.opcode == "BIC":
-            description += "<li>Effectue une opération ET NON entre:\n"
+            description += appState.getT(13)
         elif self.opcode == "MVN":
-            description += "<li>Effectue une opération NOT sur :\n"
+            description += appState.getT(14)
             if self.rd == simulatorContext.PC:
                 # We change PC, we show it in the editor
                 self._nextInstrAddr = ~op2
         else:
-            raise ExecutionException("Mnémonique invalide : {}".format(self.opcode))
+            raise ExecutionException(appState.getT(15).format(self.opcode))
 
         if self.opcode in ("MOV", "MVN"):
             description += "<ol type=\"A\"><li>{}</li></ol>\n".format(op2desc)
             disassembly += " R{}, ".format(self.rd)
         elif self.opcode in ("TST", "TEQ", "CMP", "CMN"):
-            description += "<ol type=\"A\"><li>Le registre {}</li><li>{}</li></ol>\n".format(utils.regSuffixWithBank(self.rn, bank), op2desc)
+            description += appState.getT(16).format(utils.regSuffixWithBank(self.rn, bank), op2desc)
             disassembly += " R{}, ".format(self.rn)
         else:
-            description += "<ol type=\"A\"><li>Le registre {}</li>\n".format(utils.regSuffixWithBank(self.rn, bank))
+            description += appState.getT(17).format(utils.regSuffixWithBank(self.rn, bank))
             description += "<li>{}</li></ol>\n".format(op2desc)
             disassembly += " R{}, R{}, ".format(self.rd, self.rn)
         disassembly += op2dis
@@ -164,12 +162,12 @@ class DataOp(AbstractOp):
 
         if self.modifyFlags:
             if self.rd == simulatorContext.PC:
-                description += "<li>Copie le SPSR courant dans CPSR</li>\n"
+                description += appState.getT(18)
             else:
                 self._writeflags = modifiedFlags
-                description += "<li>Met à jour les drapeaux de l'ALU en fonction du résultat de l'opération</li>\n"
+                description += appState.getT(19)
         if self.opcode not in ("TST", "TEQ", "CMP", "CMN"):
-            description += "<li>Écrit le résultat dans {}</li>".format(utils.regSuffixWithBank(self.rd, bank))
+            description += appState.getT(20).format(utils.regSuffixWithBank(self.rd, bank))
             self._writeregs |= utils.registerWithCurrentBank(self.rd, bank)
 
         description += "</ol>"
@@ -240,7 +238,7 @@ class DataOp(AbstractOp):
         elif self.opcode == "RSC":
             res, workingFlags['C'], workingFlags['V'] = utils.addWithCarry(~op1, op2, int(simulatorContext.regs.C))
         else:
-            raise ExecutionException("Mnémonique invalide : {}".format(self.opcode))
+            raise ExecutionException(appState.getT(21).format(self.opcode))
 
         # Get the result back to 32 bits, if applicable (else it's just a no-op)
         res &= 0xFFFFFFFF           
@@ -257,10 +255,10 @@ class DataOp(AbstractOp):
                 # changes which atomically restore both PC and CPSR. This form of instruction should
                 # not be used in User mode."
                 if simulatorContext.regs.mode == "User":
-                    raise ExecutionException("L'utilisation de PC comme registre de destination en combinaison avec la mise a jour des drapeaux est interdite en mode User!")
+                    raise ExecutionException(appState.getT(22))
                 if (simulatorContext.regs.SPSR & 0x1F) not in simulatorContext.regs.bits2mode:
                     # The mode in SPSR is invalid
-                    raise ExecutionException("SPSR devrait ici être copié dans CPSR, mais le mode contenu dans SPSR est invalide!")
+                    raise ExecutionException(appState.getT(23))
                 simulatorContext.regs.CPSR = simulatorContext.regs.SPSR        # Put back the saved SPSR in CPSR
             else:
                 simulatorContext.regs.setAllFlags(workingFlags)

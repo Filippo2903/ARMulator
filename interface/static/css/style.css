@@ -1237,6 +1237,10 @@ body {
     padding: 8px;
 }
 
+#disassembly_instruction {
+    margin-bottom: 8px;
+}
+
 #current_instruction.disabled {
     color: var(--text-muted);
 }

@@ -1,9 +1,7 @@
 # Changes
 
-### 1. **Finished front-end design**
-### 2. **Removed useless code that slowed down the text editor**
+### 1. **Created dictionaries for backend**
 
 # Work to do
 
-### 1. Create dictionaries for backend
-### 2. Remake documentation for new webview
+### 1. Remake documentation

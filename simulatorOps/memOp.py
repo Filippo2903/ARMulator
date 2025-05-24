@@ -1,10 +1,9 @@
-import operator
 import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque 
-
 import simulatorOps.utils as utils
 from simulatorOps.abstractOp import AbstractOp, ExecutionException
+
+from stateManager import StateManager
+appState = StateManager()
 
 class MemOp(AbstractOp):
     saveStateKeys = frozenset(("condition", 
@@ -18,7 +17,7 @@ class MemOp(AbstractOp):
     def decode(self):
         instrInt = self.instrInt
         if not (utils.checkMask(self.instrInt, (26, 25), (4, 27)) or utils.checkMask(self.instrInt, (26,), (25, 27))):
-            raise ExecutionException("Le bytecode à cette adresse ne correspond à aucune instruction valide",
+            raise ExecutionException(appState.getT(0),
                                         internalError=False)
 
         # Retrieve the condition field
@@ -61,22 +60,22 @@ class MemOp(AbstractOp):
         self._readregs = utils.registerWithCurrentBank(self.basereg, bank)
         addr = baseval = simulatorContext.regs[self.basereg]
 
-        description += "<li>Utilise la valeur du registre {} comme adresse de base</li>\n".format(utils.regSuffixWithBank(self.basereg, bank))
+        description += appState.getT(1).format(utils.regSuffixWithBank(self.basereg, bank))
         descoffset = ""
         if self.imm:
             addr += self.sign * self.offsetImm
             if self.offsetImm > 0:
                 if self.sign > 0:
-                    descoffset = "<li>Additionne la constante {} à l'adresse de base</li>\n".format(self.offsetImm)
+                    descoffset = appState.getT(2).format(self.offsetImm)
                 else:
-                    descoffset = "<li>Soustrait la constante {} à l'adresse de base</li>\n".format(self.offsetImm)
+                    descoffset = appState.getT(3).format(self.offsetImm)
         else:
             shiftDesc = utils.shiftToDescription(self.offsetRegShift, bank)
             regDesc = utils.regSuffixWithBank(self.offsetReg, bank)
             if self.sign > 0:
-                descoffset = "<li>Additionne le registre {} {} à l'adresse de base</li>\n".format(regDesc, shiftDesc)
+                descoffset = appState.getT(4).format(regDesc, shiftDesc)
             else:
-                descoffset = "<li>Soustrait le registre {} {} à l'adresse de base</li>\n".format(regDesc, shiftDesc)
+                descoffset = appState.getT(5).format(regDesc, shiftDesc)
 
             _, sval = utils.applyShift(simulatorContext.regs[self.offsetReg], self.offsetRegShift, simulatorContext.regs.C)
             addr += self.sign * sval
@@ -84,7 +83,7 @@ class MemOp(AbstractOp):
 
         realAddr = addr if self.pre else baseval
         sizeaccess = 1 if self.byte else 4
-        sizedesc = "1 octet" if sizeaccess == 1 else "{} octets".format(sizeaccess)
+        sizedesc = appState.getT(6) if sizeaccess == 1 else appState.getT(7).format(sizeaccess)
 
         disassembly += "B" if sizeaccess == 1 else ""
         if self.nonprivileged:
@@ -94,9 +93,9 @@ class MemOp(AbstractOp):
         if self.mode == 'LDR':
             if self.pre:
                 description += descoffset
-                description += "<li>Lit {} à partir de l'adresse obtenue (pré-incrément) et stocke le résultat dans {} (LDR)</li>\n".format(sizedesc, utils.regSuffixWithBank(self.rd, bank))
+                description += appState.getT(8).format(sizedesc, utils.regSuffixWithBank(self.rd, bank))
             else:
-                description += "<li>Lit {} à partir de l'adresse de base et stocke le résultat dans {} (LDR)</li>\n".format(sizedesc, utils.regSuffixWithBank(self.rd, bank))
+                description += appState.getT(9).format(sizedesc, utils.regSuffixWithBank(self.rd, bank))
                 description += descoffset
             
             self._readmem = set(range(realAddr, realAddr+sizeaccess))
@@ -117,9 +116,9 @@ class MemOp(AbstractOp):
         else:       # STR
             if self.pre:
                 description += descoffset
-                description += "<li>Copie la valeur du registre {} dans la mémoire, à l'adresse obtenue à l'étape précédente (pré-incrément), sur {} (STR)</li>\n".format(utils.regSuffixWithBank(self.rd, bank), sizedesc)
+                description += appState.getT(10).format(utils.regSuffixWithBank(self.rd, bank), sizedesc)
             else:
-                description += "<li>Copie la valeur du registre {} dans la mémoire, à l'adresse de base, sur {} (STR)</li>\n".format(utils.regSuffixWithBank(self.rd, bank), sizedesc)
+                description += appState.getT(11).format(utils.regSuffixWithBank(self.rd, bank), sizedesc)
                 description += descoffset
 
             self._writemem = set(range(realAddr, realAddr+sizeaccess))
@@ -145,7 +144,7 @@ class MemOp(AbstractOp):
 
         if self.writeback:
             self._writeregs |= utils.registerWithCurrentBank(self.basereg, bank)
-            description += "<li>Écrit l'adresse effective dans le registre de base {} (mode writeback)</li>\n".format(utils.regSuffixWithBank(self.basereg, bank))
+            description += appState.getT(12).format(utils.regSuffixWithBank(self.basereg, bank))
             if self.pre:
                 disassembly += "!"
 
@@ -175,7 +174,7 @@ class MemOp(AbstractOp):
         if self.mode == 'LDR':
             m = simulatorContext.mem.get(realAddr, size=s)
             if m is None:       # No such address in the mapped memory, we cannot continue
-                raise ExecutionException("Tentative de lecture de {} octets à partir de l'adresse {} invalide : mémoire non initialisée".format(s, realAddr))
+                raise ExecutionException(appState.getT(13).format(s, realAddr))
             res = struct.unpack("<B" if self.byte else "<I", m)[0]
 
             simulatorContext.regs[self.rd] = res

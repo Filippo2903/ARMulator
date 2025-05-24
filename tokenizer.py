@@ -17,10 +17,11 @@ available tokens are only the ones that are allowed. For instance, a data instru
 """
 
 
-import re
-from collections import namedtuple
 from itertools import chain
 import ply.lex as lex
+
+from stateManager import StateManager
+appState = StateManager()
 
 import simulatorOps.utils as instrInfos
 
@@ -589,94 +590,94 @@ def t_INITIAL_branchinstr_meminstr_LABEL(t):
 
 # Error handlers
 def t_section_error(t):
-    print("(01) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(0).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_decwithsize_error(t):
-    print("(02) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(1).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_decwithvalues_error(t):
-    print("(03) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, ord(t.value[0])))
+    print(appState.getT(2).format(t.lineno, t.lexpos, ord(t.value[0])))
 
 def t_dataopcode_error(t):
-    print("(04) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(3).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_cmpopcode_error(t):
-    print("(05) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(4).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_shiftopcode_error(t):
-    print("(06) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(5).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_memopcode_error(t):
-    print("(07) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(6).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_multiplememopcode_error(t):
-    print("(08) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(7).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_branchopcode_error(t):
-    print("(09) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(8).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_psropcode_error(t):
-    print("(10) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(9).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_mulopcode_error(t):
-    print("(11) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(10).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_svcopcode_error(t):
-    print("(12) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(11).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_nopopcode_error(t):
-    print("(12b) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(12).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_generalopcode_error(t):
-    print("(13) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(13).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_swpopcode_error(t):
-    print("(07b) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(14).format(t.lineno, t.lexpos, t.value[0]))
 
 
 def t_datainstr_error(t):
     print(t.lexer.countArgs)
-    print("(14) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(15).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_cmpinstr_error(t):
-    print("(15) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(16).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_shiftinstr_error(t):
-    print("(16) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(17).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_meminstr_error(t):
-    print("(17) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(18).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_multiplememinstr_error(t):
-    print("(18) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(19).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_branchinstr_error(t):
-    print("(19) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(20).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_psrinstr_error(t):
-    print("(20) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(21).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_mulinstr_error(t):
-    print("(21) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(22).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_svcinstr_error(t):
-    print("(22) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(23).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_nopinstr_error(t):
-    print("(23) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(24).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_generalinstr_error(t):
-    print("(24) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(25).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_swpinstr_error(t):
-    print("(25) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(26).format(t.lineno, t.lexpos, t.value[0]))
 
 def t_assertion_error(t):
-    print("(26) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(27).format(t.lineno, t.lexpos, t.value[0]))
 
 # General handler
 def t_error(t):
-    print("(G) Caractere invalide (ligne {}, colonne {}) : {}".format(t.lineno, t.lexpos, t.value[0]))
+    print(appState.getT(28).format(t.lineno, t.lexpos, t.value[0]))
     #print("Illegal character '%s'" % t.value[0])
     #t.lexer.skip(1)
 

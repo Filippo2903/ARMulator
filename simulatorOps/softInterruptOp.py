@@ -1,10 +1,8 @@
-import operator
-import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque 
-
 import simulatorOps.utils as utils
 from simulatorOps.abstractOp import AbstractOp, ExecutionException
+
+from stateManager import StateManager
+appState = StateManager()
 
 class SoftInterruptOp(AbstractOp):
     saveStateKeys = frozenset(("condition", "datauser"))
@@ -16,7 +14,7 @@ class SoftInterruptOp(AbstractOp):
     def decode(self):
         instrInt = self.instrInt
         if not (utils.checkMask(instrInt, (24, 25, 26, 27), ())):
-            raise ExecutionException("Le bytecode à cette adresse ne correspond à aucune instruction valide",
+            raise ExecutionException(appState.getT(0),
                                         internalError=False)
 
         # Retrieve the condition field
@@ -31,10 +29,10 @@ class SoftInterruptOp(AbstractOp):
         description = "<ol>\n"
         disCond, descCond = self._explainCondition()
         description += descCond
-        description += "<li>Changement de banque de registres vers SVC</li>\n"
-        description += "<li>Copie du CPSR dans le SPSR_svc</li>\n"
-        description += "<li>Copie de PC dans LR_svc</li>\n"
-        description += "<li>Assignation de 0x08 dans PC</li>\n"
+        description += appState.getT(1)
+        description += appState.getT(2)
+        description += appState.getT(3)
+        description += appState.getT(4)
         disassembly = "SVC{} 0x{:X}".format(disCond, self.datauser)
         description += "</ol>"
         simulatorContext.regs.reactivateBreakpoints()

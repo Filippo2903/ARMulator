@@ -1,10 +1,10 @@
-import operator
-import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque 
 
+import struct
 import simulatorOps.utils as utils
 from simulatorOps.abstractOp import AbstractOp, ExecutionException
+
+from stateManager import StateManager
+appState = StateManager()
 
 class HalfSignedMemOp(AbstractOp):
     saveStateKeys = frozenset(("condition", 
@@ -18,7 +18,7 @@ class HalfSignedMemOp(AbstractOp):
     def decode(self):
         instrInt = self.instrInt
         if not (utils.checkMask(instrInt, (7, 4), (27, 26, 25))):
-            raise ExecutionException("Le bytecode à cette adresse ne correspond à aucune instruction valide",
+            raise ExecutionException(appState.getT(10),
                                         internalError=False)
 
         # Retrieve the condition field
@@ -61,21 +61,21 @@ class HalfSignedMemOp(AbstractOp):
         self._readregs = utils.registerWithCurrentBank(self.basereg, bank)
         addr = baseval = simulatorContext.regs[self.basereg]
 
-        description += "<li>Utilise la valeur du registre {} comme adresse de base</li>\n".format(utils.regSuffixWithBank(self.basereg, bank))
+        description += appState.getT(1).format(utils.regSuffixWithBank(self.basereg, bank))
         descoffset = ""
         if self.imm:
             addr += self.sign * self.offsetImm
             if self.offsetImm > 0:
                 if self.sign > 0:
-                    descoffset = "<li>Additionne la constante {} à l'adresse de base</li>\n".format(self.offsetImm)
+                    descoffset = appState.getT(2).format(self.offsetImm)
                 else:
-                    descoffset = "<li>Soustrait la constante {} à l'adresse de base</li>\n".format(self.offsetImm)
+                    descoffset = appState.getT(3).format(self.offsetImm)
         else:
             regDesc = utils.regSuffixWithBank(self.offsetReg, bank)
             if self.sign > 0:
-                descoffset = "<li>Additionne le registre {} à l'adresse de base</li>\n".format(regDesc)
+                descoffset = appState.getT(4).format(regDesc)
             else:
-                descoffset = "<li>Soustrait le registre {} à l'adresse de base</li>\n".format(regDesc)
+                descoffset = appState.getT(5).format(regDesc)
 
             addr += self.sign * simulatorContext.regs[self.offsetReg]
             self._readregs |= utils.registerWithCurrentBank(self.offsetReg, bank)
@@ -91,13 +91,13 @@ class HalfSignedMemOp(AbstractOp):
         if self.mode == 'LDR':
             if self.pre:
                 description += descoffset
-                description += "<li>Lit {} à partir de l'adresse obtenue (pré-incrément) et stocke le résultat dans {} (LDR)</li>\n".format(sizedesc, utils.regSuffixWithBank(self.rd, bank))
+                description += appState.getT(6).format(sizedesc, utils.regSuffixWithBank(self.rd, bank))
             else:
-                description += "<li>Lit {} à partir de l'adresse de base et stocke le résultat dans {} (LDR)</li>\n".format(sizedesc, utils.regSuffixWithBank(self.rd, bank))
+                description += appState.getT(7).format(sizedesc, utils.regSuffixWithBank(self.rd, bank))
                 description += descoffset
             
             if self.signed:
-                description += "<li>Copie la valeur du bit {} sur les bits {} à 31 du registre de destination</li>\n".format(7 if self.byte else 15, 8 if self.byte else 16)
+                description += appState.getT(8).format(7 if self.byte else 15, 8 if self.byte else 16)
             
             self._readmem = set(range(realAddr, realAddr+sizeaccess))
             self._writeregs |= utils.registerWithCurrentBank(self.rd, bank)
@@ -115,12 +115,12 @@ class HalfSignedMemOp(AbstractOp):
                         self._nextInstrAddr = res
 
         else:       # STR
-            descRange = " de l'octet le moins significatif" if self.byte else " des 2 octets les moins significatifs"
+            descRange = appState.getT(9) if self.byte else appState.getT(10)
             if self.pre:
                 description += descoffset
-                description += "<li>Copie la valeur" + descRange + " registre {} dans la mémoire, à l'adresse obtenue à l'étape précédente (pré-incrément), sur {} (STR)</li>\n".format(utils.regSuffixWithBank(self.rd, bank), sizedesc)
+                description += appState.getT(11) + descRange + appState.getT(12).format(utils.regSuffixWithBank(self.rd, bank), sizedesc)
             else:
-                description += "<li>Copie la valeur" + descRange + " registre {} dans la mémoire, à l'adresse de base, sur {} (STR)</li>\n".format(utils.regSuffixWithBank(self.rd, bank), sizedesc)
+                description += appState.getT(13) + descRange + appState.getT(14).format(utils.regSuffixWithBank(self.rd, bank), sizedesc)
                 description += descoffset
 
             self._writemem = set(range(realAddr, realAddr+sizeaccess))
@@ -147,7 +147,7 @@ class HalfSignedMemOp(AbstractOp):
 
         if self.writeback:
             self._writeregs |= utils.registerWithCurrentBank(self.basereg, bank)
-            description += "<li>Écrit l'adresse effective dans le registre de base {} (mode writeback)</li>\n".format(utils.regSuffixWithBank(self.basereg, bank))
+            description += appState.getT(15).format(utils.regSuffixWithBank(self.basereg, bank))
             if self.pre:
                 disassembly += "!"
 
@@ -175,7 +175,7 @@ class HalfSignedMemOp(AbstractOp):
         if self.mode == 'LDR':
             m = simulatorContext.mem.get(realAddr, size=s)
             if m is None:       # No such address in the mapped memory, we cannot continue
-                raise ExecutionException("Tentative de lecture de {} octets à partir de l'adresse {} invalide : mémoire non initialisée".format(s, realAddr))
+                raise ExecutionException(appState.getT(16).format(s, realAddr))
             res = struct.unpack("<B" if self.byte else "<H", m)[0]
 
             simulatorContext.regs[self.rd] = res

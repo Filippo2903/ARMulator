@@ -1,5 +1,8 @@
 from collections import deque
 
+from stateManager import StateManager
+appState = StateManager()
+
 class History:
 
     def __init__(self, historyMaxLength=100):
@@ -77,7 +80,7 @@ class History:
             hist = self.history.pop()
         except IndexError:
             # We reached the end of the history
-            raise RuntimeError("Fin de l'historique atteinte, impossible de remonter plus haut!")
+            raise RuntimeError(appState.getT(0))
 
         for name,obj in self.members.items():
             obj.stepBack(hist[name])

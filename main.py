@@ -1,13 +1,12 @@
 import argparse
 import time
-import math
 
 from assembler import parse as ASMparser
 from bytecodeinterpreter import BCInterpreter
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='EPATER, ARM emulator')
-    parser.add_argument('inputfile', help="Fichier assembleur")
+    parser = argparse.ArgumentParser(description="ARMulator")
+    parser.add_argument('inputfile', help="Assembler file")
     args = parser.parse_args()
 
     with open(args.inputfile) as f:
@@ -20,7 +19,7 @@ if __name__ == '__main__':
         lines = f.readlines()
         interpreter.step(stepMode="forward")
         print("Cycle {}".format(interpreter.getCycleCount()))
-        print("Next line to execute : " + lines[interpreter.getCurrentLine()][:-1])
+        print("Next line to execute: " + lines[interpreter.getCurrentLine()][:-1])
         interpreter.step(stepMode="into")
         print("Cycle {}".format(interpreter.getCycleCount()))
         print("Next line to execute : " + lines[interpreter.getCurrentLine()][:-1])
@@ -32,4 +31,4 @@ if __name__ == '__main__':
     deltaTime = time.time() - a
     cycles = interpreter.getCycleCount()
     cyclesPerSec = cycles / deltaTime
-    print("Time execute {} instructions : {} ({:.0f} instr/sec)".format(cycles, deltaTime, cyclesPerSec))
+    print("Time to execute {} instructions : {} ({:.0f} instr/sec)".format(cycles, deltaTime, cyclesPerSec))

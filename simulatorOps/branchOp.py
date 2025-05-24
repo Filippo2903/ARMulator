@@ -1,7 +1,5 @@
-import operator
-import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque 
+from stateManager import StateManager
+appState = StateManager()
 
 import simulatorOps.utils as utils
 from simulatorOps.abstractOp import AbstractOp, ExecutionException
@@ -17,7 +15,7 @@ class BranchOp(AbstractOp):
     def decode(self):
         instrInt = self.instrInt
         if not (utils.checkMask(instrInt, (27, 25), (26,)) or utils.checkMask(instrInt, (24, 21, 4) + tuple(range(8, 20)), (27, 26, 25, 23, 22, 20, 7, 6, 5))):
-            raise ExecutionException("Le bytecode à cette adresse ne correspond à aucune instruction valide (1)", 
+            raise ExecutionException(appState.getT(0), 
                                         internalError=False)
 
         # Retrieve the condition field
@@ -54,7 +52,7 @@ class BranchOp(AbstractOp):
             disassembly += "L"
             self._writeregs = utils.registerWithCurrentBank(14, bank) | utils.registerWithCurrentBank(15, bank)
             self._readregs = utils.registerWithCurrentBank(15, bank)
-            description += "<li>Copie la valeur de {}-4 (l'adresse de la prochaine instruction) dans {}</li>\n".format(utils.regSuffixWithBank(15, bank), utils.regSuffixWithBank(14, bank))
+            description += appState.getT(1).format(utils.regSuffixWithBank(15, bank), utils.regSuffixWithBank(14, bank))
         
         if self.imm:
             self._nextInstrAddr = simulatorContext.regs[15] + self.offsetImm
@@ -62,15 +60,15 @@ class BranchOp(AbstractOp):
             self._readregs = utils.registerWithCurrentBank(15, bank)
             valAdd = self.offsetImm
             if valAdd < 0:
-                description += "<li>Soustrait la valeur {} à {}</li>\n".format(-valAdd, utils.regSuffixWithBank(15, bank))
+                description += appState.getT(2).format(-valAdd, utils.regSuffixWithBank(15, bank))
             else:
-                description += "<li>Additionne la valeur {} à {}</li>\n".format(valAdd, utils.regSuffixWithBank(15, bank))
+                description += appState.getT(3).format(valAdd, utils.regSuffixWithBank(15, bank))
         else:   # BX
             disassembly += "X"
             self._nextInstrAddr = simulatorContext.regs[self.addrReg]
             self._writeregs = utils.registerWithCurrentBank(15, bank)
             self._readregs = utils.registerWithCurrentBank(self.addrReg, bank)
-            description += "<li>Copie la valeur de {} dans {}</li>\n".format(utils.regSuffixWithBank(self.addrReg, bank), utils.regSuffixWithBank(15, bank))
+            description += appState.getT(4).format(utils.regSuffixWithBank(self.addrReg, bank), utils.regSuffixWithBank(15, bank))
 
         disassembly += disCond
         disassembly += " {}".format(hex(valAdd)) if self.imm else " {}".format(utils.regSuffixWithBank(self.addrReg, bank))

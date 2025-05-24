@@ -1,9 +1,8 @@
-import struct
-import math
-from collections import defaultdict, namedtuple
-from functools import lru_cache
+from collections import namedtuple
 from enum import Enum
 
+from stateManager import StateManager
+appState = StateManager()
 """
 Tools to decode instructions.
 """
@@ -227,21 +226,21 @@ def shiftToDescription(shift, bank):
 
     desc = "("
     if shift.type == "LSL":
-        desc += "décalé vers la gauche (mode LSL)"
+        desc += appState.getT(0)
     elif shift.type == "LSR":
-        desc += "décalé vers la droite (mode LSR)"
+        desc += appState.getT(1)
     elif shift.type == "ASR":
-        desc += "décalé vers la droite (mode ASR)"
+        desc += appState.getT(2)
     elif shift.type == "ROR":
         if shift.type == 0:
-            desc += "permuté vers la droite avec retenue (mode RRX)"
+            desc +=appState.getT(3)
         else:
-            desc += "permuté vers la droite (mode ROR)"
+            desc += appState.getT(4)
 
     if shift.immediate:
-        desc += " de {} {}".format(shift.value, "positions" if shift.value > 1 else "position")
+        desc += appState.getT(5).format(shift.value, "positions" if shift.value > 1 else "position")
     else:
-        desc += " du nombre de positions contenu dans {}".format(regSuffixWithBank(shift.value, bank))
+        desc += appState.getT(6).format(regSuffixWithBank(shift.value, bank))
 
     desc += ")"
     return desc

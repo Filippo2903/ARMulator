@@ -1,6 +1,5 @@
 import struct
 from collections import defaultdict
-from copy import deepcopy
 
 from ply.lex import LexError
 from tokenizer import ParserError, lexer
@@ -52,9 +51,9 @@ class ParseError:
     """
 
     dictErrors = {
-        "SYNTAX": "Erreur de syntaxe",
-        "RANGE": "Erreur de range",
-        "INVINSTR": "Instruction invalide",
+        "SYNTAX": appState.getT(0),
+        "RANGE": appState.getT(1),
+        "INVINSTR": appState.getT(2),
     }
 
     def __init__(self, etype, msg, gravity="ERROR"):
@@ -90,7 +89,7 @@ def parse(code, memLayout="simulation"):
 
     listErrors = []
     if getSetting("PCbehavior") == "real":
-        raise NotImplementedError("Actual PC behavior not implemented yet")
+        raise NotImplementedError(appState.getT(3))
     pcoffset = 8 if getSetting("PCbehavior") == "+8" else 0
 
     # First pass : the input code is passed through the lexer and the parser
@@ -134,21 +133,21 @@ def parse(code, memLayout="simulation"):
             lexer.begin("INITIAL")
             parsedLine = yaccparser.parser.parse(input=line)
         except LexError as e:
-            listErrors.append(("codeerror", i, "Format de l'instruction invalide"))
+            listErrors.append(("codeerror", i, appState.getT(4)))
             continue
         except ParserError as e:
             listErrors.append(("codeerror", i, str(e)))
             continue
         except Exception as e:
             listErrors.append(
-                ("codeerror", i, "Impossible d'interpréter l'instruction")
+                ("codeerror", i, appState.getT(5))
             )
             print(str(e))
             continue
         else:
             if parsedLine is None or len(parsedLine) == 0:
                 # Unknown error, but the instruction did not parse
-                listErrors.append(("codeerror", i, "Instruction invalide"))
+                listErrors.append(("codeerror", i, appState.getT(6)))
                 continue
 
         if "SECTION" in parsedLine:
@@ -157,7 +156,7 @@ def parse(code, memLayout="simulation"):
                     (
                         "codeerror",
                         i,
-                        "Vous ne pouvez pas écrire d'instruction avant le premier mot clé SECTION; si vous souhaitez tester un extrait de code, ne déclarez aucune section.",
+                        appState.getT(7),
                     )
                 )
                 continue
@@ -177,7 +176,7 @@ def parse(code, memLayout="simulation"):
                         (
                             "codeerror",
                             i,
-                            "La section INTVEC doit être définie avant les sections CODE et DATA!",
+                            appState.getT(8),
                         )
                     )
                     return None, None, None, None, None, listErrors
@@ -189,7 +188,7 @@ def parse(code, memLayout="simulation"):
                         (
                             "codeerror",
                             i,
-                            "La section CODE doit être définie avant la section DATA!",
+                            appState.getT(9),
                         )
                     )
                     return None, None, None, None, None, listErrors
@@ -203,7 +202,7 @@ def parse(code, memLayout="simulation"):
                     (
                         "codeerror",
                         i,
-                        "La section '{}' est définie deux fois!".format(currentSection),
+                        appState.getT(10).format(currentSection),
                     )
                 )
                 continue
@@ -239,7 +238,7 @@ def parse(code, memLayout="simulation"):
                     (
                         "codeerror",
                         i,
-                        "L'étiquette '{}' est définie deux fois (première définition à la ligne {})".format(
+                        appState.getT(11).format(
                             parsedLine["LABEL"], firstaddr + 1
                         ),
                     )
@@ -284,7 +283,7 @@ def parse(code, memLayout="simulation"):
                     (
                         "codeerror",
                         i,
-                        "La déclaration située sur cette ligne fait déborder la section INTVEC dans la section CODE. Vérifiez que vous allouez le bon nombre d'octets (128 octets maximum pour la section INTVEC en entier).",
+                        appState.getT(12),
                     )
                 )
 
@@ -298,7 +297,7 @@ def parse(code, memLayout="simulation"):
                 [
                     (
                         "error",
-                        "Le code demande une allocation totale de plus de {} octets de mémoire, ce qui est invalide.".format(
+                        appState.getT(13).format(
                             getSetting("maxtotalmem")
                         ),
                     )
@@ -314,7 +313,7 @@ def parse(code, memLayout="simulation"):
                 (
                     "codeerror",
                     0,
-                    "La section INTVEC n'est déclarée nulle part (utilisez 'SECTION INTVEC' au début du code)!",
+                    appState.getT(14),
                 )
             )
             return None, None, None, None, None, listErrors
@@ -323,7 +322,7 @@ def parse(code, memLayout="simulation"):
                 (
                     "codeerror",
                     0,
-                    "La section CODE n'est déclarée nulle part (utilisez 'SECTION CODE')!",
+                    appState.getT(15),
                 )
             )
             return None, None, None, None, None, listErrors
@@ -332,7 +331,7 @@ def parse(code, memLayout="simulation"):
                 (
                     "codeerror",
                     0,
-                    "La section DATA n'est déclarée nulle part (utilisez 'SECTION DATA' à la fin de votre code)!",
+                    appState.getT(16),
                 )
             )
             return None, None, None, None, None, listErrors
@@ -351,7 +350,7 @@ def parse(code, memLayout="simulation"):
                 (
                     "codeerror",
                     lineNo,
-                    "Cette ligne demande l'adresse de l'étiquette {}, mais celle-ci n'est déclarée nulle part".format(
+                    appState.getT(17).format(
                         labelPtr
                     ),
                 )
@@ -392,7 +391,7 @@ def parse(code, memLayout="simulation"):
                     (
                         "codeerror",
                         line,
-                        "L'étiquette {} n'est déclarée nulle part".format(depInfo[1]),
+                        appState.getT(18).format(depInfo[1]),
                     )
                 )
                 continue
@@ -405,7 +404,7 @@ def parse(code, memLayout="simulation"):
                     (
                         "codeerror",
                         line,
-                        "Accès à l'adresse identifiée par l'étiquette {} trop éloigné ({} octets d'écart) pour pouvoir être encodé".format(
+                        appState.getT(19).format(
                             depInfo[1], diff
                         ),
                     )
@@ -433,7 +432,7 @@ def parse(code, memLayout="simulation"):
                     (
                         "codeerror",
                         line,
-                        "L'étiquette {} n'est déclarée nulle part".format(depInfo[1]),
+                        appState.getT(20).format(depInfo[1]),
                     )
                 )
                 continue
@@ -443,7 +442,7 @@ def parse(code, memLayout="simulation"):
                     (
                         "codeerror",
                         line,
-                        "L'étiquette {} correspond à un décalage de {} octets, qui n'est pas un multiple de 4, ce qui est requis par ARM".format(
+                        appState.getT(21).format(
                             depInfo[1], diff
                         ),
                     )

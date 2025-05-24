@@ -1,10 +1,8 @@
-import operator
-import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque 
-
 import simulatorOps.utils as utils
 from simulatorOps.abstractOp import AbstractOp, ExecutionException
+
+from stateManager import StateManager
+appState = StateManager()
 
 class MulLongOp(AbstractOp):
     saveStateKeys = frozenset(("condition", 
@@ -18,7 +16,7 @@ class MulLongOp(AbstractOp):
     def decode(self):
         instrInt = self.instrInt
         if not (utils.checkMask(instrInt, (7, 4, 23), tuple(range(24, 28)) + (5, 6))):
-            raise ExecutionException("Le bytecode à cette adresse ne correspond à aucune instruction valide",
+            raise ExecutionException(appState.getT(0),
                                         internalError=False)
 
         # Retrieve the condition field
@@ -56,25 +54,25 @@ class MulLongOp(AbstractOp):
         if self.accumulate:
             # MLAL
             disassembly += "MLAL" + disCond
-            description += "<li>Effectue une multiplication et une addition {} sur 64 bits (A*B+[C,D]) entre :\n".format("signées" if self.signed else "non signées")
-            description += "<ol type=\"A\"><li>Le registre {}</li>\n".format(utils.regSuffixWithBank(self.rm, bank))
-            description += "<li>Le registre {}</li>\n".format(utils.regSuffixWithBank(self.rs, bank))
-            description += "<li>Le registre {}</li>\n".format(utils.regSuffixWithBank(self.rdHi, bank))
-            description += "<li>Le registre {}</li></ol>\n".format(utils.regSuffixWithBank(self.rdLo, bank))
+            description += appState.getT(1).format("signées" if self.signed else "non signées")
+            description += appState.getT(2).format(utils.regSuffixWithBank(self.rm, bank))
+            description += appState.getT(3).format(utils.regSuffixWithBank(self.rs, bank))
+            description += appState.getT(4).format(utils.regSuffixWithBank(self.rdHi, bank))
+            description += appState.getT(5).format(utils.regSuffixWithBank(self.rdLo, bank))
             self._readregs |= utils.registerWithCurrentBank(self.rdLo, bank)
             self._readregs |= utils.registerWithCurrentBank(self.rdHi, bank)
         else:
             # MULL
             disassembly += "MULL" + disCond
-            description += "<li>Effectue une multiplication {} (A*B) entre :\n".format("signée" if self.signed else "non signée")
-            description += "<ol type=\"A\"><li>Le registre {}</li>\n".format(utils.regSuffixWithBank(self.rm, bank))
-            description += "<li>Le registre {}</li></ol>\n".format(utils.regSuffixWithBank(self.rs, bank))
+            description += appState.getT(6).format("signée" if self.signed else "non signée")
+            description += appState.getT(7).format(utils.regSuffixWithBank(self.rm, bank))
+            description += appState.getT(8).format(utils.regSuffixWithBank(self.rs, bank))
 
         if self.modifyFlags:
             disassembly += "S"
-            description += "<li>Met à jour les drapeaux de l'ALU en fonction du résultat de l'opération</li>\n"
+            description += appState.getT(9)
         disassembly += " R{}, R{}, R{}, R{} ".format(self.rdLo, self.rdHi, self.rm, self.rs)
-        description += "<li>Écrit les 32 MSB du résultat dans R{} et les 32 LSB dans R{}</li>".format(self.rdHi, self.rdLo)
+        description += appState.getT(10).format(self.rdHi, self.rdLo)
         self._writeregs |= utils.registerWithCurrentBank(self.rdLo, bank)
         self._writeregs |= utils.registerWithCurrentBank(self.rdHi, bank)
 

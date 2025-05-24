@@ -1,10 +1,8 @@
-import operator
-import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque 
-
 import simulatorOps.utils as utils
 from simulatorOps.abstractOp import AbstractOp, ExecutionException
+
+from stateManager import StateManager
+appState = StateManager()
 
 class NopOp(AbstractOp):
     saveStateKeys = frozenset(("condition",))
@@ -16,7 +14,7 @@ class NopOp(AbstractOp):
     def decode(self):
         instrInt = self.instrInt
         if not (utils.checkMask(instrInt, (25, 24, 21), (27, 26, 23, 22, 20, 19, 18, 17, 16))):
-            raise ExecutionException("Le bytecode à cette adresse ne correspond à aucune instruction valide",
+            raise ExecutionException(appState.getT(0),
                                         internalError=False)
 
         # Retrieve the condition field
@@ -36,7 +34,7 @@ class NopOp(AbstractOp):
         description += descCond
 
         disassembly = "NOP" + disCond
-        description += "<li>Ne rien faire</li><li>Nonon, vraiment, juste rien</li>"
+        description += appState.getT(1)
 
         description += "</ol>"
         simulatorContext.regs.reactivateBreakpoints()

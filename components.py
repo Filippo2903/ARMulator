@@ -1,10 +1,10 @@
-import operator
+
 import struct
-from enum import Enum
-from collections import defaultdict, namedtuple, deque
+from collections import defaultdict
 from simulatorOps.abstractOp import ExecutionException
 
-from settings import getSetting
+from stateManager import StateManager
+appState = StateManager()
 
 
 class Breakpoint(Exception):
@@ -196,7 +196,7 @@ class Registers(Component):
     @mode.setter
     def mode(self, val):
         if val not in self.mode2bits:
-            raise ValueError("Invalid mode '{}'".format(val))
+            raise ValueError(appState.getT(0).format(val))
         valCPSR = self.regCPSR & (0xFFFFFFFF - 0x1F)  # Clear mode
         valCPSR = self.regCPSR | self.mode2bits[val]
         self.history.signalChange(self, {(val, "CPSR"): (self.regCPSR, valCPSR)})
@@ -219,7 +219,7 @@ class Registers(Component):
         currentBank = self.currentMode
         if currentBank == "User":
             raise ComponentException(
-                "register", "Le registre SPSR n'existe pas en mode 'User'!"
+                "register", appState.getT(1)
             )
         return self.banks[currentBank][16].val
 
@@ -228,7 +228,7 @@ class Registers(Component):
         currentBank = self.currentMode
         if currentBank == "User":
             raise ComponentException(
-                "register", "Le registre SPSR n'existe pas en mode 'User'!"
+                "register", appState.getT(2)
             )
         self.history.signalChange(self, {(self.mode, "SPSR"): (self[16], val)})
         self.banks[currentBank][16].val = val
@@ -481,11 +481,11 @@ class Memory(Component):
         resolvedAddr = self._getRelativeAddr(addr, size)
         if resolvedAddr is None:
             if execMode:
-                desc = "Tentative de lecture d'une instruction a une adresse non initialisée : {}".format(
+                desc = appState.getT(3).format(
                     hex(addr)
                 )
             else:
-                desc = "Accès mémoire en lecture fautif a l'adresse {}".format(
+                desc = appState.getT(4).format(
                     hex(addr)
                 )
             raise ComponentException("memory", desc)
@@ -508,7 +508,7 @@ class Memory(Component):
         if resolvedAddr is None:
             raise ComponentException(
                 "memory",
-                "Accès invalide pour une écriture de taille {} à l'adresse {}".format(
+                appState.getT(5).format(
                     size, hex(addr)
                 ),
             )
