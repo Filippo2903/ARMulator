@@ -1,4 +1,7 @@
 # Dictionnaire en français
+"""
+The French  dictionary for translation
+"""
 dict = {
     "abstractOp": [
         "Erreur interne: ",

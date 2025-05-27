@@ -9,6 +9,20 @@ def load_python_file(file_path):
     return getattr(module, 'dict', None)
 
 def create_main_dict(directory=os.path.join("translation", "dictionaries")):
+    """
+        Loads the language dictionary by aggregating data from multiple Python files in a directory.
+
+        This function scans the specified directory for Python files (*.py), loads their contents
+        using the `load_python_file` function, and combines them into a single dictionary.
+        Each entry in the resulting dictionary is keyed by the filename (without extension),
+        and its value is the corresponding loaded content.
+
+        Args:
+            directory (str): Path to the directory containing language dictionary files.
+
+        Returns:
+            dict: A dictionary aggregating all loaded language data from the directory.
+    """
     main_dict = {}
 
     dir_path = os.path.join(os.getcwd(), directory)

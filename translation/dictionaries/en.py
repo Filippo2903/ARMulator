@@ -1,4 +1,8 @@
 # Dictionary in English
+"""
+The English dictionary for translation
+"""
+
 dict = {
     "abstractOp": [
         "Internal error: ",

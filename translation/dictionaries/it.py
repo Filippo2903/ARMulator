@@ -1,4 +1,7 @@
 # Dizionario in italiano
+"""
+The Italian dictionary for translation
+"""
 dict = {
     "abstractOp": [
         "Errore interno: ",

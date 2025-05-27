@@ -12,6 +12,18 @@ def singleton(class_):
 
 @singleton
 class StateManager():
+    """
+    Singleton responsible for managing the global application state.
+
+    This module defines a singleton that handles shared project state such as:
+    - interface language settings
+    - communication port http server and websocketserver
+    
+
+    Using the singleton pattern ensures that there is only one instance of the state
+    accessible throughout the entire application.
+    """
+    
     def __init__(self, httpPort="8000", webPort="31415", lang = "en"):
         self.httpPort = httpPort
         self.webPort = webPort
