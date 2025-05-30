@@ -221,7 +221,7 @@ dict = {
     "simulator": [
         "Error: the value of PC ({}) is invalid (it must be a multiple of 4)!",
         "Information unavailable",
-        "Instruction address",
+        "Instruction",
         "Error: {} should be {} (the value of register R{}), but it is {}\n",
         "Error: {} should be {}, but it is {}\n",
         "Error: the memory address {} should contain {} (the value of register R{}), but it contains {}\n",

@@ -210,6 +210,15 @@ function onTimer() {
 // Funzione per ripristinare una sessione selezionata
 function restoreSession(selected) {
   saveCurrentEditor();
+
+  const simExec = isSimulatorInEditMode();
+
+  if (!simExec) {
+    $("#assemble").text(frontEndDictionary.assemble);
+    sendData(["stop"]);
+    refreshBreakpoints();
+  }
+
   var savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
   editor.setValue(savedEditor.data[selected].code, -1);
   savedEditor.current = selected;

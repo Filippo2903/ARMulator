@@ -32,6 +32,7 @@ translate = dictionary.create_main_dict()
 
 from native_app import start_app
 from stateManager import StateManager
+
 appState = StateManager()
 
 UPDATE_THROTTLE_SEC = 0.3
@@ -48,7 +49,6 @@ async def producer(ws, data_list):
         web_socket(ws):Connected client
         data_list(data_list):Data waiting to be sent
     """
-
 
     while True:
         if ws not in connected:
@@ -557,9 +557,7 @@ def process(ws, msg_in):
                     try:
                         val = bytearray([int(data[2], 16)])
                     except (ValueError, TypeError):
-                        retval.append(
-                            ["error", appState.getT(5).format(repr(data[2]))]
-                        )
+                        retval.append(["error", appState.getT(5).format(repr(data[2]))])
                         val = interpreters[ws].getMemory(data[1])
                         retval.append(["mempartial", [[data[1], val]]])
                     else:
@@ -596,13 +594,12 @@ default_code = """SECTION INTVEC
 
 B main
 
-
 SECTION CODE
 
 main
 
-fin
-B fin
+end
+B end
 
 SECTION DATA
 """
@@ -772,4 +769,3 @@ if __name__ == "__main__":
     web_server = init_server(web_server)
 
     start_app()
-

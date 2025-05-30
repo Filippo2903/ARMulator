@@ -8,7 +8,6 @@ dict = {
         "<li>Vérifie si la condition {} est remplie</li>\n",
         "L'instruction est invalide (la condition demandée n'existe pas)",
     ],
-
     "branchOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide (1)",
         "<li>Copie la valeur de {}-4 (l'adresse de la prochaine instruction) dans {}</li>\n",
@@ -16,7 +15,6 @@ dict = {
         "<li>Additionne la valeur {} à {}</li>\n",
         "<li>Copie la valeur de {} dans {}</li>\n",
     ],
-
     "dataOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide (2)",
         "La constante {}",
@@ -34,8 +32,8 @@ dict = {
         "<li>Effectue une opération ET NON entre:\n",
         "<li>Effectue une opération NOT sur :\n",
         "Mnémonique invalide : {}",
-        "<ol type=\"A\"><li>Le registre {}</li><li>{}</li></ol>\n",
-        "<ol type=\"A\"><li>Le registre {}</li>\n",
+        '<ol type="A"><li>Le registre {}</li><li>{}</li></ol>\n',
+        '<ol type="A"><li>Le registre {}</li>\n',
         "<li>Copie le SPSR courant dans CPSR</li>\n",
         "<li>Met à jour les drapeaux de l'ALU en fonction du résultat de l'opération</li>\n",
         "<li>Écrit le résultat dans {}</li>",
@@ -43,7 +41,6 @@ dict = {
         "L'utilisation de PC comme registre de destination en combinaison avec la mise a jour des drapeaux est interdite en mode User!",
         "SPSR devrait ici être copié dans CPSR, mais le mode contenu dans SPSR est invalide!",
     ],
-
     "halfSignedMemOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
         "<li>Utilise la valeur du registre {} comme adresse de base</li>\n",
@@ -63,70 +60,64 @@ dict = {
         "<li>Écrit l'adresse effective dans le registre de base {} (mode writeback)</li>\n",
         "Tentative de lecture de {} octets à partir de l'adresse {} invalide : mémoire non initialisée",
     ],
-
     "memOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
-    "<li>Utilise la valeur du registre {} comme adresse de base</li>\n",
-    "<li>Additionne la constante {} à l'adresse de base</li>\n",
-    "<li>Soustrait la constante {} à l'adresse de base</li>\n",
-    "<li>Additionne le registre {} {} à l'adresse de base</li>\n",
-    "<li>Soustrait le registre {} {} à l'adresse de base</li>\n",
-    "1 octet",
-    "{} octets",
-    "<li>Lit {} à partir de l'adresse obtenue (pré-incrément) et stocke le résultat dans {} (LDR)</li>\n",
-    "<li>Lit {} à partir de l'adresse de base et stocke le résultat dans {} (LDR)</li>\n",
-    "<li>Copie la valeur du registre {} dans la mémoire, à l'adresse obtenue à l'étape précédente (pré-incrément), sur {} (STR)</li>\n",
-    "<li>Copie la valeur du registre {} dans la mémoire, à l'adresse de base, sur {} (STR)</li>\n",
-    "<li>Écrit l'adresse effective dans le registre de base {} (mode writeback)</li>\n",
-    "Tentative de lecture de {} octets à partir de l'adresse {} invalide : mémoire non initialisée",
+        "<li>Utilise la valeur du registre {} comme adresse de base</li>\n",
+        "<li>Additionne la constante {} à l'adresse de base</li>\n",
+        "<li>Soustrait la constante {} à l'adresse de base</li>\n",
+        "<li>Additionne le registre {} {} à l'adresse de base</li>\n",
+        "<li>Soustrait le registre {} {} à l'adresse de base</li>\n",
+        "1 octet",
+        "{} octets",
+        "<li>Lit {} à partir de l'adresse obtenue (pré-incrément) et stocke le résultat dans {} (LDR)</li>\n",
+        "<li>Lit {} à partir de l'adresse de base et stocke le résultat dans {} (LDR)</li>\n",
+        "<li>Copie la valeur du registre {} dans la mémoire, à l'adresse obtenue à l'étape précédente (pré-incrément), sur {} (STR)</li>\n",
+        "<li>Copie la valeur du registre {} dans la mémoire, à l'adresse de base, sur {} (STR)</li>\n",
+        "<li>Écrit l'adresse effective dans le registre de base {} (mode writeback)</li>\n",
+        "Tentative de lecture de {} octets à partir de l'adresse {} invalide : mémoire non initialisée",
     ],
-
     "mulLongOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
         "<li>Effectue une multiplication et une addition {} sur 64 bits (A*B+[C,D]) entre :\n",
-        "<ol type=\"A\"><li>Le registre {}</li>\n",
+        '<ol type="A"><li>Le registre {}</li>\n',
         "<li>Le registre {}</li>\n",
         "<li>Le registre {}</li>\n",
         "<li>Le registre {}</li></ol>\n",
         "<li>Effectue une multiplication {} (A*B) entre :\n",
-        "<ol type=\"A\"><li>Le registre {}</li>\n",
+        '<ol type="A"><li>Le registre {}</li>\n',
         "<li>Le registre {}</li></ol>\n",
         "<li>Met à jour les drapeaux de l'ALU en fonction du résultat de l'opération</li>\n",
         "<li>Écrit les 32 MSB du résultat dans R{} et les 32 LSB dans R{}</li>",
     ],
-
     "mulOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
         "<li>Effectue une multiplication suivie d'une addition (A*B+C) entre :\n",
-        "<ol type=\"A\"><li>Le registre {}</li>\n",
+        '<ol type="A"><li>Le registre {}</li>\n',
         "<li>Le registre {}</li>\n",
         "<li>Le registre {}</li></ol>\n",
         "<li>Met à jour les drapeaux de l'ALU en fonction du résultat de l'opération</li>\n",
         "<li>Effectue une multiplication (A*B) entre :\n",
-        "<ol type=\"A\"><li>Le registre {}</li>\n",
+        '<ol type="A"><li>Le registre {}</li>\n',
         "<li>Le registre {}</li></ol>\n",
         "<li>Met à jour les drapeaux de l'ALU en fonction du résultat de l'opération</li>\n",
         "<li>Écrit le résultat dans R{}</li>",
     ],
-
     "multipleMemOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
-    "<li>Lit la valeur de SP</li>\n",
-    "<li>Pour chaque registre de la liste suivante, stocke la valeur contenue à l'adresse pointée par SP dans le registre, puis incrémente SP de 4.</li>\n",
-    "<li>Lit la valeur de SP</li>\n",
-    "<li>Pour chaque registre de la liste suivante, décrémente SP de 4, puis stocke la valeur du registre à l'adresse pointée par SP.</li>\n",
-    "<li>Lit la valeur de {}</li>\n",
-    "<li>Pour chaque registre de la liste suivante, stocke la valeur contenue à l'adresse pointée par {reg} dans le registre, puis {incmode} {reg} de 4.</li>\n",
-    "<li>Lit la valeur de {}</li>\n",
-    "<li>Pour chaque registre de la liste suivante, {incmode} {reg} de 4, puis stocke la valeur du registre à l'adresse pointée par {reg}.</li>\n",
-    "<li>Copie du SPSR courant dans le CPSR</li>\n",
+        "<li>Lit la valeur de SP</li>\n",
+        "<li>Pour chaque registre de la liste suivante, stocke la valeur contenue à l'adresse pointée par SP dans le registre, puis incrémente SP de 4.</li>\n",
+        "<li>Lit la valeur de SP</li>\n",
+        "<li>Pour chaque registre de la liste suivante, décrémente SP de 4, puis stocke la valeur du registre à l'adresse pointée par SP.</li>\n",
+        "<li>Lit la valeur de {}</li>\n",
+        "<li>Pour chaque registre de la liste suivante, stocke la valeur contenue à l'adresse pointée par {reg} dans le registre, puis {incmode} {reg} de 4.</li>\n",
+        "<li>Lit la valeur de {}</li>\n",
+        "<li>Pour chaque registre de la liste suivante, {incmode} {reg} de 4, puis stocke la valeur du registre à l'adresse pointée par {reg}.</li>\n",
+        "<li>Copie du SPSR courant dans le CPSR</li>\n",
     ],
-
     "nopOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
         "<li>Ne rien faire</li><li>Nonon, vraiment, juste rien</li>",
     ],
-
     "psrOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
         "<li>Écrit la constante {} dans {}</li>\n",
@@ -141,15 +132,13 @@ dict = {
         "Erreur : tentative de changer le mode du processeur à partir d'un mode non privilégié!",
         "Erreur : lecture de SPSR en mode 'User' (ce mode ne possede pas de registre SPSR)",
     ],
-
     "softInterruptOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
         "<li>Changement de banque de registres vers SVC</li>\n",
         "<li>Copie du CPSR dans le SPSR_svc</li>\n",
         "<li>Copie de PC dans LR_svc</li>\n",
-        "<li>Assignation de 0x08 dans PC</li>\n"
+        "<li>Assignation de 0x08 dans PC</li>\n",
     ],
-
     "swapOp": [
         "Le bytecode à cette adresse ne correspond à aucune instruction valide",
         "<li>Lit {} à partir de l'adresse contenue dans {}</li>\n",
@@ -157,9 +146,8 @@ dict = {
         "<li>Écrit l'octet le moins significatif de la valeur originale en mémoire dans {}</li>\n",
         "<li>Écrit la valeur du registre {} à l'adresse contenue dans {}</li>\n",
         "<li>Écrit dans {} la valeur originale de l'adresse contenue dans {}</li>\n",
-        "Tentative de lecture de {} octets à partir de l'adresse {} invalide : mémoire non initialisée"
+        "Tentative de lecture de {} octets à partir de l'adresse {} invalide : mémoire non initialisée",
     ],
-
     "utils": [
         "décalé vers la gauche (mode LSL)",
         "décalé vers la droite (mode LSR)",
@@ -167,9 +155,8 @@ dict = {
         "permuté vers la droite avec retenue (mode RRX)",
         "permuté vers la droite (mode ROR)",
         " de {} {}",
-        " du nombre de positions contenu dans {}"
+        " du nombre de positions contenu dans {}",
     ],
-
     "assembler": [
         "Erreur de syntaxe",
         "Erreur de range",
@@ -194,7 +181,6 @@ dict = {
         "L'étiquette {} n'est déclarée nulle part",
         "L'étiquette {} correspond à un décalage de {} octets, qui n'est pas un multiple de 4, ce qui est requis par ARM",
     ],
-
     "components": [
         "Invalid mode '{}'",
         "Le registre SPSR n'existe pas en mode 'User'!",
@@ -203,11 +189,7 @@ dict = {
         "Accès mémoire en lecture fautif a l'adresse {}",
         "Accès invalide pour une écriture de taille {} à l'adresse {}",
     ],
-
-    "history": [
-        "Fin de l'historique atteinte, impossible de remonter plus haut!"
-    ],
-
+    "history": ["Fin de l'historique atteinte, impossible de remonter plus haut!"],
     "mainweb": [
         "Information indisponible",
         "Veuillez assembler le code avant d'effectuer cette opération.",
@@ -216,19 +198,17 @@ dict = {
         "Registre invalide: {}",
         "Valeur invalide: {}",
     ],
-
     "simulator": [
         "Erreur : la valeur de PC ({}) est invalide (ce doit être un multiple de 4)!",
         "Information indisponible",
-        "Adresse de l’instruction",
+        "Instruction",
         "Erreur : {} devrait valoir {} (la valeur du registre R{}), mais il vaut {}\n",
         "Erreur : {} devrait valoir {}, mais il vaut {}\n",
         "Erreur : l'adresse mémoire {} devrait contenir {} (la valeur du registre R{}), mais elle contient {}\n",
         "Erreur : l'adresse mémoire {} devrait contenir {}, mais elle contient {}\n",
         "Erreur : le drapeau {} devrait signaler {}, mais il signale {}\n",
-        "Assertion inconnue ou impossible à interpréter : ({}, {})!"
+        "Assertion inconnue ou impossible à interpréter : ({}, {})!",
     ],
-
     "tokenizer": [
         "(01) Caractere invalide (ligne {}, colonne {}) : {}",
         "(02) Caractere invalide (ligne {}, colonne {}) : {}",
@@ -260,10 +240,9 @@ dict = {
         "(26) Caractere invalide (ligne {}, colonne {}) : {}",
         "(G) Caractere invalide (ligne {}, colonne {}) : {}",
     ],
-
     "yaccparser": [
         "Une étiquette doit commencer par une lettre majuscule ou minuscule (et non par un chiffre)",
-        "Instruction invalide : \"{}\". Veuillez vous référer au manuel du simulateur pour la liste des instructions acceptées. ",
+        'Instruction invalide : "{}". Veuillez vous référer au manuel du simulateur pour la liste des instructions acceptées. ',
         "Le registre R{}{} n'existe pas",
         "L'instruction {} requiert un registre comme premier argument",
         "Les registres et/ou constantes utilisés dans une opération doivent être séparés par une virgule",
@@ -304,6 +283,6 @@ dict = {
         "Une variable peut avoir les tailles suivantes (en bits) : 8, 16 ou 32. {} n'est pas une taille valide",
         "Une allocation de variable ne peut qu'être suivie d'un nombre d'éléments. Utilisez ASSIGN si vous voulez assigner des valeurs précises.",
         "Demande d'allocation mémoire trop grande. Le maximum permis est de 8 Ko (8192 octets), mais la déclaration demande {} octets.",
-        "Une allocation de variable doit être suivie d'une taille en bits (par exemple ALLOC32 ou ALLOC8)"
+        "Une allocation de variable doit être suivie d'une taille en bits (par exemple ALLOC32 ou ALLOC8)",
     ],
 }

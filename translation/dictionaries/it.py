@@ -220,7 +220,7 @@ dict = {
     "simulator": [
         "Errore: il valore di PC ({}) non è valido (deve essere un multiplo di 4)!",
         "Informazioni non disponibili",
-        "Indirizzo dell'istruzione",
+        "Indirizzo",
         "Errore: {} dovrebbe valere {} (il valore del registro R{}), ma vale {}\n",
         "Errore: {} dovrebbe valere {}, ma vale {}\n",
         "Errore: l'indirizzo di memoria {} dovrebbe contenere {} (il valore del registro R{}), ma contiene {}\n",
