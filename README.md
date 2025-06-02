@@ -1,5 +1,5 @@
 # Tesina - Emulatore ARMv4
-###### _Università degli studi di Roma Tor Vergata<br>CdL Informatica<br>A.A. 2024/2025 - Architettura dei Sistemi di Elaborazione - Prof. A. Simonetta, Ing. E. Iannaccone<br>Filippo Gentili, Thomas Infascelli, Matteo Sorvillo, Alessandro Stella_
+###### _Università degli studi di Roma Tor Vergata<br>CdL Informatica<br>A.A. 2024/2025 - Architettura dei Sistemi di Elaborazione<br> Prof. A. Simonetta, Ing. E. Iannaccone<br>Filippo Gentili, Thomas Infascelli, Matteo Sorvillo, Alessandro Stella_
 ## Introduzione
 
 Questo progetto nasce dall'esigenza didattica di disporre di un'alternativa nativa e mantenibile a [**CPUlator**](https://cpulator.01xz.net/), simulatore e debugger di sistemi informatici.<br>
@@ -66,7 +66,7 @@ pip install -r requirements.txt
 ```
 
 ## Accesso Server
-Per accedere all'emulatore sul server privato, utilizzare il seguente indirizzo:<br>
+Per accedere all'emulatore sul server privato, utilizzare il seguente [indirizzo](147.93.63.174:8888):<br>
 147.93.63.174:8888
 
 ## Utilizzo
@@ -79,6 +79,8 @@ Per accedere all'emulatore sul server privato, utilizzare il seguente indirizzo:
    - Impostare breakpoint
    - Eseguire il programma (step/continuo)
 4. Visualizzare: registri, memoria, flags, output ed errori
+5. La sessione viene salvata automaticamente
+6. Esportare il codice di testo
 
 
 ## Differenze rispetto al progetto originale
@@ -93,9 +95,9 @@ Per accedere all'emulatore sul server privato, utilizzare il seguente indirizzo:
 
 ## Come funziona e manuale utente
 
-Il file [`howItWorks.pdf`]() presenta uno schema visivo del funzionamento generale dell'emulatore.<br>
-Per una documentazione approfondita delle API, si consulti la documentazione in [`pdoc-docs`](https://github.com/Filippo2903/ARMulator/tree/master/pdoc-docs).<br>
-Il manuale originale del progetto (_da tradurre_) è incluso: [`manuale`](). Descrive le funzionalità della GUI, i registri, la memoria, e il set di istruzioni ARMv4 supportate.
+Il file [`howItWorks.pdf`](https://github.com/Filippo2903/ARMulator/blob/master/howItWorks.png) presenta uno schema visivo del funzionamento generale dell'emulatore.<br>
+Per una documentazione approfondita delle API, si consulti la [documentazione](http://147.93.63.174:8080).<br>
+Il manuale originale del progetto (_da aggiornare_) è incluso: [`manuale`](https://github.com/Filippo2903/ARMulator/blob/master/manuale.pdf). Descrive le funzionalità della GUI, i registri, la memoria, e il set di istruzioni ARMv4 supportate.
 
 # Sviluppi Futuri
 
@@ -110,11 +112,11 @@ Il manuale originale del progetto (_da tradurre_) è incluso: [`manuale`](). Des
 7. Compatibilità con MacOS (Silicon/Intel)
 8. Ottimizzare ulteriormente aggiornamento GUI ed evitare che funzioni "passivamente"
    * ##### al momento utilizza del codice jQuery per reagire a messaggi provenienti dal websocket
-9. Tradurre `manuale`
-10. Comprendere inizializzazione memoria ed errori riguardanti celle non inizializzate da compiler
+9. Tradurre `manuale` o produrne uno nuovo
+10. Comprendere inizializzazione memoria ed errori riguardanti celle non inizializzate immediatamente
 
 ## Licenza e Ringraziamenti
 
-Progetto prodotto come tesina per il corso di laurea di [Informatica](http://www.informatica.uniroma2.it/) dell'Università degli studi di Roma Tor Vergata<br>.
+Progetto prodotto come tesina per il corso di laurea di [Informatica](http://www.informatica.uniroma2.it/) dell'Università degli studi di Roma Tor Vergata.<br>
 Basato su [epater](https://github.com/mgard/epater), sviluppato originariamente da Marc-André Gardner, Yannick Hold-Geoffroy e Jean-François Lalonde.<br>
 Il progetto è distribuito sotto licenza GPLv3 (vedi `LICENSE`).
