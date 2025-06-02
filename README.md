@@ -45,7 +45,7 @@ Si tratta di un emulatore ARM, scritto in python, a scopi didattici con interfac
 - **Modernizzazione GUI** e miglioramenti all'usabilità
 - **Supporto multilingua integrato**
    - **Aggiunta lingua italiana ed inglese**
-- Accesso all'emulatore su server privato
+- Accesso momentaneo all'emulatore su server privato
 
 ## Installazione
 
@@ -66,6 +66,7 @@ pip install -r requirements.txt
 ```
 
 ## Accesso Server
+L'emulatore è stato caricato momentaneamente su una VPS a basse prestazioni, con il solo scopo di dimostrarne una futura e stabile implementazione.<br>
 Per accedere all'emulatore sul server privato, utilizzare il seguente [indirizzo](http://147.93.63.174:8888):<br>
 147.93.63.174:8888
 
