@@ -65,6 +65,14 @@ function openMaxSessionDialog() {
 }
 
 function createNewSession() {
+  const simExec = isSimulatorInEditMode();
+
+  if (!simExec) {
+    $("#assemble").text(frontEndDictionary.assemble);
+    sendData(["stop"]);
+    refreshBreakpoints();
+  }
+
   var savedEditor = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {
     defaultEditor: editor.getValue(),
     current: null,

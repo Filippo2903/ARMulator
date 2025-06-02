@@ -155,6 +155,15 @@ $(document).ready(function () {
     openDeleteDialog(index);
   });
 
+  $(document).on("mousedown", ".session_item", function (event) {
+    if (event.which === 2) {
+      event.preventDefault();
+
+      const index = $(this).find(".delete_session").data("session-index");
+      openDeleteDialog(index);
+    }
+  });
+
   $("#credits_overlay").on("click", function () {
     closeCreditsDialog();
   });
