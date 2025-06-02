@@ -66,7 +66,7 @@ pip install -r requirements.txt
 ```
 
 ## Accesso Server
-Per accedere all'emulatore sul server privato, utilizzare il seguente [indirizzo](147.93.63.174:8888):<br>
+Per accedere all'emulatore sul server privato, utilizzare il seguente [indirizzo](http://147.93.63.174:8888):<br>
 147.93.63.174:8888
 
 ## Utilizzo
