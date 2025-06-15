@@ -1,123 +1,128 @@
-# Tesina - Emulatore ARMv4
-###### _Università degli studi di Roma Tor Vergata<br>CdL Informatica<br>A.A. 2024/2025 - Architettura dei Sistemi di Elaborazione<br> Prof. A. Simonetta, Ing. E. Iannaccone<br>Filippo Gentili, Thomas Infascelli, Matteo Sorvillo, Alessandro Stella_
-## Introduzione
+# Final Project - ARMv4 Emulator
 
-Questo progetto nasce dall'esigenza didattica di disporre di un'alternativa nativa e mantenibile a [**CPUlator**](https://cpulator.01xz.net/), simulatore e debugger di sistemi informatici.<br>
-Il progetto è basato su [**epater**](https://github.com/mgard/epater), un assemblatore ed emulatore ARMv4.<br>
-Il codice originale è stato aggiornato, ottimizzato e reso compatibile con Windows e Linux.
+###### *University of Rome Tor Vergata<br>BSc in Computer Science<br>A.Y. 2024/2025 - Computer Architecture<br> Prof. A. Simonetta, Eng. E. Iannaccone<br>Filippo Gentili, Thomas Infascelli, Matteo Sorvillo, Alessandro Stella*
 
+## Introduction
 
-## Requisiti
-- Fornire un'alternativa nativa a CPUlator
-- Utilizzare [epater](https://github.com/mgard/epater) come punto di partenza
-   * Rendere il progetto iniziale utilizzabile
-   * Comprenderne potenzialità e limiti
-   * Rendere l'installazione del software chiara e semplice
+This project was created to meet the educational need for a native and maintainable alternative to [**CPUlator**](https://cpulator.01xz.net/), a computer systems simulator and debugger.<br>
+The project is based on [**epater**](https://github.com/mgard/epater), an ARMv4 assembler and emulator.<br>
+The original code has been updated, optimized, and made compatible with both Windows and Linux.
 
+## Requirements
 
+* Provide a native alternative to CPUlator
+* Use [epater](https://github.com/mgard/epater) as a starting point
 
-## Il Progetto
+  * Make the initial project usable
+  * Understand its capabilities and limitations
+  * Make the software installation process clear and straightforward
 
-Si tratta di un emulatore ARM, scritto in python, a scopi didattici con interfaccia grafica interattiva. Anziché _**interpretare**_ il codice ARM, questo software è in grado di _**emulare**_ direttamente una CPU ARM.<br>In particolare, è un assemblatore e simulatore composto in tre parti:
+## The Project
 
-1. Assemblatore che traduce codice ARM in bytecode ARMv4
-2. Emulatore ARMv4
-3. Interfaccia grafica composta da editor di testo, tabella dei registri, tabella degli indirizzi di memoria e varie funzioni utili al debug e allo studio
+This is an educational ARM emulator, written in Python, featuring an interactive graphical interface. Instead of ***interpreting*** ARM code, this software can ***emulate*** an ARM CPU directly.<br>
+Specifically, it is an assembler and simulator composed of three parts:
 
-## Funzionalità supportate
+1. An assembler that translates ARM code into ARMv4 bytecode
+2. An ARMv4 emulator
+3. A graphical interface including a text editor, register table, memory address table, and various debugging and learning tools
 
-- Tutte le istruzioni dell'architettura ARMv4 
-- Interrupt (software tramite SWI o hardware di tipo timer con IRQ o FIQ)
-- Esecuzione step-by-step e continua
-- Debugger integrato, incluso reverse-debugging
-- Interfaccia grafica moderna e interattiva
-- Salvataggio e caricamento fino ad un massimo di 10 sessioni
+## Supported Features
 
+* Full support for ARMv4 instruction set
+* Interrupts (software via SWI or hardware via timer using IRQ or FIQ)
+* Step-by-step and continuous execution
+* Integrated debugger, including reverse-debugging
+* Modern and interactive graphical interface
+* Save and load up to 10 sessions
 
-## Modifiche principali
+## Main Changes
 
-- **Aggiornamento dipendenze** nel file `requirements.txt`
-- **Parallelizzazione dei server** HTTP e WebSocket
-- **Ottimizzazione aggiornamento GUI**
-  - **Editor di testo velocizzato**
-- **Compilazione in eseguibile** tramite [py-to-exe](https://pypi.org/project/auto-py-to-exe) 
-- **Distribuzione con Installer** 
-- **Modernizzazione GUI** e miglioramenti all'usabilità
-- **Supporto multilingua integrato**
-   - **Aggiunta lingua italiana ed inglese**
-- Accesso momentaneo all'emulatore su server privato
+* **Updated dependencies** in the `requirements.txt` file
+* **Parallelization of** HTTP and WebSocket **servers**
+* **Optimized GUI updates**
 
-## Installazione
+  * **Faster text editor**
+* **Compiled into an executable** using [py-to-exe](https://pypi.org/project/auto-py-to-exe)
+* **Installer-based distribution**
+* **Modernized GUI** and improved usability
+* **Integrated multilingual support**
 
-Per installare l'emulatore è sufficiente scaricare l'installer corrispondente al vostro sistema operativo.<br>
-[Windows]() [Linux]()<br> 
+  * **Added Italian and English languages**
+* Temporary access to the emulator via private server
 
-### Requisiti di sistema
+## Installation
 
-- Windows 11 o qualsiasi distribuzione Linux
-- Python ver 3.12 (per sviluppatori)
+To install the emulator, simply download the installer for your operating system.<br>
+[Windows]() [Linux]()<br>
 
-### Installazione per Sviluppatori
+### System Requirements
+
+* Windows 11 or any Linux distribution
+* Python ver. 3.12 (for developers)
+
+### Developer Installation
 
 ```bash
-git clone https://github.com/NOME_UTENTE/NOME_REPO
+git clone https://github.com/USERNAME/REPO_NAME
 pip install -r requirements.txt
-
 ```
 
-## Accesso Server
-L'emulatore è stato caricato momentaneamente su una VPS a basse prestazioni, con il solo scopo di dimostrarne una futura e stabile implementazione.<br>
-Per accedere all'emulatore sul server privato, utilizzare il seguente [indirizzo](http://147.93.63.174:8888):<br>
+## Server Access
+
+The emulator has been temporarily deployed on a low-performance VPS, solely for demonstrating a potential future stable deployment.<br>
+To access the emulator on the private server, use the following [address](http://147.93.63.174:8888):<br>
 147.93.63.174:8888
 
-## Utilizzo
+## Usage
 
-1. Aprire l'applicazione
-2. Caricare un file `.txt` con codice assembly ARM oppure utilizzare direttamente l'editor di testo
-3. Usare la GUI per:
-   - Modificare il codice
-   - Modificare manualmente memoria e registri
-   - Impostare breakpoint
-   - Eseguire il programma (step/continuo)
-4. Visualizzare: registri, memoria, flags, output ed errori
-5. La sessione viene salvata automaticamente
-6. Esportare il codice di testo
+1. Open the application
+2. Load a `.txt` file containing ARM assembly code or use the built-in text editor
+3. Use the GUI to:
 
+   * Edit the code
+   * Manually edit memory and registers
+   * Set breakpoints
+   * Run the program (step-by-step or continuously)
+4. View: registers, memory, flags, output, and errors
+5. The session is automatically saved
+6. Export the text code
 
-## Differenze rispetto al progetto originale
+## Differences from the Original Project
 
-| Aspetto                | Epater Originale           | Versione tesina             |
-|------------------------|----------------------------|-----------------------------|
-| Esecuzione             | Web-based                  | Applicazione nativa         |
-| GUI                    | Obsoleta                   | Modernizzata                |
-| Server                 | Non funzionante            | Doppio, asincrono           |
-| Build                  | Assente                    | Eseguibile + installer      |
-| Dipendenze             | Obsolete                   | Gestite via `requirements`  |
+| Feature      | Original Epater | Final Project Version      |
+| ------------ | --------------- | -------------------------- |
+| Execution    | Web-based       | Native application         |
+| GUI          | Outdated        | Modernized                 |
+| Server       | Non-functional  | Dual, asynchronous         |
+| Build        | Not available   | Executable + installer     |
+| Dependencies | Outdated        | Managed via `requirements` |
 
-## Come funziona e manuale utente
+## How It Works and User Manual
 
-Il file [`howItWorks.pdf`](https://github.com/Filippo2903/ARMulator/blob/master/howItWorks.png) presenta uno schema visivo del funzionamento generale dell'emulatore.<br>
-Per una documentazione approfondita delle API, si consulti la [documentazione](http://147.93.63.174:8080).<br>
-Il manuale originale del progetto (_da aggiornare_) è incluso: [`manuale`](https://github.com/Filippo2903/ARMulator/blob/master/manuale.pdf). Descrive le funzionalità della GUI, i registri, la memoria, e il set di istruzioni ARMv4 supportate.
+The file [`howItWorks.pdf`](https://github.com/Filippo2903/ARMulator/blob/master/howItWorks.png) provides a visual overview of the emulator’s general functioning.<br>
+For detailed API documentation, refer to the [documentation](http://147.93.63.174:8080).<br>
+The original project manual (*to be updated*) is included: [`manuale`](https://github.com/Filippo2903/ARMulator/blob/master/manuale.pdf). It describes GUI features, registers, memory, and the supported ARMv4 instruction set.
 
-# Sviluppi Futuri
+# Future Developments
 
-1. Implementare le funzionalità di ARMv7
-   * ##### in `simulator.py` la funzione _`bytecodeToInstr`_ sembra un buon punto di partenza
-   * ##### si potrebbe usare [unicorn](https://www.unicorn-engine.org) ma richiede una revisione totale del codice
-2. Completare la traduzione, rimuovendo le stringhe 'hard-coded'
-3. Ottimizzare l'interazione tra client e server
-4. Aggiungere modalità Thumb
-5. Aggiungere istruzioni verso i coprocessori
-6. Simulazione accurata dei cicli del processore
-7. Compatibilità con MacOS (Silicon/Intel)
-8. Ottimizzare ulteriormente aggiornamento GUI ed evitare che funzioni "passivamente"
-   * ##### al momento utilizza del codice jQuery per reagire a messaggi provenienti dal websocket
-9. Tradurre `manuale` o produrne uno nuovo
-10. Comprendere inizializzazione memoria ed errori riguardanti celle non inizializzate immediatamente
+1. Implement ARMv7 features
 
-## Licenza e Ringraziamenti
+   * ##### In `simulator.py`, the *`bytecodeToInstr`* function seems a good starting point
+   * ##### [unicorn](https://www.unicorn-engine.org) could be used, but would require a complete codebase overhaul
+2. Complete the translation by removing all hard-coded strings
+3. Optimize client-server interaction
+4. Add Thumb mode support
+5. Add coprocessor instruction support
+6. Accurately simulate CPU cycles
+7. Ensure compatibility with macOS (Silicon/Intel)
+8. Further optimize GUI updates and prevent passive behavior
 
-Progetto prodotto come tesina per il corso di laurea di [Informatica](http://www.informatica.uniroma2.it/) dell'Università degli studi di Roma Tor Vergata.<br>
-Basato su [epater](https://github.com/mgard/epater), sviluppato originariamente da Marc-André Gardner, Yannick Hold-Geoffroy e Jean-François Lalonde.<br>
-Il progetto è distribuito sotto licenza GPLv3 (vedi `LICENSE`).
+   * ##### Currently uses jQuery code to react to WebSocket messages
+9. Translate the `manuale` or produce a new one
+10. Understand memory initialization and address errors with uninitialized cells
+
+## License and Acknowledgments
+
+This project was developed as a final assignment for the [Computer Science](http://www.informatica.uniroma2.it/) degree program at the University of Rome Tor Vergata.<br>
+It is based on [epater](https://github.com/mgard/epater), originally developed by Marc-André Gardner, Yannick Hold-Geoffroy, and Jean-François Lalonde.<br>
+The project is released under the GPLv3 license (see `LICENSE`).
